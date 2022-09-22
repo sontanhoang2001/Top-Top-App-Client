@@ -2,11 +2,13 @@ import { Fragment } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { publicRoutes } from './router';
 import { DefaultLayout } from './components/Layout';
-import './firebase/config.js';
+import Login from './page/Login';
+// import './firebase/config.js';
 
 function App() {
     return (
         <div className="App">
+            <Login />
             <Routes>
                 {publicRoutes.map((route, index) => {
                     const Page = route.component;
