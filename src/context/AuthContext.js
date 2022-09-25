@@ -38,7 +38,9 @@ export const AuthContextProvider = ({ children }) => {
         return () => {
             unsubcribe();
         };
-    });
+    }, [user]);
+
+    
     return (
         <AuthContext.Provider value={{ googleSignIn, facebookSignIn, logOut, user }}>{children}</AuthContext.Provider>
     );

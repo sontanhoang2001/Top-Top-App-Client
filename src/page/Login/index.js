@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '~/context/AuthContext';
 
 function Login() {
+    
     const navigate = useNavigate();
     const { googleSignIn, facebookSignIn, user } = UserAuth();
 
@@ -23,15 +24,15 @@ function Login() {
         }
     };
 
-    useEffect(() => {
-        if (user) {
-            console.log('user: ', user);
-            const { displayName, email } = user;
-            console.log(`Data: name: ${displayName}, email: ${email}`);
+    // useEffect(() => {
+    //     if (user) {
+    //         console.log('user: ', user);
+    //         const { displayName, email } = user;
+    //         console.log(`Data: name: ${displayName}, email: ${email}`);
 
-            navigate('/account');
-        }
-    }, [user]);
+    //         navigate('/profile');
+    //     }
+    // }, [user]);
 
     return (
         <>
