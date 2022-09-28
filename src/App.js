@@ -5,6 +5,9 @@ import { DefaultLayout } from './components/Layout';
 import { AuthContextProvider } from './context/AuthContext';
 import Protected from './Proteced';
 
+import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
+
 function App() {
     return (
         <AuthContextProvider>

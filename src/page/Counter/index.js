@@ -4,6 +4,7 @@ import { decrement, increment, incrementByAmount, incrementAsync, selectCount } 
 import slideApi from '~/api/slide';
 
 import styles from './Counter.module.css';
+import { Button } from '@mui/material';
 
 export function Counter() {
     const count = useSelector(selectCount);
@@ -24,6 +25,7 @@ export function Counter() {
 
     return (
         <div>
+             <Button variant="contained">Hello World</Button>
             <div className={styles.row}>
                 <button className={styles.button} aria-label="Increment value" onClick={() => dispatch(increment())}>
                     +

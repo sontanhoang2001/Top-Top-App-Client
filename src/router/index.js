@@ -16,7 +16,6 @@ const publicRoutes = [
     { path: '/upload', component: Upload, layout: HeaderOnly },
     { path: '/@', component: Profile },
     { path: '/counter', component: Counter },
-
 ];
 
 const privateRoutes = [];
