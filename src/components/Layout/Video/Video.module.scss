@@ -1,9 +1,9 @@
 .video {
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
-    position: relative;
+    height: 91vh;
     scroll-snap-align: start;
 }
 
@@ -12,14 +12,13 @@
     align-self: center;
     width: 380px;
     height: 100%;
-    object-fit: fill;
 }
 
 .video__thumbnail {
     position: absolute;
     width: 100%;
     filter: brightness(0.5) blur(10px);
-    transform: scaleX(1.5);
+    // transform: scaleX(1.5);
 }
 
 .container__btn {
@@ -50,4 +49,23 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
+}
+
+.DivUnmuteButton {
+    left: 12px;
+    position: absolute;
+    top: 72px;
+    min-width: 139px;
+    padding: 0px 16px;
+    height: 36px;
+    z-index: 1;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+    border-radius: 4px;
+    box-shadow: rgb(0 0 0 / 12%) 0px 1px 1px;
+    background: rgba(255, 255, 255, 0.85);
 }

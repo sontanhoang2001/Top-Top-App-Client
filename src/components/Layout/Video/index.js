@@ -1,20 +1,38 @@
 import React, { useEffect, useRef, useState } from 'react';
+import useElementOnScreen from '~/hooks/useElementOnScreen ';
 import classNames from 'classnames/bind';
 import styles from './Video.module.scss';
 import VideoFooter from './videoFooter';
 import VideoSidebar from './videoSidebar';
 
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import { IconButton, Typography } from '@mui/material';
+
 const cx = classNames.bind(styles);
 
-function Video({ index, url, song, description, channel, likes, messages, shares }) {
+function Video({ index, url, song, description, channel, likes, messages, shares, muted, onEnableAudio }) {
     const [playing, setPlaying] = useState(false);
-    const [muted, setMuted] = useState(true);
 
     const videoRef = useRef(null);
+    const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.3,
+    };
+    const isVisibile = useElementOnScreen(options, videoRef);
+    const onVideoClick = () => {
+        if (playing) {
+            videoRef.current.pause();
+            setPlaying(!playing);
+        } else {
+            videoRef.current.play();
+            setPlaying(!playing);
+        }
+    };
 
     const attemptPlay = () => {
         if (index == 0) {
-            setPlaying(true);
+            // setPlaying(true);
             videoRef &&
                 videoRef.current &&
                 videoRef.current.play().catch((error) => {
@@ -25,20 +43,19 @@ function Video({ index, url, song, description, channel, likes, messages, shares
 
     useEffect(() => {
         attemptPlay();
-    }, []);
 
-    const onVideoPress = () => {
-        if (playing) {
-            videoRef.current.pause();
-            setPlaying(false);
+        if (isVisibile) {
+            if (!playing) {
+                videoRef.current.play();
+                setPlaying(true);
+            }
         } else {
-            videoRef.current.play();
-            setPlaying(true);
-
-            // Nếu lần đầu == true thì setMuted = false
-            muted && setMuted(false);
+            if (playing) {
+                videoRef.current.pause();
+                setPlaying(false);
+            }
         }
-    };
+    }, [isVisibile]);
 
     return (
         <div className={cx('video')}>
@@ -50,11 +67,26 @@ function Video({ index, url, song, description, channel, likes, messages, shares
                 muted={muted}
                 loop
                 playsInline
+                preload="true"
                 alt={description}
             ></video>
-            <div className={cx('container__btn')} onClick={onVideoPress}>
-                {playing || <div className={cx('btn__play')}></div>}
+            <div className={cx('container__btn')} onClick={onVideoClick}>
+                {!playing && <div className={cx('btn__play')}></div>}
             </div>
+
+            {muted && (
+                <div className={cx('container__btn')} onClick={onEnableAudio}>
+                    <div className={cx('DivUnmuteButton')}>
+                        <IconButton>
+                            <VolumeOffIcon  />
+                        </IconButton>
+                        <Typography  sx={{ fontSize: 'default', fontWeight: 'bold' }}>
+                            Bỏ tắt tiếng
+                        </Typography>
+                    </div>
+                </div>
+            )}
+
             <VideoFooter channel={channel} description={description} song={song} />
             <VideoSidebar messages={messages} shares={shares} likes={likes} />
         </div>

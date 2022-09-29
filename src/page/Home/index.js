@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 import Video from '~/components/Layout/Video';
-import video1 from '~/video/video1.mp4';
-import video2 from '~/video/video2.mp4';
-import video3 from '~/video/video3.mp4';
+import video1 from '~/source/video/video1.mp4';
+import video2 from '~/source/video/video2.mp4';
+import video3 from '~/source/video/video3.mp4';
+import video4 from '~/source/video/video4.mp4';
+import video5 from '~/source/video/video5.mp4';
+import video6 from '~/source/video/video6.mp4';
+import video7 from '~/source/video/video7.mp4';
+import video8 from '~/source/video/video8.mp4';
 
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
@@ -10,6 +15,53 @@ import styles from './Home.module.scss';
 const videosFake = [
     {
         url: video1,
+        likes: 581.7,
+        messages: 3146,
+        shares: 580,
+        description: 'Em này dễ thương quá @xuhuong @cover @hathay @amnhac',
+        channel: 'my30.01',
+        song: 'nhạc nền - I ❤ My IDOL',
+    },
+    {
+        url: video2,
+        likes: 750,
+        messages: 29,
+        shares: 2,
+        description:
+            'Xin chào tất cả mọi người!!🌻 Mình là LÊ THIÊN ÁI rất vui được làm quen cùng với mọi người!! 👋😌👋 Hãy theo dõi mình để xem những video tiếp theo chủ đề về vlog, Mv và hậu trường nha! 🎉 ',
+        channel: '@thienai176',
+        song: 'nhạc nền - Lê Thiên Ái',
+    },
+    {
+        url: video3,
+        likes: 950,
+        messages: 49,
+        shares: 100,
+        description:
+            'Các vị trí trong bộ phận IT của FPT software #fptsoftwareacademy #LearnOnTikTok #tuyendungit #fypシ #xuhuong',
+        channel: 'fptsoftwareacademy',
+        song: 'nhạc nền - FSoft Academy - Học viện CNTT',
+    },
+    {
+        url: video4,
+        likes: 850,
+        messages: 29,
+        shares: 78,
+        description: 'Vào đây mê không lối thoát lunnn #cantho #review #theanh28',
+        channel: 'fptsoftwareacademy',
+        song: 'nhạc nền - Di s Story in Can Tho',
+    },
+    {
+        url: video5,
+        likes: 479,
+        messages: 876,
+        shares: 26,
+        description: 'Bạn thích mẫu áo nào? #jteeman #thoitrangdinh #outfitideas #99tiktokshoppingsale',
+        channel: 'jteeman',
+        song: 'follow liz sanchez if you are hot - LIZ SANCHEZ',
+    },
+    {
+        url: video6,
         likes: 329,
         messages: 124,
         shares: 34,
@@ -18,7 +70,7 @@ const videosFake = [
         song: 'Aloha remix nhảy Au thả thính - SPX Entertainment',
     },
     {
-        url: video2,
+        url: video7,
         likes: 129,
         messages: 24,
         shares: 14,
@@ -27,7 +79,7 @@ const videosFake = [
         song: 'Aloha remix nhảy Au thả thính - SPX Entertainment',
     },
     {
-        url: video3,
+        url: video8,
         likes: 829,
         messages: 324,
         shares: 4,
@@ -41,12 +93,17 @@ const cx = classNames.bind(styles);
 
 function Home() {
     const [videos, setVideo] = useState(videosFake);
+    const [muted, setMuted] = useState(true);
+
+    const onEnableAudio = () => {
+        setMuted(false);
+    };
 
     return (
         <>
             <div className={cx('video__container')}>
                 {videos.map((video, index) => (
-                    <>
+                    <div key={index}>
                         <Video
                             index={index}
                             messages={video.messages}
@@ -56,8 +113,10 @@ function Home() {
                             channel={video.channel}
                             song={video.song}
                             url={video.url}
+                            muted={muted}
+                            onEnableAudio={onEnableAudio}
                         />
-                    </>
+                    </div>
                 ))}
             </div>
         </>

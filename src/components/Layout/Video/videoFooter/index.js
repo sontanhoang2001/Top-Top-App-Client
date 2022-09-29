@@ -20,11 +20,12 @@ function VideoFooter({ channel, description, song }) {
                     </marquee>
                 </div>
             </div>
-            <img
+            {/* <img
                 className={cx('videoFooter__record')}
                 src="https://static.thenounproject.com/png/934821-200.png"
                 alt=""
-            />
+            /> */}
+
         </div>
     );
 }
