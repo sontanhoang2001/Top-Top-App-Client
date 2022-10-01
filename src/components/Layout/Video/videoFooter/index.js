@@ -1,31 +1,37 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styles from './VideoFooter.module.scss';
 import classNames from 'classnames/bind';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const cx = classNames.bind(styles);
 
-function VideoFooter({ channel, description, song }) {
+function VideoFooter({ playing, channel, description, song }) {
+    const textSongRef = useRef();
+
+    useEffect(() => {
+        if (playing) {
+            textSongRef.current.start()
+        } else {
+            textSongRef.current.stop()
+        }
+
+    }, [playing])
+
     return (
         <div className={cx('videoFooter')}>
             <div className={cx('videoFooter__text')}>
-                <h3>@{channel}</h3>
-                <p>{description}</p>
+                <h3 className={cx('videoFooter__text--channel')}>@{channel}</h3>
+                <p className={cx('videoFooter__text--description')}>{description}</p>
                 <div className={cx('videoFooter_ticker')}>
                     <MusicNoteIcon className={cx('videoFooter__icon')} />
-                    <marquee scrollamount="10" className={cx('videoFooter__song')}>
+                    <marquee ref={textSongRef} scrollamount="8" className={cx('videoFooter__song')}>
                         <>
-                            <p>{song}</p>
+                            <p className={cx('videoFooter__text--song')}>{song}</p>
                         </>
                     </marquee>
                 </div>
             </div>
-            {/* <img
-                className={cx('videoFooter__record')}
-                src="https://static.thenounproject.com/png/934821-200.png"
-                alt=""
-            /> */}
-
         </div>
     );
 }

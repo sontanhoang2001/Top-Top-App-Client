@@ -1,3 +1,7 @@
+.videoSideBar__text {
+    font-size: 1rem;
+}
+
 .videoSidebar {
     position: absolute;
     height: 100%;
@@ -8,11 +12,19 @@
     flex-direction: column;
     justify-content: flex-end;
 }
+.videoSidebar__button:first-child {
+    height: 80px;
+    margin: 0 auto;
+}
 .videoSidebar__button {
     padding-bottom: 20px;
     text-align: center;
 }
 
+.follow__button {
+    position: relative;
+    bottom: 16px;
+}
 .videoSidebar__musicCover {
     margin-top: 30px;
     text-align: center;

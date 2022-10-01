@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import styles from './Video.module.scss';
 import VideoFooter from './videoFooter';
 import VideoSidebar from './videoSidebar';
+import VideoThumbnail from 'react-video-thumbnail';
 
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { IconButton, Typography } from '@mui/material';
@@ -14,6 +15,8 @@ function Video({ index, url, song, description, channel, likes, messages, shares
     const [playing, setPlaying] = useState(false);
 
     const videoRef = useRef(null);
+    const thumbnailRef = useRef(null);
+
     const options = {
         root: null,
         rootMargin: '0px',
@@ -41,6 +44,7 @@ function Video({ index, url, song, description, channel, likes, messages, shares
         }
     };
 
+
     useEffect(() => {
         attemptPlay();
 
@@ -59,7 +63,14 @@ function Video({ index, url, song, description, channel, likes, messages, shares
 
     return (
         <div className={cx('video')}>
-            <video className={cx('video__thumbnail')} src={url}></video>
+            <div className={cx('video__thumbnail')} >
+                <VideoThumbnail
+                    videoUrl={url}
+                    thumbnailHandler={(thumbnail) => console.log(thumbnail)}
+                    cors={true}
+                    snapshotAtTime={5}
+                    renderThumbnail={true} />
+            </div>
             <video
                 className={cx('video__player')}
                 src={url}
@@ -78,17 +89,17 @@ function Video({ index, url, song, description, channel, likes, messages, shares
                 <div className={cx('container__btn')} onClick={onEnableAudio}>
                     <div className={cx('DivUnmuteButton')}>
                         <IconButton>
-                            <VolumeOffIcon  />
+                            <VolumeOffIcon />
                         </IconButton>
-                        <Typography  sx={{ fontSize: 'default', fontWeight: 'bold' }}>
+                        <Typography sx={{ fontSize: 'default', fontWeight: 'bold' }}>
                             Bỏ tắt tiếng
                         </Typography>
                     </div>
                 </div>
             )}
 
-            <VideoFooter channel={channel} description={description} song={song} />
-            <VideoSidebar messages={messages} shares={shares} likes={likes} />
+            <VideoSidebar playing={playing} messages={messages} shares={shares} likes={likes} />
+            <VideoFooter playing={playing} channel={channel} description={description} song={song} />
         </div>
     );
 }

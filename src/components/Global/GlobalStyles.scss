@@ -9,15 +9,19 @@
     display: none;
 }
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 // html {
-//     font-size: 62.5%;    
+//     font-size: 62.5%;
 // }
 body {
     font-family: ibm-plex-sans, sans-serif;
-    font-size: 1.6rem;
+    // font-size: 1.6rem;
+    font-size: 16px;
+}
+.react-thumbnail-generator img {
+    width: 100%;
 }

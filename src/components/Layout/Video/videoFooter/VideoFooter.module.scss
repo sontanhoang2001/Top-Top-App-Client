@@ -1,15 +1,52 @@
+@import '../../../Global/media-queries.scss';
+
+.videoFooter__text--channel {
+    font-weight: 600;
+    font-size: 26px;
+}
+
+@include Responsive(SM) {
+    .videoFooter__text--channel {
+        font-size: 17px !important;
+    }
+}
+
+.videoFooter__text--description {
+    font-size: 22px;
+}
+
+.videoFooter__text--song {
+    font-size: 22px;
+}
+
+@include Responsive(SM) {
+    .videoFooter__text {
+        max-width: 300px !important;
+    }
+
+    .videoFooter__text--description {
+        font-size: 15px !important;
+    }
+
+    .videoFooter__text--song {
+        font-size: 15px !important;
+    }
+}
+
 .videoFooter {
     position: absolute;
     width: 100%;
-    bottom: 0;
-    left: 10px;
+    bottom: 4%;
+    left: 2%;
     color: white;
     display: flex;
-    margin-bottom: 2%;
     z-index: 10;
+    align-items: flex-end;
 }
 .videoFooter__text {
     flex: 1;
+    width: 70%;
+    max-width: 600px;
 }
 .videoFooter__text > h3 {
     padding-bottom: 15px;
@@ -54,6 +91,4 @@
 .videoFooter__song {
     position: relative;
     left: 40px;
-    width: 70%;
-    max-width: 600px;
 }

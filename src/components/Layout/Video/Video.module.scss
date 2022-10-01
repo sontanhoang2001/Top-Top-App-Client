@@ -1,3 +1,5 @@
+@import '../../Global/media-queries.scss';
+
 .video {
     position: relative;
     display: flex;
@@ -14,11 +16,16 @@
     height: 100%;
 }
 
+@include ResponsiveCustom('max', 380px) {
+    .video__player {
+        height: auto !important;
+    }
+}
+
 .video__thumbnail {
     position: absolute;
     width: 100%;
-    filter: brightness(0.5) blur(10px);
-    // transform: scaleX(1.5);
+    filter: brightness(0.5) blur(16px) opacity(0.5) drop-shadow(2px 4px 6px black);
 }
 
 .container__btn {
