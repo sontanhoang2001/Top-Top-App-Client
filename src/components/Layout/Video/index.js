@@ -66,7 +66,6 @@ function Video({ index, url, song, description, channel, likes, messages, shares
             <div className={cx('video__thumbnail')} >
                 <VideoThumbnail
                     videoUrl={url}
-                    thumbnailHandler={(thumbnail) => console.log(thumbnail)}
                     cors={true}
                     snapshotAtTime={5}
                     renderThumbnail={true} />

@@ -11,6 +11,7 @@ import video8 from '~/source/video/video8.mp4';
 
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
+import Header from './Header';
 
 const videosFake = [
     {
@@ -100,7 +101,8 @@ function Home() {
     };
 
     return (
-        <>
+        <div className='home'>
+            <Header />
             <div className={cx('video__container')}>
                 {videos.map((video, index) => (
                     <div key={index}>
@@ -119,7 +121,7 @@ function Home() {
                     </div>
                 ))}
             </div>
-        </>
+        </div>
     );
 }
 

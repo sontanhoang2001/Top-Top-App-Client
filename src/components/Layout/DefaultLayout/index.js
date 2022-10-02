@@ -1,12 +1,10 @@
-import Header from './Header';
-// import Sidebar from './Sidebar';
+import Footer from './Footer';
 
 function DefaultLayout({children}) {
     return (
         <>
-            <Header />
+            <Footer />
             <div className="container">
-                {/* <Sidebar /> */}
                 <div className="content">{children}</div>
             </div>
         </>

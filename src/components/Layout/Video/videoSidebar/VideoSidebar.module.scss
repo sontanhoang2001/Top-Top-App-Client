@@ -19,6 +19,8 @@
 .videoSidebar__button {
     padding-bottom: 20px;
     text-align: center;
+    cursor: pointer;
+
 }
 
 .follow__button {
@@ -37,6 +39,8 @@
     background-size: cover;
     // filter: invert(1);
     animation: spinTheRecord infinite 5s linear;
+    cursor: pointer;
+
 }
 .divMusic__Album {
     background-size: cover;

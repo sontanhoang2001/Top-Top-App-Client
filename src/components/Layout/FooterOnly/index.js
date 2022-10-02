@@ -1,9 +1,9 @@
-import Header from '~/components/Layout/DefaultLayout/Header';
+import Footer from '~/components/Layout/DefaultLayout/Footer';
 
-function HeaderOnly({ children }) {
+function FooterOnly({ children }) {
     return (
         <>
-            <Header />
+            <Footer />
             <div className="container">
                 <div className="content">{children}</div>
             </div>
@@ -11,4 +11,4 @@ function HeaderOnly({ children }) {
     );
 }
 
-export default HeaderOnly;
+export default FooterOnly;

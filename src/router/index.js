@@ -2,7 +2,7 @@ import Following from '~/page/Following';
 import Home from '~/page/Home';
 import Profile from '~/page/Profile';
 import Upload from '~/page/Upload';
-import HeaderOnly from '~/components/Layout/HeaderOnly';
+import FooterOnly from '~/components/Layout/FooterOnly';
 import NotFoundPage from '~/page/404';
 import { Counter } from '~/page/Counter';
 
@@ -13,7 +13,7 @@ const publicRoutes = [
     // { path: '/', component: Home },
     // { path: '/home', component: Home },
     { path: '/following', component: Following },
-    { path: '/upload', component: Upload, layout: HeaderOnly },
+    { path: '/upload', component: Upload, layout: FooterOnly },
     { path: '/@', component: Profile },
     { path: '/counter', component: Counter },
 ];

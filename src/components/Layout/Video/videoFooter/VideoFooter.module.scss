@@ -3,6 +3,7 @@
 .videoFooter__text--channel {
     font-weight: 600;
     font-size: 26px;
+    cursor: pointer;
 }
 
 @include Responsive(SM) {
@@ -17,6 +18,7 @@
 
 .videoFooter__text--song {
     font-size: 22px;
+    cursor: pointer;
 }
 
 @include Responsive(SM) {
@@ -35,7 +37,6 @@
 
 .videoFooter {
     position: absolute;
-    width: 100%;
     bottom: 4%;
     left: 2%;
     color: white;
