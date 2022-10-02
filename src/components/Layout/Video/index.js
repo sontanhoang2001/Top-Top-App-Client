@@ -35,7 +35,6 @@ function Video({ index, url, song, description, channel, likes, messages, shares
 
     const attemptPlay = () => {
         if (index == 0) {
-            // setPlaying(true);
             videoRef &&
                 videoRef.current &&
                 videoRef.current.play().catch((error) => {

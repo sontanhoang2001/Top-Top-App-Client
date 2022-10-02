@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import Video from '~/components/Layout/Video';
-import video1 from '~/source/video/video1.mp4';
-import video2 from '~/source/video/video2.mp4';
-import video3 from '~/source/video/video3.mp4';
-import video4 from '~/source/video/video4.mp4';
-import video5 from '~/source/video/video5.mp4';
-import video6 from '~/source/video/video6.mp4';
-import video7 from '~/source/video/video7.mp4';
-import video8 from '~/source/video/video8.mp4';
+import video1 from '~/static/video/video1.mp4';
+import video2 from '~/static/video/video2.mp4';
+import video3 from '~/static/video/video3.mp4';
+import video4 from '~/static/video/video4.mp4';
+import video5 from '~/static/video/video5.mp4';
+import video6 from '~/static/video/video6.mp4';
+import video7 from '~/static/video/video7.mp4';
+import video8 from '~/static/video/video8.mp4';
 
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import Header from './Header';
+import { useSelector } from 'react-redux';
 
 const videosFake = [
     {
@@ -93,6 +94,8 @@ const videosFake = [
 const cx = classNames.bind(styles);
 
 function Home() {
+    const currentPage = useSelector((state) => state.currentPage.value);
+    const [enable, setEnable] = useState(false);
     const [videos, setVideo] = useState(videosFake);
     const [muted, setMuted] = useState(true);
 
@@ -100,8 +103,16 @@ function Home() {
         setMuted(false);
     };
 
+    useEffect(() => {
+        if (currentPage != 'home') {
+            setEnable(true)
+        } else {
+            setEnable(false)
+        }
+    })
+
     return (
-        <div className='home'>
+        <div className={enable} style={{  display: !enable ? 'inherit' : 'none' }}>
             <Header />
             <div className={cx('video__container')}>
                 {videos.map((video, index) => (
@@ -121,7 +132,7 @@ function Home() {
                     </div>
                 ))}
             </div>
-        </div>
+        </div >
     );
 }
 

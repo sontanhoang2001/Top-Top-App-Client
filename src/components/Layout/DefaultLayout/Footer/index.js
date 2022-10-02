@@ -1,6 +1,5 @@
 import classNames from 'classnames/bind';
 import styles from './Footer.module.scss';
-import './Footer.css';
 
 import GoogleButton from 'react-google-button';
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,10 +14,42 @@ import SearchIcon from '@mui/icons-material/Search';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import PersonIcon from '@mui/icons-material/Person';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
+import { useMediaQuery } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
+import { currentPath } from './routerPathSlice';
 
 const cx = classNames.bind(styles);
 
+// styleOverrides
+const theme = createTheme({
+    palette: {
+        btnNavAction: {
+            backGroundColor: 'red',
+            position: 'fixed',
+            zIndex: '999',
+            width: '100%',
+            height: '65px',
+            bottom: '0px',
+            boxShadow: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px',
+            justifyContent: 'space-between'
+        }
+    },
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: (themeParam) => `
+            .btnNavAction {
+            ${themeParam.palette.btnNavAction};
+          }
+        `,
+        },
+    },
+});
+
 function Footer() {
+    const dispatch = useDispatch();
+
     // START HEADER
     const [page, setPage] = React.useState('');
     React.useEffect(() => {
@@ -47,7 +78,7 @@ function Footer() {
                 setPage(window.location.pathname.split('/')[1]);
         }
 
-        console.log('page: ', page)
+        dispatch(currentPath(pathName))
     });
 
     const handleChange = (event, newPage) => {
@@ -106,55 +137,60 @@ function Footer() {
     //     }
     // }, [user]);
 
+    const theme = useTheme();
+    const matchesSM = useMediaQuery(theme.breakpoints.up('sm'));
+
     return (
         <>
-            <BottomNavigation
-                showLabels
-                value={page}
-                onChange={handleChange}
-                className={cx(page == 'home' ? 'dark' : null)}
-            >
-                <BottomNavigationAction
-                    component={Link}
-                    to="/home"
-                    label="Home"
-                    value="home"
-                    icon={<HomeIcon />}
-                    className={cx(page == 'home' ? 'btnNav__light' : null)}
-                />
-                <BottomNavigationAction
-                    component={Link}
-                    to="/search"
-                    label="Search"
-                    value="search"
-                    icon={<SearchIcon />}
-                    className={cx(page == 'home' ? 'btnNav__light' : null)}
-                />
-                <BottomNavigationAction
-                    component={Link}
-                    to="/upload"
-                    label="Upload"
-                    value="upload"
-                    icon={<VideoCallIcon />}
-                    className={cx(page == 'home' ? 'btnNav__light' : null)}
-                />
-                <BottomNavigationAction
-                    component={Link}
-                    to="/chat"
-                    label="Chat"
-                    value="chat"
-                    icon={<ChatBubbleIcon />}
-                    className={cx(page == 'home' ? 'btnNav__light' : null)}
-                />
-                <BottomNavigationAction
-                    component={Link}
-                    to="/@"
-                    label="Profile"
-                    value="profile"
-                    icon={<PersonIcon />}
-                    className={cx(page == 'home' ? 'btnNav__light' : null)}
-                />
-            </BottomNavigation>
+            <ThemeProvider theme={theme}>
+                <BottomNavigation
+                    showLabels
+                    value={page}
+                    onChange={handleChange}
+                    className={cx('btnNavAction', page == 'home' ? 'dark' : null)}
+                >
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/home"
+                        label="Home"
+                        value="home"
+                        icon={<HomeIcon fontSize={matchesSM ? 'large' : 'medium'} />}
+                        className={cx(page == 'home' ? 'btnNav__light' : null)}
+                    />
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/search"
+                        label="Search"
+                        value="search"
+                        icon={<SearchIcon fontSize={matchesSM ? 'large' : 'medium'} />}
+                        className={cx(page == 'home' ? 'btnNav__light' : null)}
+                    />
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/upload"
+                        label="Upload"
+                        value="upload"
+                        icon={<VideoCallIcon fontSize={matchesSM ? 'large' : 'medium'} />}
+                        className={cx(page == 'home' ? 'btnNav__light' : null)}
+                    />
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/chat"
+                        label="Chat"
+                        value="chat"
+                        icon={<ChatBubbleIcon fontSize={matchesSM ? 'large' : 'medium'} />}
+                        className={cx(page == 'home' ? 'btnNav__light' : null)}
+                    />
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/@"
+                        label="Profile"
+                        value="profile"
+                        icon={<PersonIcon fontSize={matchesSM ? 'large' : 'medium'} />}
+                        className={cx(page == 'home' ? 'btnNav__light' : null)}
+                    />
+                </BottomNavigation>
+            </ThemeProvider>
 
             {/* <header className={cx('wrapper')}>
                 <div className="float-right">

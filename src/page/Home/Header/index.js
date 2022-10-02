@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind';
-import styles from './Header.module.scss';
+// import styles from './Header.module.scss';
+// import   './Header.css';
 
 import * as React from 'react';
 import BottomNavigation from '@mui/material/BottomNavigation';
@@ -83,7 +84,6 @@ const search = (
     </StyledSearch>
 );
 
-const cx = classNames.bind(styles);
 
 const appBarStyles = styled({
     background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
@@ -145,7 +145,7 @@ function Header() {
      // END HAMBURGER MENU NAVIGATION
      
     return (<>
-        <AppBar position="fixed">
+        <AppBar position="fixed" sx={{backgroundColor: 'transparent', boxShadow: 'none'}}>
             <Container maxWidth="xl">
                 <Toolbar>
                     <IconButton
