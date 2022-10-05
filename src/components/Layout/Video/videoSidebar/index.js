@@ -27,10 +27,6 @@ function VideoSidebar({ playing, messages, shares, likes }) {
                 </div>
 
                 <div className={cx('videoSidebar__button')}>
-                    <input className={cx('toggle-heart')} type="checkbox" />
-                    <label for="toggle-heart">❤</label>
-                </div>
-                <div className={cx('videoSidebar__button')}>
                     {liked ? (
                         <FavoriteIcon
                             fontSize="large"

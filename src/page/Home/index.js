@@ -104,7 +104,7 @@ function Home() {
     };
 
     useEffect(() => {
-        if (currentPage != 'home') {
+        if (currentPage == '' || currentPage == 'home') {
             setEnable(true)
         } else {
             setEnable(false)
@@ -112,7 +112,7 @@ function Home() {
     })
 
     return (
-        <div className={enable} style={{  display: !enable ? 'inherit' : 'none' }}>
+        <div className={enable} style={{  display: enable ? 'inherit' : 'none' }}>
             <Header />
             <div className={cx('video__container')}>
                 {videos.map((video, index) => (
