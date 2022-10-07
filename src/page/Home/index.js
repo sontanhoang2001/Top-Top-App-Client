@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import Video from '~/components/Layout/Video';
 import video1 from '~/static/video/video1.mp4';
-import video2 from '~/static/video/video2.mp4';
 import video3 from '~/static/video/video3.mp4';
 import video4 from '~/static/video/video4.mp4';
 import video5 from '~/static/video/video5.mp4';
@@ -23,16 +22,6 @@ const videosFake = [
         description: 'Em này dễ thương quá @xuhuong @cover @hathay @amnhac',
         channel: 'my30.01',
         song: 'nhạc nền - I ❤ My IDOL',
-    },
-    {
-        url: video2,
-        likes: 750,
-        messages: 29,
-        shares: 2,
-        description:
-            'Xin chào tất cả mọi người!!🌻 Mình là LÊ THIÊN ÁI rất vui được làm quen cùng với mọi người!! 👋😌👋 Hãy theo dõi mình để xem những video tiếp theo chủ đề về vlog, Mv và hậu trường nha! 🎉 ',
-        channel: '@thienai176',
-        song: 'nhạc nền - Lê Thiên Ái',
     },
     {
         url: video3,

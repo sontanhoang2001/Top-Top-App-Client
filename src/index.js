@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-//import ReactDOM from 'react-dom/client';
+// import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles from './components/Global';
@@ -9,20 +9,8 @@ import { Provider } from 'react-redux';
 import './index.css';
 import store from './store';
 
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// root.render(
-//     <React.StrictMode>
-//         <GlobalStyles>
-//             <Provider store={store}>
-//                 <BrowserRouter>
-//                     <App />
-//                 </BrowserRouter>
-//             </Provider>
-//         </GlobalStyles>
-//     </React.StrictMode>,
-// );
-
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
     <React.StrictMode>
         <GlobalStyles>
             <Provider store={store}>
@@ -30,9 +18,21 @@ ReactDOM.render(
                     <App />
                 </BrowserRouter>
             </Provider>
-        </GlobalStyles>    </React.StrictMode>,
-    document.getElementById('root')
+        </GlobalStyles>
+    </React.StrictMode>,
 );
+
+// ReactDOM.render(
+//     <React.StrictMode>
+//         <GlobalStyles>
+//             <Provider store={store}>
+//                 <BrowserRouter>
+//                     <App />
+//                 </BrowserRouter>
+//             </Provider>
+//         </GlobalStyles>    </React.StrictMode>,
+//     document.getElementById('root')
+// );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

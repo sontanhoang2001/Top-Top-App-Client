@@ -6,19 +6,14 @@ import Upload from '~/page/Upload';
 import FooterOnly from '~/components/Layout/FooterOnly';
 import NotFoundPage from '~/page/404';
 import { Counter } from '~/page/Counter';
-import Dashboard from '~/admin/page/dashboard';
+import Search from '~/page/Search';
 
 // Public routes
-const publicRoutesAdmin = [
-    { path: '*', component: NotFoundPage },
-    { path: '/admin', component: Dashboard , layout: FooterOnly},
-];
-
 const publicRoutes = [
     { path: '*', component: NotFoundPage },
-    
     { path: '/', component: Fragment },
     { path: '/home', component: Fragment },
+    { path: '/search', component: Search },
     { path: '/following', component: Following },
     { path: '/upload', component: Upload, layout: FooterOnly },
     { path: '/@', component: Profile },
@@ -27,4 +22,4 @@ const publicRoutes = [
 
 const privateRoutes = [];
 
-export { publicRoutesAdmin, publicRoutes, privateRoutes };
+export { publicRoutes, privateRoutes };
