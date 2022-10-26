@@ -1,11 +1,14 @@
 import { Fragment, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
+
+import ThemeProvider from './theme';
+
 import { publicRoutes, privateRoutes } from './router';
 import { DefaultLayout } from './components/Layout';
 import { AuthContextProvider } from './context/AuthContext';
 import Protected from './Proteced';
 
-import '@fontsource/roboto/300.css';
+// import '@fontsource/roboto/300.css';
 import Home from './page/Home';
 
 import { useDispatch } from 'react-redux';
@@ -18,33 +21,35 @@ function App() {
         const pathName = window.location.pathname.split('/')[1];
         dispatch(currentPath(pathName))
     })
+    
     return (
-        <AuthContextProvider>
-            <Home />
-            <Routes>
-                {publicRoutes.map((route, index) => {
-                    const Page = route.component;
-                    let Layout = DefaultLayout;
+        <ThemeProvider>
+            <AuthContextProvider>
+                <Home />
+                <Routes>
+                    {publicRoutes.map((route, index) => {
+                        const Page = route.component;
+                        let Layout = DefaultLayout;
 
-                    if (route.layout) {
-                        Layout = route.layout;
-                    } else if (route.layout === null) {
-                        Layout = Fragment;
-                    }
-                    return (
-                        <Route
-                            key={index}
-                            path={route.path}
-                            element={
-                                <Layout>
-                                    <Page key={index} />
-                                </Layout>
-                            }
-                        />
-                    );
-                })}
+                        if (route.layout) {
+                            Layout = route.layout;
+                        } else if (route.layout === null) {
+                            Layout = Fragment;
+                        }
+                        return (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={
+                                    <Layout>
+                                        <Page key={index} />
+                                    </Layout>
+                                }
+                            />
+                        );
+                    })}
 
-                {/* {privateRoutes.map((route, index) => {
+                    {/* {privateRoutes.map((route, index) => {
                     const Page = route.component;
                     let Layout = DefaultLayout;
 
@@ -65,8 +70,9 @@ function App() {
                         />
                     );
                 })} */}
-            </Routes>
-        </AuthContextProvider>
+                </Routes>
+            </AuthContextProvider>
+        </ThemeProvider>
     );
 }
 

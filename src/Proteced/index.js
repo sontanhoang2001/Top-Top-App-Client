@@ -7,9 +7,10 @@ function Protected({ children }) {
 
     if (user) {
         return children;
-    } else {
-        return <Navigate to="/login" />;
     }
+    //  else {
+    //     return <Navigate to="/login" />;
+    // }
 
     return children;
 }
