@@ -24,6 +24,9 @@ const publicRoutes = [
     { path: '/counter', component: Counter },
 ];
 
-const privateRoutes = [];
+const privateRoutes = [
+    { path: '/login', component: Login, layout: FooterOnly },
+    { path: '/register', component: Register, layout: FooterOnly },
+];
 
 export { publicRoutes, privateRoutes };

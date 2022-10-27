@@ -21,7 +21,7 @@ function App() {
         const pathName = window.location.pathname.split('/')[1];
         dispatch(currentPath(pathName))
     })
-    
+
     return (
         <ThemeProvider>
             <AuthContextProvider>
@@ -49,27 +49,27 @@ function App() {
                         );
                     })}
 
-                    {/* {privateRoutes.map((route, index) => {
-                    const Page = route.component;
-                    let Layout = DefaultLayout;
+                    {privateRoutes.map((route, index) => {
+                        const Page = route.component;
+                        let Layout = DefaultLayout;
 
-                    if (route.layout) {
-                        Layout = route.layout;
-                    } else if (route.layout === null) {
-                        Layout = Fragment;
-                    }
-                    return (
-                        <Route
-                            key={index}
-                            path={route.path}
-                            element={
-                                <Layout>
-                                    <Page key={index} />
-                                </Layout>
-                            }
-                        />
-                    );
-                })} */}
+                        if (route.layout) {
+                            Layout = route.layout;
+                        } else if (route.layout === null) {
+                            Layout = Fragment;
+                        }
+                        return (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={
+                                    <Layout>
+                                        <Page key={index} />
+                                    </Layout>
+                                }
+                            />
+                        );
+                    })}
                 </Routes>
             </AuthContextProvider>
         </ThemeProvider>

@@ -97,9 +97,9 @@ export default function Register() {
 
           {!smUp && (
             <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-              Don’t have an account?{' '}
+              Bạn chưa có tài khoản? {' '}
               <Link variant="subtitle2" component={RouterLink} to="/register">
-                Get started
+                Đăng ký
               </Link>
             </Typography>
           )}
