@@ -6,9 +6,13 @@ import Upload from '~/page/Upload';
 import FooterOnly from '~/components/Layout/FooterOnly';
 import NotFoundPage from '~/page/404';
 import { Counter } from '~/page/Counter';
+import Search from '~/page/Search';
 import Login from '~/page/Login';
 import Register from '~/page/Register';
-import Search from '~/page/Search';
+import Otp from '~/page/Otp';
+import ForgotPassword from '~/page/ForgotPassword';
+import ResetPassword from '~/page/ResetPassword';
+
 
 // Public routes
 const publicRoutes = [
@@ -27,6 +31,9 @@ const publicRoutes = [
 const privateRoutes = [
     { path: '/login', component: Login, layout: FooterOnly },
     { path: '/register', component: Register, layout: FooterOnly },
+    { path: '/otp', component: Otp, layout: FooterOnly },
+    { path: '/forgotpassword', component: ForgotPassword, layout: FooterOnly },
+    { path: '/resetpassword', component: ResetPassword, layout: FooterOnly },
 ];
 
 export { publicRoutes, privateRoutes };

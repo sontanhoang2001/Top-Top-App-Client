@@ -14,6 +14,6 @@ export const currentPageSlice = createSlice({
 
 export const { currentPath } = currentPageSlice.actions;
 
-// export const selectCurrentPage = (state) => state.currentPage.value;
+export const selectCurrentPage = (state) => state.currentPage.value;
 
 export default currentPageSlice.reducer;

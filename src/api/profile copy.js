@@ -1,10 +1,10 @@
 import axiosClient from './axiosClient'
 
-const pathname = 'profile';
+const pathname = 'management/profile';
 
 const profile = {
-  getProfile: (email) => {
-    const url = `${pathname}/${email}`;
+  getProfile: (userId) => {
+    const url = `${pathname}/${userId}`;
     return axiosClient.get(url)
   }
 };

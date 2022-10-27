@@ -13,21 +13,36 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Iconify from '~/components/Iconify';
 import { FormProvider, RHFTextField, RHFCheckbox } from '~/components/hook-form';
 
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
+
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const { login } = UserAuth();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const REGEX_PASSWORD = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,15}$/
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required'),
+    email: Yup
+      .string()
+      .email('Email vừa nhập chưa đúng định dạng!')
+      .required('Bạn chưa nhập Email!'),
+    password: Yup.string()
+      .matches(REGEX_PASSWORD, 'Mật khẩu phải trên 8 ký tự tối đã 15 ký tự, phải có số và ít nhất một chữ cái in hoa'),
   });
 
+  // load remember
+  const getRemember = window.localStorage?.getItem("remember");
+  const rememberUser = JSON.parse(getRemember);
+
   const defaultValues = {
-    email: '',
-    password: '',
+    email: rememberUser.email,
+    password: rememberUser.password,
     remember: true,
   };
 
@@ -37,12 +52,27 @@ export default function LoginForm() {
   });
 
   const {
-    handleSubmit,
-    formState: { isSubmitting },
+    handleSubmit
   } = methods;
 
   const onSubmit = async () => {
-    navigate('/', { replace: true });
+    setIsSubmitting(true)
+    const email = methods.getValues("email");
+    const password = methods.getValues("password");
+    const remember = methods.getValues("remember");
+
+
+    // ghi nhớ cho lần đăng nhập tiếp theo
+    if (remember) {
+      window.localStorage.setItem("remember", JSON.stringify({ email: email, password: password }))
+    }
+
+    try {
+      await login(email, password)
+      setIsSubmitting(false)
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -68,7 +98,7 @@ export default function LoginForm() {
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <RHFCheckbox name="remember" label="Ghi nhớ tài khoản" />
-        <Link variant="subtitle2" underline="hover"  component={RouterLink} to="/resetpassword">
+        <Link variant="subtitle2" underline="hover" component={RouterLink} to="/forgotpassword">
           Quên mật khẩu?
         </Link>
       </Stack>

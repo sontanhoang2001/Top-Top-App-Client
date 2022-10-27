@@ -1,16 +1,16 @@
-import { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import Snackbar from '@mui/material/Snackbar';
 import { Alert } from '@mui/material';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { closeSnackbar, selectEnable, selectType, selectMessage } from './snackbarSlice';
+import { closeSnackbar, selectEnable, selectType, selectMessage, selectDuration, resetDuration } from './snackbarSlice';
 
 function CustomizedSnackbars() {
   const dispatch = useDispatch();
   const enable = useSelector(selectEnable)
   const type = useSelector(selectType)
   const message = useSelector(selectMessage)
+  const duration = useSelector(selectDuration)
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -19,11 +19,10 @@ function CustomizedSnackbars() {
     dispatch(closeSnackbar())
   };
 
-  // console.log('re-render: ', enable)
-
   setTimeout(() => {
-    dispatch(closeSnackbar())
-  }, 3000)
+    dispatch(closeSnackbar());
+    dispatch(resetDuration());
+  }, duration)
 
   return (
     <Stack spacing={2} sx={{ width: '100%' }}>

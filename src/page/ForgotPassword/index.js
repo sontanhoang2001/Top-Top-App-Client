@@ -6,7 +6,7 @@ import { Card, Link, Container, Typography } from '@mui/material';
 import useResponsive from '../../hooks/useResponsive';
 
 // sections
-import { LoginForm } from '../sections/auth/login';
+import { ForgotPasswordForm } from '../sections/auth/forgotPassword';
 import AuthSocial from '~/page/sections/auth/AuthSocial';
 
 // ----------------------------------------------------------------------
@@ -55,9 +55,8 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function Login() {
+export default function ForgotPassword() {
   const smUp = useResponsive('up', 'sm');
-
   const mdUp = useResponsive('up', 'md');
 
   return (
@@ -86,14 +85,12 @@ export default function Login() {
       <Container maxWidth="sm">
         <ContentStyle>
           <Typography variant="h5" gutterBottom sx={{ fontWeight: '700' }}>
-            Đăng nhập vào TopTop
+            Khôi phục tài khoản
           </Typography>
 
-          <Typography sx={{ color: 'text.secondary', mb: 5 }}>Nhập thông tin dưới đâu.</Typography>
+          <Typography sx={{ color: 'text.secondary', mb: 5 }}>Nhập email của bạn để hỗ trợ khôi phục tài khoản của bạn.</Typography>
 
-          <AuthSocial />
-
-          <LoginForm />
+          <ForgotPasswordForm />
 
           {!smUp && (
             <Typography variant="body2" align="center" sx={{ mt: 3 }}>

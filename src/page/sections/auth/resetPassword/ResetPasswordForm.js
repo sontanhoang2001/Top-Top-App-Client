@@ -14,16 +14,17 @@ import { FormProvider, RHFTextField } from '~/components/hook-form';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
-import { setUserId } from '~/context/authSlice'
+import { selectUserId } from '~/context/authSlice'
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 
 // api
 import accountApi from '~/api/account'
 // ----------------------------------------------------------------------
 
-export default function RegisterForm() {
+export default function ResetPasswordForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const userId = useDispatch(selectUserId);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -32,11 +33,6 @@ export default function RegisterForm() {
   const REGEX_PASSWORD = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,15}$/
 
   const RegisterSchema = Yup.object().shape({
-    fullName: Yup.string()
-      .min(8, 'Tên của bạn phải ít nhất 8 ký tự!')
-      .max(30, 'Tên tối đa 30 ký tự!')
-      .required('Bạn chưa nhập tên!'),
-    email: Yup.string().email('Email vừa nhập chưa đúng định dạng!').required('Bạn chưa nhập email!'),
     password: Yup.string()
       .matches(REGEX_PASSWORD, 'Mật khẩu phải trên 8 ký tự tối đã 15 ký tự, phải có số và ít nhất một chữ cái in hoa'),
     confirmPassword: Yup.string()
@@ -45,8 +41,6 @@ export default function RegisterForm() {
   });
 
   const defaultValues = {
-    fullName: '',
-    email: '',
     password: '',
     confirmPassword: ''
   };
@@ -63,19 +57,15 @@ export default function RegisterForm() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
 
-    const email = data.email;
+    const confirmPassword = data.confirmPassword;
 
-    // method check trung email
-    await accountApi.checkEmail(email, null)
+    const dataRequest = { id: userId, password: confirmPassword };
+    await accountApi.resetPassword(data)
       .then(res => {
-        if (res.data.result) {
-          setIsSubmitting(false);
-          const snackBarPayload = { type: 'error', message: 'Email bạn vừa nhập đã tồn tại trong hệ thống!' };
-          dispatch(openSnackbar(snackBarPayload))
-          setIsSubmitting(false);
-        } else {
-          handleRegister(data);
-        }
+
+        setIsSubmitting(false);
+        const snackBarPayload = { type: 'error', message: 'Bạn đã đổi mật khẩu thành công!', duration: 8000 };
+        dispatch(openSnackbar(snackBarPayload))
       })
       .catch(error => {
         console.log(error);
@@ -85,41 +75,9 @@ export default function RegisterForm() {
       });
   }
 
-  const handleRegister = async (data) => {
-    setIsSubmitting(true);
-    const dataRegister = {
-      "email": data.email,
-      "fullName": data.fullName,
-      "password": data.confirmPassword,
-      "avatar": null,
-      "history": null,
-      "alias": null,
-      "role": 5,
-      "active": false
-    };
-
-    await accountApi.register(dataRegister)
-      .then(res => {
-        console.log("res: ", res.data);
-        const payload = { userId: res.data.id };
-        dispatch(setUserId(payload))
-        const snackBarPayload = { type: 'success', message: 'Bạn đã đăng ký tài khoản thành công!', duration : 10000 };
-        dispatch(openSnackbar(snackBarPayload))
-        navigate('/otp');
-      })
-      .catch(error => {
-        console.log(error);
-        const snackBarPayload = { type: 'error', message: 'Đã gặp sự cố!' };
-        dispatch(openSnackbar(snackBarPayload))
-      });
-  }
-
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
-
-        <RHFTextField name="fullName" label="Tên đầy đủ" />
-        <RHFTextField name="email" label="Email" />
 
         <RHFTextField
           name="password"
@@ -152,7 +110,7 @@ export default function RegisterForm() {
         />
 
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          Đăng ký
+          Lưu thay đổi
         </LoadingButton>
 
       </Stack>

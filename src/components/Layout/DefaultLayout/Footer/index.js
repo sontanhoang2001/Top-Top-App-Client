@@ -18,7 +18,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { currentPath } from './routerPathSlice';
+import { currentPath } from '../../../../router/routerPathSlice';
 
 const cx = classNames.bind(styles);
 

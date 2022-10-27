@@ -14,6 +14,9 @@ export const authSlice = createSlice({
         setToken: (state, action) => {
             state.accessToken = action.payload.accessToken;
         },
+        setUserId: (state, action) => {
+            state.userId = action.payload.userId;
+        },
         setInfor: (state, action) => {
             state.loginStatus = action.payload.loginStatus;
             state.userId = action.payload.userId;
@@ -24,7 +27,7 @@ export const authSlice = createSlice({
     },
 });
 
-export const { setToken, setInfor } = authSlice.actions;
+export const { setToken, setUserId, setInfor } = authSlice.actions;
 
 export const selectToken = (state) => state.auth.accessToken;
 export const selectLoginStatus = (state) => state.auth.loginStatus;
