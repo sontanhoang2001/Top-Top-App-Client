@@ -15,7 +15,6 @@ import jwtDecode from "jwt-decode";
 // redux
 import { useDispatch } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
-import { setInfor } from "./authSlice";
 
 // api
 import authApi from '../api/auth'
@@ -32,6 +31,8 @@ export const AuthContextProvider = ({ children }) => {
         role: false,
     });
 
+    const [userTempId, setUserTempId] = useState(false);
+
     const [uid, setUid] = useState(false);
     const [role, setRole] = useState(false);
 
@@ -46,8 +47,7 @@ export const AuthContextProvider = ({ children }) => {
                 // save token in localStorage
                 const token = res.data.access_token;
                 window.localStorage.setItem("token", token);
-                // window.location = "/home";
-                // navigate("/home")
+                window.location = "/";
             })
             .catch(error => {
                 if (error.response) {
@@ -93,7 +93,7 @@ export const AuthContextProvider = ({ children }) => {
         // Kiểm tra thông tin đăng nhập
         checkAuthInfo();
 
-    }, [uid])
+    }, [user.uid])
 
     const checkAuthInfo = async () => {
         const authenInfor = window.localStorage?.getItem("token");
@@ -103,12 +103,8 @@ export const AuthContextProvider = ({ children }) => {
                 const email = jwtDecoded.sub;
                 await profileApi.getProfile(email)
                     .then(res => {
-                        setUid(res.data.id)
-
+                        setUser({ uid: res.data.id, role: res.data.role.id });
                         console.log("check auth", res.data)
-
-                        const payload = { loginStatus: true, userId: res.data.id, role: res.data.role, fullName: res.data.fullName, avatar: res.data.avatar }
-                        dispatch(setInfor(payload))
                     })
                     .catch(error => {
                         console.log(error)
@@ -127,10 +123,10 @@ export const AuthContextProvider = ({ children }) => {
         return () => {
             unsubcribe();
         };
-    }, [uid]);
+    }, [user.uid]);
 
     return (
-        <AuthContext.Provider value={{ login, googleSignIn, facebookSignIn, logOut, user }}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ login, googleSignIn, facebookSignIn, logOut, user, userTempId, setUserTempId }}>{children}</AuthContext.Provider>
     );
 };
 

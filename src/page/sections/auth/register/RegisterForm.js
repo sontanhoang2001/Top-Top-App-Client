@@ -13,15 +13,16 @@ import Iconify from '~/components/Iconify';
 import { FormProvider, RHFTextField } from '~/components/hook-form';
 
 // redux
-import { useSelector, useDispatch } from 'react-redux';
-import { setUserId } from '~/context/authSlice'
+import { useDispatch } from 'react-redux';
+import { setDirection } from '~/router/routerPathSlice'
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 
 // api
 import accountApi from '~/api/account'
+
 // ----------------------------------------------------------------------
 
-export default function RegisterForm() {
+export default function RegisterForm({ setUserTempId }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -100,11 +101,13 @@ export default function RegisterForm() {
 
     await accountApi.register(dataRegister)
       .then(res => {
-        console.log("res: ", res.data);
-        const payload = { userId: res.data.id };
-        dispatch(setUserId(payload))
-        const snackBarPayload = { type: 'success', message: 'Bạn đã đăng ký tài khoản thành công!', duration : 10000 };
+        const userId = res.data.id;
+        setUserTempId(userId);
+
+        const snackBarPayload = { type: 'success', message: 'Bạn đã đăng ký tài khoản thành công!', duration: 10000 };
         dispatch(openSnackbar(snackBarPayload))
+
+        dispatch(setDirection({ direction: '/' }));
         navigate('/otp');
       })
       .catch(error => {

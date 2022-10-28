@@ -5,11 +5,12 @@ import { Card, Link, Container, Typography } from '@mui/material';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 
-
-
 // sections
 import { RegisterForm } from '../sections/auth/register';
 import AuthSocial from '../sections/auth/AuthSocial';
+
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
 
 // ----------------------------------------------------------------------
 
@@ -57,8 +58,9 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Register() {
-  const smUp = useResponsive('up', 'sm');
+  const { setUserTempId } = UserAuth();
 
+  const smUp = useResponsive('up', 'sm');
   const mdUp = useResponsive('up', 'md');
 
   return (
@@ -86,14 +88,14 @@ export default function Register() {
       <Container>
         <ContentStyle>
           <Typography variant="h4" gutterBottom>
-          Bắt đầu hoàn toàn miễn phí.
+            Bắt đầu hoàn toàn miễn phí.
           </Typography>
 
           <Typography sx={{ color: 'text.secondary', mb: 5 }}>Đăng nhập nhanh với các mạng xã hội.</Typography>
 
           <AuthSocial />
 
-          <RegisterForm />
+          <RegisterForm setUserTempId={setUserTempId} />
 
           <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
             Bằng cách đăng ký, tôi đồng ý với&nbsp;

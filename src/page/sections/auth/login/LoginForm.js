@@ -37,12 +37,12 @@ export default function LoginForm() {
   });
 
   // load remember
-  const getRemember = window.localStorage?.getItem("remember");
-  const rememberUser = JSON.parse(getRemember);
+  // const getRemember = window.localStorage?.getItem("remember");
+  // const rememberUser = JSON.parse(getRemember);
 
   const defaultValues = {
-    email: rememberUser.email,
-    password: rememberUser.password,
+    email: "",
+    password: "",
     remember: true,
   };
 

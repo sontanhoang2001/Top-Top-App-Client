@@ -28,13 +28,14 @@ export default function AuthSocial() {
     }
   };
 
-  // useEffect(() => {
-  //   if (user) {
-  //     console.log('user: ', user);
-  //     const { displayName, email } = user;
-  //     console.log(`Data: name: ${displayName}, email: ${email}`);
-  //   }
-  // }, [user.uid]);
+  useEffect(() => {
+    if (user) {
+      console.log('user: ', user);
+      const { displayName, email } = user;
+      console.log(`Data: name: ${displayName}, email: ${email}`);
+    }
+
+  }, [user.uid]);
 
   return (
     <>

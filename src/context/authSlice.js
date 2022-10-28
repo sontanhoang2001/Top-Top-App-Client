@@ -23,7 +23,7 @@ export const authSlice = createSlice({
             state.role = action.payload.role;
             state.fullName = action.payload.fullName;
             state.avatar = action.payload.avatar;
-        },
+        }
     },
 });
 
@@ -35,6 +35,5 @@ export const selectUserId = (state) => state.auth.userId;
 export const selectRole = (state) => state.auth.role;
 export const selectFullName = (state) => state.auth.fullName;
 export const selectAvatar = (state) => state.auth.avatar;
-
 
 export default authSlice.reducer;

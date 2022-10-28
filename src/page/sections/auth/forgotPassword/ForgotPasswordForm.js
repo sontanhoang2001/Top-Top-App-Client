@@ -15,16 +15,20 @@ import { FormProvider, RHFTextField, RHFCheckbox } from '~/components/hook-form'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
-import { setUserId } from '~/context/authSlice'
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
+import { setDirection } from '~/router/routerPathSlice'
 
 import accountApi from '~/api/account';
+
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
 
 // ----------------------------------------------------------------------
 
 export default function ForgotPasswordForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { setUserTempId } = UserAuth();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -52,20 +56,23 @@ export default function ForgotPasswordForm() {
     setIsSubmitting(true)
     const email = methods.getValues("email");
 
-
     await accountApi.forgotPassword(email)
       .then(res => {
-        const payload = { userId: res.data.id }
-        dispatch(setUserId(payload));
+        const userId = res.data.id;
+        setUserTempId(userId)
 
-        const snackBarPayload = { type: 'success', message: 'Bạn đã xác nhận email thành công!', duration: 8000 };
-        dispatch(openSnackbar(snackBarPayload))
+        dispatch(setDirection({ direction: '/resetpassword' }));
         navigate('/otp');
       })
       .catch(error => {
+        if (error.response.status === 404) {
+          const snackBarPayload = { type: 'error', message: 'Email bạn vừa nhập không tồn tại trong hệ thống!', duration: 8000 };
+          dispatch(openSnackbar(snackBarPayload))
+        } else {
+          const snackBarPayload = { type: 'error', message: 'Đã gặp sự cố!' };
+          dispatch(openSnackbar(snackBarPayload))
+        }
         console.log(error);
-        const snackBarPayload = { type: 'error', message: 'Đã gặp sự cố!' };
-        dispatch(openSnackbar(snackBarPayload))
       });
     setIsSubmitting(false);
   };
@@ -77,7 +84,7 @@ export default function ForgotPasswordForm() {
       </Stack>
 
       <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} sx={{ mt: 2 }}>
-        Đăng Nhập
+        Xác nhận
       </LoadingButton>
     </FormProvider>
   );

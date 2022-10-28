@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, Link, Container, Typography } from '@mui/material';
@@ -9,9 +9,14 @@ import useResponsive from '../../hooks/useResponsive';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUserId } from '~/context/authSlice'
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
+import { selectDirection } from "~/router/routerPathSlice";
 
 // sections
 import { ResetPasswordForm } from '../sections/auth/resetPassword';
+import { useEffect } from 'react';
+
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
 
 // ----------------------------------------------------------------------
 
@@ -59,64 +64,71 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function ChangePassword() {
-  const smUp = useResponsive('up', 'sm');
+  const navigate = useNavigate();
+  const direction = useSelector(selectDirection);
+  const { userTempId } = UserAuth();
 
+  const smUp = useResponsive('up', 'sm');
   const mdUp = useResponsive('up', 'md');
 
-  return (
-    <RootStyle>
-      <HeaderStyle>
-        {smUp && (
-          <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-            Bạn đã có tài khoản? {''}
-            <Link variant="subtitle2" component={RouterLink} to="/login">
-              Đăng nhập
-            </Link>
-          </Typography>
-        )}
-      </HeaderStyle>
-
-      {mdUp && (
-        <SectionStyle>
-          <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-            Hãy bắt đầu một tài khoản với TopTop
-          </Typography>
-          <img alt="register" src="/static/illustrations/illustration_register.png" />
-        </SectionStyle>
-      )}
-
-      <Container>
-        <ContentStyle>
-          <Typography variant="h4" gutterBottom>
-            Thay đổi mật khẩu.
-          </Typography>
-
-          <Typography sx={{ color: 'text.secondary', mb: 5 }}>Hãy ghi nhớ mật khẩu của bạn cho lần đăng nhập sau nhé.</Typography>
-
-          <ResetPasswordForm />
-
-          <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
-            Bằng cách đăng ký, tôi đồng ý với&nbsp;
-            <Link underline="always" color="text.primary" href="#">
-              Điều khoản dịch vụ
-            </Link>
-            {''} và {''}
-            <Link underline="always" color="text.primary" href="#">
-              Chính sách quyền riêng tư
-            </Link>
-            .
-          </Typography>
-
-          {!smUp && (
-            <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
-              Already have an account?{' '}
-              <Link variant="subtitle2" to="/login" component={RouterLink}>
-                Login
+  if (!userTempId) {
+    navigate("/404")
+  } else {
+    return (
+      <RootStyle>
+        <HeaderStyle>
+          {smUp && (
+            <Typography variant="body2" sx={{ mt: { md: -2 } }}>
+              Bạn đã có tài khoản? {''}
+              <Link variant="subtitle2" component={RouterLink} to="/login">
+                Đăng nhập
               </Link>
             </Typography>
           )}
-        </ContentStyle>
-      </Container>
-    </RootStyle>
-  );
+        </HeaderStyle>
+
+        {mdUp && (
+          <SectionStyle>
+            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
+              Hãy bắt đầu một tài khoản với TopTop
+            </Typography>
+            <img alt="register" src="/static/illustrations/illustration_register.png" />
+          </SectionStyle>
+        )}
+
+        <Container>
+          <ContentStyle>
+            <Typography variant="h4" gutterBottom>
+              Thay đổi mật khẩu.
+            </Typography>
+
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Hãy ghi nhớ mật khẩu của bạn cho lần đăng nhập sau nhé.</Typography>
+
+            <ResetPasswordForm userTempId={userTempId}/>
+
+            <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
+              Bằng cách đăng ký, tôi đồng ý với&nbsp;
+              <Link underline="always" color="text.primary" href="#">
+                Điều khoản dịch vụ
+              </Link>
+              {''} và {''}
+              <Link underline="always" color="text.primary" href="#">
+                Chính sách quyền riêng tư
+              </Link>
+              .
+            </Typography>
+
+            {!smUp && (
+              <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
+                Already have an account?{' '}
+                <Link variant="subtitle2" to="/login" component={RouterLink}>
+                  Login
+                </Link>
+              </Typography>
+            )}
+          </ContentStyle>
+        </Container>
+      </RootStyle>
+    );
+  }
 }

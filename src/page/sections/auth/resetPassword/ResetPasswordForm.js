@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // form
 import { useForm } from 'react-hook-form';
@@ -14,17 +14,15 @@ import { FormProvider, RHFTextField } from '~/components/hook-form';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUserId } from '~/context/authSlice'
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 
 // api
 import accountApi from '~/api/account'
 // ----------------------------------------------------------------------
 
-export default function ResetPasswordForm() {
+export default function ResetPasswordForm({ userTempId }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userId = useDispatch(selectUserId);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -59,17 +57,18 @@ export default function ResetPasswordForm() {
 
     const confirmPassword = data.confirmPassword;
 
-    const dataRequest = { id: userId, password: confirmPassword };
-    await accountApi.resetPassword(data)
-      .then(res => {
-
+    const dataRequest = { id: userTempId, password: confirmPassword };
+    await accountApi.resetPassword(dataRequest)
+      .then(() => {
         setIsSubmitting(false);
-        const snackBarPayload = { type: 'error', message: 'Bạn đã đổi mật khẩu thành công!', duration: 8000 };
+        const snackBarPayload = { type: 'success', message: 'Bạn đã đổi mật khẩu thành công!', duration: 8000 };
         dispatch(openSnackbar(snackBarPayload))
+
+        navigate('/login');
       })
       .catch(error => {
         console.log(error);
-        const snackBarPayload = { type: 'error', message: 'Đã gặp sự cố!' };
+        const snackBarPayload = { type: 'error', message: 'Bạn đã đổi mật khẩu thất bại!' };
         dispatch(openSnackbar(snackBarPayload))
         setIsSubmitting(false);
       });
