@@ -1,9 +1,7 @@
 import classNames from 'classnames/bind';
 import styles from './Footer.module.scss';
 
-import GoogleButton from 'react-google-button';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserAuth } from '~/context/AuthContext';
 
 import * as React from 'react';
 import BottomNavigation from '@mui/material/BottomNavigation';
@@ -14,11 +12,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import PersonIcon from '@mui/icons-material/Person';
-import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux';
-import { currentPath } from '../../../../router/routerPathSlice';
+import { useDispatch } from 'react-redux';
+import { currentPath } from '~/router/routerPathSlice';
 
 const cx = classNames.bind(styles);
 
@@ -100,43 +97,6 @@ function Footer() {
     };
     // END HAMBURGER MENU NAVIGATION
 
-    const navigate = useNavigate();
-    const { googleSignIn, facebookSignIn, user, logOut } = UserAuth();
-
-    const handleGoogleSignIn = async () => {
-        try {
-            await googleSignIn();
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleFacebookSignIn = async () => {
-        try {
-            await facebookSignIn();
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleSignOut = async () => {
-        try {
-            await logOut();
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // useEffect(() => {
-    //     if (user) {
-    //         console.log('user: ', user);
-    //         const { displayName, email } = user;
-    //         console.log(`Data: name: ${displayName}, email: ${email}`);
-
-    //         navigate('/profile');
-    //     }
-    // }, [user]);
-
     const theme = useTheme();
     const matchesSM = useMediaQuery(theme.breakpoints.up('sm'));
 
@@ -152,7 +112,7 @@ function Footer() {
                     <BottomNavigationAction
                         component={Link}
                         to="/home"
-                        label="Home"
+                        label="Trang Chủ"
                         value="home"
                         icon={<HomeIcon fontSize={matchesSM ? 'large' : 'medium'} />}
                         className={cx(page == 'home' ? 'btnNav__light' : null)}
@@ -160,7 +120,7 @@ function Footer() {
                     <BottomNavigationAction
                         component={Link}
                         to="/search"
-                        label="Search"
+                        label="Tìm Kiếm"
                         value="search"
                         icon={<SearchIcon fontSize={matchesSM ? 'large' : 'medium'} />}
                         className={cx(page == 'home' ? 'btnNav__light' : null)}
@@ -168,23 +128,23 @@ function Footer() {
                     <BottomNavigationAction
                         component={Link}
                         to="/upload"
-                        label="Upload"
+                        label="Đăng Video"
                         value="upload"
                         icon={<VideoCallIcon fontSize={matchesSM ? 'large' : 'medium'} />}
                         className={cx(page == 'home' ? 'btnNav__light' : null)}
                     />
                     <BottomNavigationAction
                         component={Link}
-                        to="/chat"
-                        label="Chat"
-                        value="chat"
+                        to="/notification"
+                        label="Thông báo"
+                        value="notification"
                         icon={<ChatBubbleIcon fontSize={matchesSM ? 'large' : 'medium'} />}
                         className={cx(page == 'home' ? 'btnNav__light' : null)}
                     />
                     <BottomNavigationAction
                         component={Link}
                         to="/@"
-                        label="Profile"
+                        label="Cá Nhân"
                         value="profile"
                         icon={<PersonIcon fontSize={matchesSM ? 'large' : 'medium'} />}
                         className={cx(page == 'home' ? 'btnNav__light' : null)}

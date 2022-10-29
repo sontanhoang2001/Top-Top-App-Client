@@ -3,16 +3,13 @@ import { UserAuth } from '~/context/AuthContext';
 
 function Protected({ children }) {
     const { user } = UserAuth();
-    console.log('user: ', user);
+    const authenInfor = window.localStorage?.getItem("token");
 
     if (user) {
+        return <Navigate to="/404" />;
+    } else {
         return children;
     }
-    //  else {
-    //     return <Navigate to="/login" />;
-    // }
-
-    return children;
 }
 
 export default Protected;

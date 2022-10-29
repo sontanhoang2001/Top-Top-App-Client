@@ -70,7 +70,7 @@ const videosFake = [
         song: 'Aloha remix nhảy Au thả thính - SPX Entertainment',
     },
     {
-        url: video8,
+        url: "https://drive.google.com/uc?export=download&id=11t80AH_PK8JJSxWMjPDll4cCNsDRcrVT",
         likes: 829,
         messages: 324,
         shares: 4,
@@ -98,7 +98,7 @@ function Home() {
         } else {
             setEnable(false)
         }
-    })
+    }, [currentPage])
 
     return (
         <div className={enable} style={{  display: enable ? 'inherit' : 'none' }}>

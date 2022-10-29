@@ -4,36 +4,42 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState: {
         loginStatus: false,
-        userId: null,
-        accessToken: null,
-        role: "",
+        id: null,
+        email: "",
+        alias: "",
+        avatar: "",
         fullName: "",
-        avatar: ""
+        history: "",
+        createdDate: "",
+        role: null,
     },
     reducers: {
-        setToken: (state, action) => {
-            state.accessToken = action.payload.accessToken;
-        },
-        setUserId: (state, action) => {
-            state.userId = action.payload.userId;
-        },
         setInfor: (state, action) => {
             state.loginStatus = action.payload.loginStatus;
             state.userId = action.payload.userId;
-            state.role = action.payload.role;
-            state.fullName = action.payload.fullName;
+            state.email = action.payload.email;
+            state.alias = action.payload.alias;
             state.avatar = action.payload.avatar;
+            state.fullName = action.payload.fullName;
+            state.history = action.payload.history;
+            state.createdDate = action.payload.createdDate;
+            state.role = action.payload.role;
         }
     },
 });
 
 export const { setToken, setUserId, setInfor } = authSlice.actions;
 
-export const selectToken = (state) => state.auth.accessToken;
 export const selectLoginStatus = (state) => state.auth.loginStatus;
 export const selectUserId = (state) => state.auth.userId;
-export const selectRole = (state) => state.auth.role;
-export const selectFullName = (state) => state.auth.fullName;
+export const selectEmail = (state) => state.auth.email;
+export const selectAlias = (state) => state.auth.alias;
 export const selectAvatar = (state) => state.auth.avatar;
+export const selectFullName = (state) => state.auth.fullName;
+export const selectHistory = (state) => state.auth.history;
+export const selectCreatedDate = (state) => state.auth.createdDate;
+export const selectRole = (state) => state.auth.role;
+
+
 
 export default authSlice.reducer;

@@ -9,9 +9,11 @@ import { Counter } from '~/page/Counter';
 import Search from '~/page/Search';
 import Login from '~/page/Login';
 import Register from '~/page/Register';
+import Notification from '~/page/Notification';
 import Otp from '~/page/Otp';
 import ForgotPassword from '~/page/ForgotPassword';
 import ResetPassword from '~/page/ResetPassword';
+import Chat from '~/page/Chat/index';
 
 
 // Public routes
@@ -21,9 +23,10 @@ const publicRoutes = [
     { path: '/home', component: Fragment },
     { path: '/search', component: Search },
     { path: '/following', component: Following },
-    { path: '/upload', component: Upload, layout: FooterOnly },
+    { path: '/upload', component: Upload },
+    { path: '/notification', component: Notification },
+    { path: '/chat', component: Chat },
     { path: '/@', component: Profile },
-    { path: '/login', component: Login, layout: FooterOnly },
     { path: '/register', component: Register, layout: FooterOnly },
     { path: '/counter', component: Counter },
 ];

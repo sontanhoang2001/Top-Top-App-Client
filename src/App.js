@@ -65,9 +65,11 @@ function App() {
                                 key={index}
                                 path={route.path}
                                 element={
-                                    <Layout>
-                                        <Page key={index} />
-                                    </Layout>
+                                    <Protected>
+                                        <Layout>
+                                            <Page key={index} />
+                                        </Layout>
+                                    </Protected>
                                 }
                             />
                         );

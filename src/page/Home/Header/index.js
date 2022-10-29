@@ -103,7 +103,7 @@ function Header() {
          // console.log('current Pathname 👉️', pathName);
          switch (pathName) {
              case '':
-                 setValue('home');
+                 setValue('Trang Chủ');
                  break;
              case 'home':
                  setValue('home');

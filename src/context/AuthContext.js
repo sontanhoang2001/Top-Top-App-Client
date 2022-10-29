@@ -15,6 +15,7 @@ import jwtDecode from "jwt-decode";
 // redux
 import { useDispatch } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
+import { setInfor } from "./authSlice";
 
 // api
 import authApi from '../api/auth'
@@ -26,15 +27,14 @@ export const AuthContextProvider = ({ children }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [user, setUser] = useState({
-        uid: false,
-        role: false,
-    });
+    const [user, setUser] = useState(false);
+    const [userInfo, setUserInfo] = useState({});
+
+
+    const [uid, setUid] = useState();
+    const [role, setRole] = useState();
 
     const [userTempId, setUserTempId] = useState(false);
-
-    const [uid, setUid] = useState(false);
-    const [role, setRole] = useState(false);
 
     // <======= START LOGIN  =======>
     const login = async (email, password) => {
@@ -93,7 +93,8 @@ export const AuthContextProvider = ({ children }) => {
         // Kiểm tra thông tin đăng nhập
         checkAuthInfo();
 
-    }, [user.uid])
+        console.log("re-render auth checkAuthInfo");
+    }, [])
 
     const checkAuthInfo = async () => {
         const authenInfor = window.localStorage?.getItem("token");
@@ -103,8 +104,23 @@ export const AuthContextProvider = ({ children }) => {
                 const email = jwtDecoded.sub;
                 await profileApi.getProfile(email)
                     .then(res => {
-                        setUser({ uid: res.data.id, role: res.data.role.id });
-                        console.log("check auth", res.data)
+                        setUser({ uid: res.data.id, email: res.data.email, role: res.data.role.id });
+
+                        const payload = {
+                            loginStatus: true,
+                            id: res.data.id,
+                            email: res.data.email,
+                            alias: res.data.alias,
+                            avatar: res.data.avatar,
+                            fullName: res.data.fullName,
+                            history: res.data.history,
+                            createdDate: res.data.createdDate,
+                            role: res.data.role.id
+                        };
+
+                        setUserInfo(payload);
+                        // dispatch(setInfor(payload))
+                        console.log("check info", res.data)
                     })
                     .catch(error => {
                         console.log(error)
@@ -116,6 +132,8 @@ export const AuthContextProvider = ({ children }) => {
     }
 
     useEffect(() => {
+        console.log("re-render auth currentUser");
+
         const unsubcribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
@@ -123,10 +141,11 @@ export const AuthContextProvider = ({ children }) => {
         return () => {
             unsubcribe();
         };
-    }, [user.uid]);
+
+    }, []);
 
     return (
-        <AuthContext.Provider value={{ login, googleSignIn, facebookSignIn, logOut, user, userTempId, setUserTempId }}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ login, googleSignIn, facebookSignIn, logOut, user, userTempId, setUserTempId, userInfo }}>{children}</AuthContext.Provider>
     );
 };
 

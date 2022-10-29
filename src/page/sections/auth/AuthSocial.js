@@ -35,7 +35,7 @@ export default function AuthSocial() {
       console.log(`Data: name: ${displayName}, email: ${email}`);
     }
 
-  }, [user.uid]);
+  }, [user]);
 
   return (
     <>
