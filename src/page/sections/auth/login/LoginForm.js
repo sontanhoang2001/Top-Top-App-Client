@@ -18,7 +18,7 @@ import { UserAuth } from '~/context/AuthContext';
 
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
+export default function LoginForm({ socialLogin }) {
   const navigate = useNavigate();
   const { login } = UserAuth();
 

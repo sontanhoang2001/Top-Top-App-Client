@@ -7,6 +7,10 @@ const Account = {
         const url = pathname;
         return axiosClientLogin.post(url, data)
     },
+    loginOrRegisterSocial: (data) => {
+        const url = `${pathname}/social`;
+        return axiosClientLogin.post(url, data)
+    },
     verifyOtp: (data) => {
         const url = `${pathname}/otp`;
         return axiosClientLogin.put(url, data)

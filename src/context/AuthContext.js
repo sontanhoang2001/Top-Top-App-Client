@@ -15,7 +15,6 @@ import jwtDecode from "jwt-decode";
 // redux
 import { useDispatch } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
-import { setInfor } from "./authSlice";
 
 // api
 import authApi from '../api/auth'
@@ -28,12 +27,14 @@ export const AuthContextProvider = ({ children }) => {
     const navigate = useNavigate();
 
     const [user, setUser] = useState(false);
-    const [userInfo, setUserInfo] = useState({});
+    const [userInfo, setUserInfo] = useState(false);
 
+    const [socialLogin, setSocialLogin] = useState(false);
 
     const [uid, setUid] = useState();
     const [role, setRole] = useState();
 
+    // đóng vai trò tạm khi đăng ký
     const [userTempId, setUserTempId] = useState(false);
 
     // <======= START LOGIN  =======>
@@ -43,7 +44,6 @@ export const AuthContextProvider = ({ children }) => {
 
         await authApi.login(resquest)
             .then(res => {
-                console.log("login: ", res.data)
                 // save token in localStorage
                 const token = res.data.access_token;
                 window.localStorage.setItem("token", token);
@@ -80,11 +80,13 @@ export const AuthContextProvider = ({ children }) => {
         try {
             signOut(auth);
             window.localStorage.setItem("token", null);
+            window.localStorage.setItem("socialRegister", null);
             window.location = "/login";
         } catch (error) {
             console.log(error)
         }
     };
+
 
     // <======= END LOGIN  =======>
 
@@ -126,23 +128,22 @@ export const AuthContextProvider = ({ children }) => {
                         console.log(error)
                     })
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
         }
     }
 
-    useEffect(() => {
-        console.log("re-render auth currentUser");
+    // useEffect(() => {
+    //     const unsubcribe = onAuthStateChanged(auth, (currentUser) => {
+    //         setUser(currentUser);
 
-        const unsubcribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-        });
+    //     });
 
-        return () => {
-            unsubcribe();
-        };
+    //     return () => {
+    //         unsubcribe();
+    //     };
+    // }, [user]);
 
-    }, []);
 
     return (
         <AuthContext.Provider value={{ login, googleSignIn, facebookSignIn, logOut, user, userTempId, setUserTempId, userInfo }}>{children}</AuthContext.Provider>

@@ -6,10 +6,6 @@ const Auth = {
   login: (data) => {
     const url = pathname;
     return axiosClientLogin.post(url, data)
-  },
-  loginSocial: (data) => {
-    const url = pathname;
-    return axiosClientLogin.post(url, data)
   }
 };
 
