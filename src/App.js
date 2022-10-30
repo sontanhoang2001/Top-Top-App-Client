@@ -19,11 +19,6 @@ import { currentPath } from '~/router/routerPathSlice';
 function App() {
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        const pathName = window.location.pathname.split('/')[1];
-        dispatch(currentPath(pathName))
-    }, [])
-
     return (
         <ThemeProvider>
             <AuthContextProvider>

@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useContext, createContext, useEffect, useState } from 'react';
 import {
     GoogleAuthProvider,
@@ -24,15 +23,11 @@ const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const [user, setUser] = useState(false);
     const [userInfo, setUserInfo] = useState(false);
+    const [loginStatus, setLoginStatus] = useState(false);
 
-    const [socialLogin, setSocialLogin] = useState(false);
-
-    const [uid, setUid] = useState();
-    const [role, setRole] = useState();
 
     // đóng vai trò tạm khi đăng ký
     const [userTempId, setUserTempId] = useState(false);
@@ -94,8 +89,6 @@ export const AuthContextProvider = ({ children }) => {
     useEffect(() => {
         // Kiểm tra thông tin đăng nhập
         checkAuthInfo();
-
-        console.log("re-render auth checkAuthInfo");
     }, [])
 
     const checkAuthInfo = async () => {
@@ -107,7 +100,7 @@ export const AuthContextProvider = ({ children }) => {
                 await profileApi.getProfile(email)
                     .then(res => {
                         setUser({ uid: res.data.id, email: res.data.email, role: res.data.role.id });
-
+                        setLoginStatus(true);
                         const payload = {
                             loginStatus: true,
                             id: res.data.id,
@@ -119,10 +112,9 @@ export const AuthContextProvider = ({ children }) => {
                             createdDate: res.data.createdDate,
                             role: res.data.role.id
                         };
+                        setUser(payload);
 
-                        setUserInfo(payload);
-                        // dispatch(setInfor(payload))
-                        console.log("check info", res.data)
+                        // setUserInfo(payload);
                     })
                     .catch(error => {
                         console.log(error)
@@ -133,20 +125,8 @@ export const AuthContextProvider = ({ children }) => {
         }
     }
 
-    // useEffect(() => {
-    //     const unsubcribe = onAuthStateChanged(auth, (currentUser) => {
-    //         setUser(currentUser);
-
-    //     });
-
-    //     return () => {
-    //         unsubcribe();
-    //     };
-    // }, [user]);
-
-
     return (
-        <AuthContext.Provider value={{ login, googleSignIn, facebookSignIn, logOut, user, userTempId, setUserTempId, userInfo }}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ login, googleSignIn, facebookSignIn, logOut, user, userTempId, setUserTempId, loginStatus }}>{children}</AuthContext.Provider>
     );
 };
 

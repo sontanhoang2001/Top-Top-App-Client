@@ -12,6 +12,7 @@ import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import Header from './Header';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 const videosFake = [
     {
@@ -83,7 +84,10 @@ const videosFake = [
 const cx = classNames.bind(styles);
 
 function Home() {
-    const currentPage = useSelector((state) => state.currentPage.value);
+    const location = useLocation();
+    const pathName = location.pathname;
+
+    // const currentPage = useSelector((state) => state.currentPage.value);
     const [enable, setEnable] = useState(false);
     const [videos, setVideo] = useState(videosFake);
     const [muted, setMuted] = useState(true);
@@ -93,15 +97,15 @@ function Home() {
     };
 
     useEffect(() => {
-        if (currentPage == '' || currentPage == 'home') {
+        if (pathName == '/' || pathName == '/home') {
             setEnable(true)
         } else {
             setEnable(false)
         }
-    }, [currentPage])
+    }, [pathName])
 
     return (
-        <div className={enable} style={{  display: enable ? 'inherit' : 'none' }}>
+        <div className={enable} style={{ display: enable ? 'inherit' : 'none' }}>
             <Header />
             <div className={cx('video__container')}>
                 {videos.map((video, index) => (

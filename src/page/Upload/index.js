@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Stack, IconButton, InputAdornment, Card, CardContent, TextField, Button, Grid, FormControl, Select, MenuItem, InputLabel, Chip, Avatar, Typography, Box, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
-import { LibraryMusic, CloudUpload } from '@mui/icons-material';
+import { Stack, IconButton, InputAdornment, Card, CardContent, TextField, Button, Grid, FormControl, Select, MenuItem, InputLabel, Chip, Avatar, Typography, Box, FormGroup, FormControlLabel, Checkbox, DialogContent, DialogTitle, DialogContentText, DialogActions, Dialog } from '@mui/material';
+import { LibraryMusic, CloudUpload, Save } from '@mui/icons-material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 // components
@@ -20,26 +20,34 @@ import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 
 // api
 import mediaApi from '~/api/media';
+import videoApi from '~/api/video';
+
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
+import { Container } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
 export default function UploadVideoForm() {
+    const dispatch = useDispatch();
+    const { user } = UserAuth();
+    const userId = user.id;
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [reviewVideo, setReviewVideo] = useState();
 
     const UploadSchema = Yup.object().shape({
         title: Yup.string()
-            .min(8, 'Tên của bạn phải ít nhất 5 ký tự!')
-            .max(30, 'Tên tối đa 30 ký tự!')
+            .max(80, 'Tên tối đa 80 ký tự!')
             .required('Bạn chưa nhập tiêu đề!'),
         hashTag: Yup.string("Hash Tag bạn vừa nhập chưa đúng định dạng!")
     });
 
     const defaultValues = {
         title: '',
-        videoUrl: '',
+        videoUrl: null,
         music: '',
-        enableComment: '',
+        enableComment: true,
         hashTag: ''
     };
 
@@ -49,37 +57,14 @@ export default function UploadVideoForm() {
     });
 
     const {
-        handleSubmit,
+        handleSubmit
     } = methods;
 
     const onSubmit = async (data) => {
-        setIsSubmitting(true);
-
-        console.log("upload video...")
-        setIsSubmitting(false);
-
-
-        // await accountApi.register(dataRegister)
-        //   .then(res => {
-        //     const userId = res.data.id;
-        //     setUserTempId(userId);
-
-        //     const snackBarPayload = { type: 'success', message: 'Bạn đã đăng ký tài khoản thành công!', duration: 10000 };
-        //     dispatch(openSnackbar(snackBarPayload))
-
-        //     dispatch(setDirection({ direction: '/' }));
-        //     navigate('/otp');
-        //   })
-        //   .catch(error => {
-        //     console.log(error);
-        //     const snackBarPayload = { type: 'error', message: 'Đã gặp sự cố!' };
-        //     dispatch(openSnackbar(snackBarPayload))
-        //   });
+        uploadVideo(data);
     }
 
-    const [reviewVideo, setReviewVideo] = useState();
-
-    const uploadVideo = (e) => {
+    const handleReviewVideo = (e) => {
         var filePath = URL.createObjectURL(e.target.files[0]);
         var file = e.target.files[0] //the file
         var reader = new FileReader() //this for convert to Base64 
@@ -88,93 +73,183 @@ export default function UploadVideoForm() {
             var rawLog = reader.result.split(',')[1]; //extract only thee file data part
             var dataSend = { dataReq: { data: rawLog, name: file.name, type: file.type }, fname: "uploadFilesToGoogleDrive" }; //preapre info to send to API
 
-            console.log("review video: ", filePath)
+            methods.setValue("videoUrl", dataSend);
             setReviewVideo(filePath);
-            // mediaApi.uploadVideo(dataSend)
-            //     .then(res => res.json())
-            //     .then((a) => {
-            //         console.log(a) //See response
-            //     }).catch(e => console.log(e)) // Or Error in console
         }
     }
 
+    const uploadVideo = (data) => {
+        if (data.videoUrl === null) {
+            const snackBarPayload = { type: 'error', message: 'Bạn chưa tải video!', duration: 5000 };
+            dispatch(openSnackbar(snackBarPayload))
+            setIsSubmitting(false);
+        } else {
+            setIsSubmitting(true);
+            const dataVideoUrl = data.videoUrl;
+            mediaApi.uploadVideo(dataVideoUrl)
+                .then(res => res.json())
+                .then((res) => {
+                    console.log(res.url) //See response
+
+                    const videoUrl = res.url;
+                    if (videoUrl !== "") {
+                        // lọc dữ liệu trước khi gửi lên
+                        console.log("upload video...", data)
+
+                        const hashTag = data.hashTag.split("#");
+                        console.log("hashTag", hashTag);
+
+                        const dataVideo = {
+                            title: data.title,
+                            videoUrl: videoUrl,
+                            music: data.music,
+                            enableComment: true,
+                            userid: userId,
+                            hashTag: hashTag
+                        };
+
+                        // gọi tiếp method post db lên database
+                        createVideoInfo(dataVideo);
+                    }
+                }).catch(e => console.log(e)) // Or Error in console
+        }
+    }
+
+    const createVideoInfo = async (dataVideo) => {
+        await videoApi.createVideo(dataVideo)
+            .then(() => {
+                resetForm();
+                const snackBarPayload = { type: 'success', message: 'Bạn đã tải video thành công!', duration: 10000 };
+                dispatch(openSnackbar(snackBarPayload))
+            })
+            .catch(error => {
+                console.log(error);
+                const snackBarPayload = { type: 'error', message: 'Bạn đã tải video thất bại!' };
+                dispatch(openSnackbar(snackBarPayload))
+            });
+        setIsSubmitting(false);
+    }
     // https://drive.google.com/uc?export=download&id=11t80AH_PK8JJSxWMjPDll4cCNsDRcrVT
+
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const resetForm = () => {
+        setReviewVideo("");
+        methods.resetField("title");
+        methods.resetField("videoUrl");
+        methods.resetField("music");
+        methods.resetField("enableComment");
+        methods.resetField("hashTag");
+    }
+
     return (
         <>
             <NavBar namePage='Đăng Video mới' />
 
-            <Card sx={{ marginLeft: '1rem', marginRight: '1rem', marginTop: '5rem', marginBottom: '1rem' }}>
-                <CardContent>
-                    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} md={4}>
-                                <Stack spacing={3}>
-                                    {reviewVideo && (
-                                        <video src={reviewVideo} height={400} autoPlay controls loop />
-                                    )}
+            <Container>
+                <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+                    <Card sx={{ marginLeft: '1rem', marginRight: '1rem', marginTop: '5rem', marginBottom: '1rem' }}>
+                        <CardContent>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={4}>
+                                    <Stack spacing={3}>
+                                        {reviewVideo && (
+                                            <video src={reviewVideo} height={450} autoPlay controls loop />
+                                        )}
 
-                                    {reviewVideo || (
-                                        <Button variant="outlined" component="label" startIcon={<CloudUpload />} sx={{ paddingBottom: '100%' }}>
-                                            Tải video lên
-                                            <input hidden type="file" accept="application/video" onChange={(e) => uploadVideo(e)} />
+                                        {reviewVideo || (
+                                            <Button variant="outlined" component="label" startIcon={<CloudUpload />} sx={{ height: '450px' }}>
+                                                Tải video lên
+                                                <input hidden type="file" accept="application/video" onChange={(e) => handleReviewVideo(e)} />
+                                            </Button>
+                                        )}
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={12} md={8}>
+                                    <Stack spacing={3}>
+                                        <RHFTextField name="title" label="Tiêu đề video" />
+                                        <RHFTextField
+                                            name='hashTag'
+                                            label="Hash tag"
+                                            sx={{ m: 1 }}
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">#</InputAdornment>,
+                                            }}
+                                        />
+
+                                        <Button variant="outlined" startIcon={<LibraryMusic />} sx={{ m: 1, width: '36ch' }} onClick={handleClickOpen}>
+                                            Chọn âm nhạc cho video
                                         </Button>
-                                    )}
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={12} md={8}>
-                                <Stack spacing={3}>
-                                    <TextField
-                                        name='title'
-                                        label="Tiêu đề video" id="outlined-start-adornment"
-                                        sx={{ m: 1 }}
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start">#</InputAdornment>,
-                                        }}
-                                    />
-                                    <RHFTextField name="hashTag" label="Hash tag" />
 
-                                    <Button variant="outlined" startIcon={<LibraryMusic />} sx={{ m: 1, width: '36ch' }}>
-                                        Chọn âm nhạc cho video
-                                    </Button>
+                                        <Box>
+                                            <InputLabel id="demo-simple-select-label">Âm nhạc cho video</InputLabel>
 
-                                    <Box>
-                                        <InputLabel id="demo-simple-select-label">Âm nhạc cho video</InputLabel>
+                                            <Chip avatar={<Avatar>M</Avatar>} label="Đã có anh ở đây rồi - Chi Dân" sx={{ padding: '1rem' }} variant="outlined" />
+                                        </Box>
+                                        <FormGroup>
+                                            <FormControlLabel onChange={(e) => methods.setValue("enableComment", e.target.checked)} control={<Checkbox defaultChecked />} label="Cho phép bình luận video" />
+                                        </FormGroup>
+                                        <FormControl fullWidth sx={{ width: '26ch' }}>
+                                            <InputLabel id="demo-simple-select-label">Ai có thể xem video này</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                value={1}
+                                                label="Ai có thể xem video này"
+                                            // onChange={handleChange}
+                                            >
+                                                <MenuItem value={1}>Công khai</MenuItem>
+                                                <MenuItem value={2}>Riêng Tư</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={12} md={8}>
+                                    <Stack spacing={2} direction="row" mt={3}>
+                                        <Button size="large" variant="outlined" disabled={isSubmitting} onClick={resetForm}>
+                                            Hủy bỏ
+                                        </Button >
 
-                                        <Chip avatar={<Avatar>M</Avatar>} label="Đã có anh ở đây rồi - Chi Dân" sx={{ padding: '1rem' }} variant="outlined" />
-                                    </Box>
-                                    <FormGroup>
-                                        <FormControlLabel name='enableComment' control={<Checkbox defaultChecked />} label="Cho phép bình luận video" />
-                                    </FormGroup>
-                                    <FormControl fullWidth sx={{ width: '26ch' }}>
-                                        <InputLabel id="demo-simple-select-label">Ai có thể xem video này</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={1}
-                                            label="Ai có thể xem video này"
-                                        // onChange={handleChange}
+                                        <LoadingButton
+                                            loading={isSubmitting}
+                                            loadingPosition="start"
+                                            startIcon={<Save />}
+                                            variant="contained"
+                                            size="large" type="submit"
                                         >
-                                            <MenuItem value={1}>Công khai</MenuItem>
-                                            <MenuItem value={2}>Riêng Tư</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Stack>
+                                            Đăng Video
+                                        </LoadingButton>
+                                    </Stack>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} md={8}>
-                                <Stack spacing={2} direction="row" mt={3}>
-                                    <Button size="large" type="submit" variant="contained" loading={isSubmitting} sx={{ width: '26ch' }}>
-                                        Hủy bỏ
-                                    </Button >
-                                    <LoadingButton size="large" type="submit" variant="contained" loading={isSubmitting} sx={{ width: '26ch' }}>
-                                        Đăng Video
-                                    </LoadingButton>
-                                </Stack>
-                            </Grid>
-                        </Grid>
-                    </FormProvider>
-                </CardContent>
-            </Card>
-        </>
+                        </CardContent>
+                    </Card>
+                </FormProvider>
 
+
+
+                <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle>Subscribe</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            To subscribe to this website, please enter your email address here. We
+                            will send updates occasionally.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={handleClose}>Subscribe</Button>
+                    </DialogActions>
+                </Dialog>
+            </Container>
+        </>
     );
 }

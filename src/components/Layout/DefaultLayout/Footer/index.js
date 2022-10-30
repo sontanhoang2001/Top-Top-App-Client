@@ -1,9 +1,11 @@
+
+
 import classNames from 'classnames/bind';
 import styles from './Footer.module.scss';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 
@@ -45,37 +47,34 @@ const theme = createTheme({
 });
 
 function Footer() {
-    const dispatch = useDispatch();
+    const location = useLocation();
+    const pathName = location.pathname;
 
     // START HEADER
-    const [page, setPage] = React.useState('');
-    React.useEffect(() => {
-        const pathName = window.location.pathname.split('/')[1];
-        // console.log('current Pathname 👉️', pathName);
+    const [page, setPage] = useState('');
+    useEffect(() => {
         switch (pathName) {
-            case '':
+            case '/':
                 setPage('home');
                 break;
-            case 'home':
+            case '/home':
                 setPage('home');
                 break;
-            case 'search':
+            case '/search':
                 setPage('search');
                 break;
-            case 'upload':
+            case '/upload':
                 setPage('upload');
                 break;
-            case 'chat':
+            case '/chat':
                 setPage('chat');
                 break;
-            case '@':
+            case '/@':
                 setPage('profile');
                 break;
             default:
-                setPage(window.location.pathname.split('/')[1]);
+                setPage('/');
         }
-
-        dispatch(currentPath(pathName))
     });
 
     const handleChange = (event, newPage) => {
@@ -83,19 +82,10 @@ function Footer() {
     };
     // END HEADER
 
+
     // START HAMBURGER MENU NAVIGATION
     //react useState hook to save the current open/close state of the drawer, normally variables dissapear afte the function was executed
-    const [open, setState] = React.useState(false);
-
-    //function that is being called every time the drawer should open or close, the keys tab and shift are excluded so the user can focus between the elements with the keys
-    const toggleDrawer = (open) => (event) => {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-            return;
-        }
-        //changes the function state according to the value of open
-        setState(open);
-    };
-    // END HAMBURGER MENU NAVIGATION
+    const [open, setState] = useState(false);
 
     const theme = useTheme();
     const matchesSM = useMediaQuery(theme.breakpoints.up('sm'));
