@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useElementOnScreen from '~/hooks/useElementOnScreen ';
 import classNames from 'classnames/bind';
+import './Video.css';
 import styles from './Video.module.scss';
 import VideoFooter from './videoFooter';
 import VideoSidebar from './videoSidebar';
@@ -15,7 +16,6 @@ function Video({ index, url, avatarUser, song, title, channel, likes, comments, 
     const [playing, setPlaying] = useState(false);
 
     const videoRef = useRef(null);
-    const thumbnailRef = useRef(null);
 
     const options = {
         root: null,
@@ -33,6 +33,7 @@ function Video({ index, url, avatarUser, song, title, channel, likes, comments, 
         }
     };
 
+    // tự động phát cho video đầu tiên
     const attemptPlay = () => {
         if (index == 0) {
             videoRef &&
@@ -62,14 +63,11 @@ function Video({ index, url, avatarUser, song, title, channel, likes, comments, 
 
     return (
         <div className={cx('video')}>
-            <div className={cx('video__thumbnail')} >
-                <VideoThumbnail
-                    videoUrl={url}
-                    cors={true}
-                    snapshotAtTime={5}
-                    width='500'
-                    renderThumbnail={true} />
-            </div>
+            <video
+                className={cx('video__thumbnail')}
+                src={url}
+                alt={title}
+            />
             <video
                 className={cx('video__player')}
                 src={url}
@@ -79,7 +77,7 @@ function Video({ index, url, avatarUser, song, title, channel, likes, comments, 
                 playsInline
                 preload="true"
                 alt={title}
-            ></video>
+            />
             <div className={cx('container__btn')} onClick={onVideoClick}>
                 {!playing && <div className={cx('btn__play')}></div>}
             </div>
@@ -96,8 +94,7 @@ function Video({ index, url, avatarUser, song, title, channel, likes, comments, 
                     </div>
                 </div>
             )}
-
-            <VideoSidebar playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} />
+            <VideoSidebar id={index} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} />
             <VideoFooter playing={playing} channel={channel} title={title} song={song} />
         </div>
     );

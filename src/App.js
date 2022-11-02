@@ -9,16 +9,10 @@ import { DefaultLayout } from './components/Layout';
 import { AuthContextProvider } from './context/AuthContext';
 import Protected from './Proteced';
 
-
 // import '@fontsource/roboto/300.css';
 import Home from './page/Home';
 
-import { useDispatch } from 'react-redux';
-import { currentPath } from '~/router/routerPathSlice';
-
 function App() {
-    const dispatch = useDispatch();
-
     return (
         <ThemeProvider>
             <AuthContextProvider>
@@ -70,7 +64,6 @@ function App() {
                         );
                     })}
                 </Routes>
-
                 <Snackbar />
             </AuthContextProvider>
         </ThemeProvider>

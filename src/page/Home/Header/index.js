@@ -96,56 +96,56 @@ const appBarStyles = styled({
 });
 
 function Header() {
-     // START HEADER
-     const [value, setValue] = React.useState('');
-     React.useEffect(() => {
-         const pathName = window.location.pathname.split('/')[1];
-         // console.log('current Pathname 👉️', pathName);
-         switch (pathName) {
-             case '':
-                 setValue('Trang Chủ');
-                 break;
-             case 'home':
-                 setValue('home');
-                 break;
-             case 'search':
-                 setValue('search');
-                 break;
-             case 'upload':
-                 setValue('upload');
-                 break;
-             case 'chat':
-                 setValue('chat');
-                 break;
-             case '@':
-                 setValue('profile');
-                 break;
-             default:
-                 setValue(window.location.pathname.split('/')[1]);
-         }
-     });
- 
-     const handleChange = (event, newValue) => {
-         setValue(newValue);
-     };
-     // END HEADER
- 
-     // START HAMBURGER MENU NAVIGATION
-     //react useState hook to save the current open/close state of the drawer, normally variables dissapear afte the function was executed
-     const [open, setState] = React.useState(false);
- 
-     //function that is being called every time the drawer should open or close, the keys tab and shift are excluded so the user can focus between the elements with the keys
-     const toggleDrawer = (open) => (event) => {
-         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-             return;
-         }
-         //changes the function state according to the value of open
-         setState(open);
-     };
-     // END HAMBURGER MENU NAVIGATION
-     
+    // START HEADER
+    const [value, setValue] = React.useState('');
+    React.useEffect(() => {
+        const pathName = window.location.pathname.split('/')[1];
+        // console.log('current Pathname 👉️', pathName);
+        switch (pathName) {
+            case '':
+                setValue('Trang Chủ');
+                break;
+            case 'home':
+                setValue('home');
+                break;
+            case 'search':
+                setValue('search');
+                break;
+            case 'upload':
+                setValue('upload');
+                break;
+            case 'chat':
+                setValue('chat');
+                break;
+            case '@':
+                setValue('profile');
+                break;
+            default:
+                setValue(window.location.pathname.split('/')[1]);
+        }
+    });
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+    // END HEADER
+
+    // START HAMBURGER MENU NAVIGATION
+    //react useState hook to save the current open/close state of the drawer, normally variables dissapear afte the function was executed
+    const [open, setState] = React.useState(false);
+
+    //function that is being called every time the drawer should open or close, the keys tab and shift are excluded so the user can focus between the elements with the keys
+    const toggleDrawer = (open) => (event) => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+        //changes the function state according to the value of open
+        setState(open);
+    };
+    // END HAMBURGER MENU NAVIGATION
+
     return (<>
-        <AppBar position="fixed" sx={{backgroundColor: 'transparent', boxShadow: 'none'}}>
+        <AppBar position="fixed" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
             <Container maxWidth="xl">
                 <Toolbar>
                     <IconButton
@@ -181,8 +181,8 @@ function Header() {
                             }}
                         >
                             {/* when clicking the icon it calls the function toggleDrawer and closes the drawer by setting the variable open to false */}
-                            <IconButton sx={{ mb: 2 }}>
-                                <CloseIcon onClick={toggleDrawer(false)} />
+                            <IconButton sx={{ mb: 2 }} onClick={toggleDrawer(false)} >
+                                <CloseIcon />
                             </IconButton>
 
                             <Divider sx={{ mb: 2 }} />

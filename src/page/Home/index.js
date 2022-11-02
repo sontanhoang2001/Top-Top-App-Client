@@ -14,7 +14,6 @@ import videoApi from '~/api/video';
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import Header from './Header';
-import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import { urlFromDriveUrl } from '~/shared/helper';
@@ -123,31 +122,25 @@ function Home() {
             })
     }, [])
 
-    useEffect(() => {
-        console.log("videos: ", videos)
-    })
-
     if (isLoaded) {
         return (
-            <div className={enable} style={{ display: enable ? 'inherit' : 'none' }}>
+            <div style={{ display: enable ? 'inherit' : 'none' }}>
                 <Header />
                 <div className={cx('video__container')}>
                     {videos.map((video, index) => (
-                        <div key={index}>
-                            <Video
-                                index={video.id}
-                                avatarUser={video.user.avatar}
-                                comments='34'
-                                likes={video.heart}
-                                shares='123'
-                                title={video.title}
-                                channel={video.user.alias}
-                                song={video.musicUrl}
-                                url={urlFromDriveUrl(video.url)}
-                                muted={muted}
-                                onEnableAudio={onEnableAudio}
-                            />
-                        </div>
+                        <Video key={index}
+                            index={video.id}
+                            avatarUser={video.user.avatar}
+                            comments='34'
+                            likes={video.heart}
+                            shares='123'
+                            title={video.title}
+                            channel={video.user.alias}
+                            song={video.musicUrl}
+                            url={urlFromDriveUrl(video.url)}
+                            muted={muted}
+                            onEnableAudio={onEnableAudio}
+                        />
                     ))}
                 </div>
             </div >
