@@ -23,6 +23,7 @@ import SendIcon from '@mui/icons-material/Send';
 
 // component
 import NavBar from '~/components/Layout/NavBarHeader'
+import ChatBox from './ChatBox'
 
 const messages = [
     {
@@ -105,13 +106,19 @@ export default function Chat() {
                     </List>
                 </Grid>
                 <Grid item md={9}>
-                    <h1>Hiệp Đinh</h1>
+                    <ChatBox />
+                    {/* <h1>Hiệp Đinh</h1>
                     <Box>
+                        dfgfdgdf
+                    </Box>
+                    <Box flex >
                         <TextField id="outlined-basic" variant="outlined" sx={{ width: '84%' }} />
-                        <Button variant="contained" size="large" endIcon={<SendIcon />} sx={{ ml: 1, mt: '2px'}}>
+                        <Button variant="contained" size="large" endIcon={<SendIcon />} sx={{ ml: 1, mt: '2px' }}>
                             Gửi
                         </Button>
-                    </Box>
+                    </Box> */}
+
+
                 </Grid>
             </Grid>
             <Paper square sx={{ pb: '50px', mt: '6rem' }}>

@@ -129,8 +129,6 @@ export default function UploadVideoForm() {
             });
         setIsSubmitting(false);
     }
-    // https://drive.google.com/uc?export=download&id=11t80AH_PK8JJSxWMjPDll4cCNsDRcrVT
-
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {

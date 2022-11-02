@@ -1,5 +1,3 @@
-
-
 import classNames from 'classnames/bind';
 import styles from './Footer.module.scss';
 
@@ -10,14 +8,13 @@ import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 
 import HomeIcon from '@mui/icons-material/Home';
-import SearchIcon from '@mui/icons-material/Search';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import PersonIcon from '@mui/icons-material/Person';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import { currentPath } from '~/router/routerPathSlice';
+
 
 const cx = classNames.bind(styles);
 
@@ -60,8 +57,8 @@ function Footer() {
             case '/home':
                 setPage('home');
                 break;
-            case '/search':
-                setPage('search');
+            case '/chat':
+                setPage('chat');
                 break;
             case '/upload':
                 setPage('upload');
@@ -109,10 +106,10 @@ function Footer() {
                     />
                     <BottomNavigationAction
                         component={Link}
-                        to="/search"
-                        label="Tìm Kiếm"
-                        value="search"
-                        icon={<SearchIcon fontSize={matchesSM ? 'large' : 'medium'} />}
+                        to="/chat"
+                        label="Tin Nhắn"
+                        value="chat"
+                        icon={<ChatBubbleIcon fontSize={matchesSM ? 'large' : 'medium'} />}
                         className={cx(page == 'home' ? 'btnNav__light' : null)}
                     />
                     <BottomNavigationAction
@@ -128,7 +125,7 @@ function Footer() {
                         to="/notification"
                         label="Thông báo"
                         value="notification"
-                        icon={<ChatBubbleIcon fontSize={matchesSM ? 'large' : 'medium'} />}
+                        icon={<NotificationsActiveIcon fontSize={matchesSM ? 'large' : 'medium'} />}
                         className={cx(page == 'home' ? 'btnNav__light' : null)}
                     />
                     <BottomNavigationAction
@@ -141,37 +138,6 @@ function Footer() {
                     />
                 </BottomNavigation>
             </ThemeProvider>
-
-            {/* <header className={cx('wrapper')}>
-                <div className="float-right">
-                    <ul>
-                        <li>
-                            <Link to="/home">Home</Link>
-                        </li>
-                        <li>
-                            <Link to="/following">Following</Link>
-                        </li>
-                        <li>
-                            <Link to="/counter">Counter</Link>
-                        </li>
-                        <li>
-                            <Link to="/@">Profile</Link>
-                        </li>
-                    </ul>
-                </div>
-            </header>
-            {user == null ? (
-                <>
-                    <h1>Sign in</h1>
-                    <GoogleButton onClick={handleGoogleSignIn} />
-                    <GoogleButton onClick={handleFacebookSignIn} />
-                </>
-            ) : (
-                <>
-                    <p>Welcome, {user?.displayName}</p>
-                    <button onClick={handleSignOut}>Logout</button>
-                </>
-            )} */}
         </>
     );
 }

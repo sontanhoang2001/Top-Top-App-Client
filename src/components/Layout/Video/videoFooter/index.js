@@ -6,7 +6,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
 
 const cx = classNames.bind(styles);
 
-function VideoFooter({ playing, channel, description, song }) {
+function VideoFooter({ playing, channel, title, song }) {
     const textSongRef = useRef();
 
     useEffect(() => {
@@ -22,7 +22,7 @@ function VideoFooter({ playing, channel, description, song }) {
         <div className={cx('videoFooter')}>
             <div className={cx('videoFooter__text')}>
                 <h3 className={cx('videoFooter__text--channel')}>@{channel}</h3>
-                <p className={cx('videoFooter__text--description')}>{description}</p>
+                <p className={cx('videoFooter__text--description')}>{title}</p>
                 <div className={cx('videoFooter_ticker')}>
                     <MusicNoteIcon className={cx('videoFooter__icon')} />
                     <marquee ref={textSongRef} scrollamount="8" className={cx('videoFooter__song')}>

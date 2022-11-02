@@ -11,7 +11,7 @@ import { IconButton, Typography } from '@mui/material';
 
 const cx = classNames.bind(styles);
 
-function Video({ index, url, song, description, channel, likes, messages, shares, muted, onEnableAudio }) {
+function Video({ index, url, avatarUser, song, title, channel, likes, comments, shares, muted, onEnableAudio }) {
     const [playing, setPlaying] = useState(false);
 
     const videoRef = useRef(null);
@@ -67,6 +67,7 @@ function Video({ index, url, song, description, channel, likes, messages, shares
                     videoUrl={url}
                     cors={true}
                     snapshotAtTime={5}
+                    width='500'
                     renderThumbnail={true} />
             </div>
             <video
@@ -77,7 +78,7 @@ function Video({ index, url, song, description, channel, likes, messages, shares
                 loop
                 playsInline
                 preload="true"
-                alt={description}
+                alt={title}
             ></video>
             <div className={cx('container__btn')} onClick={onVideoClick}>
                 {!playing && <div className={cx('btn__play')}></div>}
@@ -96,8 +97,8 @@ function Video({ index, url, song, description, channel, likes, messages, shares
                 </div>
             )}
 
-            <VideoSidebar playing={playing} messages={messages} shares={shares} likes={likes} />
-            <VideoFooter playing={playing} channel={channel} description={description} song={song} />
+            <VideoSidebar playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} />
+            <VideoFooter playing={playing} channel={channel} title={title} song={song} />
         </div>
     );
 }

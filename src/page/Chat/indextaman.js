@@ -2,17 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
 
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
+
 var stompClient = null;
 const ChatRoom = () => {
-
-    const [token, setToken] = useState();
-
-    // useEffect(() => {
-    //     const getToken = "Bearer " + window.localStorage?.getItem("token");
-    //     setToken(getToken);
-
-    //     // console.log("token ne: ", token);
-    // })
+    const { user } = UserAuth();
+    const userId = user.id;
 
     const [privateChats, setPrivateChats] = useState(new Map());
     const [publicChats, setPublicChats] = useState([]);
@@ -28,7 +24,6 @@ const ChatRoom = () => {
     // }, [userData]);
 
     const connect = () => {
-        console.log("tets token: ", token)
         try {
             let Sock = new SockJS('http://localhost:8081/ws');
             stompClient = over(Sock);
@@ -39,9 +34,10 @@ const ChatRoom = () => {
     }
 
     const onConnected = () => {
+        console.log("lay ra userId ne: ", userId);
         setUserData({ ...userData, "connected": true });
         stompClient.subscribe('/chatroom/public', onMessageReceived);
-        stompClient.subscribe('/user/' + userData.username + '/private', onPrivateMessage);
+        stompClient.subscribe('/user/' + userId + '/private', onPrivateMessage);
         userJoin();
     }
 
@@ -76,6 +72,7 @@ const ChatRoom = () => {
             privateChats.get(payloadData.senderName).push(payloadData);
             setPrivateChats(new Map(privateChats));
         } else {
+            console.log("null ne")
             let list = [];
             list.push(payloadData);
             privateChats.set(payloadData.senderName, list);
@@ -147,15 +144,19 @@ const ChatRoom = () => {
                     {tab === "CHATROOM" && <div className="chat-content">
                         <ul className="chat-messages">
                             {publicChats.map((chat, index) => (
-                                <li className={`message ${chat.senderName === userData.username && "self"}`} key={index}>
-                                    {chat.senderName !== userData.username && <div className="avatar">{chat.senderName}</div>}
-                                    <div className="message-data">{chat.message}</div>
-                                    {chat.senderName === userData.username && <div className="avatar self">{chat.senderName}</div>}
-                                </li>
+                                <>
+                                    <li className={`message ${chat.senderName === userData.username && "self"}`} key={index}>
+                                        {chat.senderName !== userData.username && <div className="avatar">{chat.senderName}</div>}
+                                        <div className="message-data">{chat.message}</div>
+                                        {chat.senderName === userData.username && <div className="avatar self">{chat.senderName}</div>}
+                                    </li>
+                                </>
                             ))}
                         </ul>
 
                         <div className="send-message">
+                            <h1>public</h1>
+
                             <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onChange={handleMessage} />
                             <button type="button" className="send-button" onClick={sendValue}>send</button>
                         </div>
@@ -172,6 +173,7 @@ const ChatRoom = () => {
                         </ul>
 
                         <div className="send-message">
+                            <h1>private</h1>
                             <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onChange={handleMessage} />
                             <button type="button" className="send-button" onClick={sendPrivateValue}>send</button>
                         </div>
