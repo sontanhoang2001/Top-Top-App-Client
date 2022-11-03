@@ -2,17 +2,18 @@ import styles from './VideoSidebar.module.scss';
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
 
+// mui
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MessageIcon from '@mui/icons-material/Message';
 import ShareIcon from '@mui/icons-material/Share';
-import diskIcon from '~/static/image/core/disk.png';
 import Avatar from '@mui/material/Avatar';
 import musicImg from '~/static/image/music/hoang.jpg'
+import diskIcon from '~/static/image/core/disk.png';
 
 // redux
 import { useDispatch } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
-
+import { dialogComment, dialogShare } from '~/components/customizedDialog/dialogSlice'
 
 const cx = classNames.bind(styles);
 function VideoSidebar({ playing, avatarUser, channel, comments, shares, likes }) {
@@ -27,31 +28,16 @@ function VideoSidebar({ playing, avatarUser, channel, comments, shares, likes })
         }
     }, [follow])
 
-    const handleShare = () => {
-        if (navigator.share) {
-            navigator.share({
+    const handleClickOpenDialogShare = () => {
+        const payload = { dialogStatus: true, dialogId: "id ne" };
+        dispatch(dialogShare(payload));
+    };
 
-                // Title that occurs over
-                // web share dialog
-                title: 'GeeksForGeeks',
+    const handleClickOpenDialogComment = () => {
+        const payload = { dialogStatus: true, dialogId: "id ne" };
+        dispatch(dialogComment(payload));
+    };
 
-                // URL to share
-                url: 'https://geeksforgeeks.org'
-            }).then(() => {
-                console.log('Thanks for sharing!');
-            }).catch(err => {
-
-                // Handle errors, if occured
-                console.log(
-                    "Error while using Web share API:");
-                console.log(err);
-            });
-        } else {
-
-            // Alerts user if API not available 
-            alert("Browser doesn't support this API !");
-        }
-    }
 
     return (
         <>
@@ -77,11 +63,11 @@ function VideoSidebar({ playing, avatarUser, channel, comments, shares, likes })
                     )}
                     <p className={cx('videoSideBar__text')}>{liked ? likes + 1 : likes}</p>
                 </div>
-                <div className={cx('videoSidebar__button')}>
+                <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogComment}>
                     <MessageIcon fontSize="large" />
                     <p className={cx('videoSideBar__text')}>{comments}</p>
                 </div>
-                <div className={cx('videoSidebar__button')} onClick={handleShare}>
+                <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogShare}>
                     <ShareIcon fontSize="large" />
                     <p className={cx('videoSideBar__text')}>{shares}</p>
                 </div>

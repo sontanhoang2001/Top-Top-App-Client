@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import styles from './VideoFooter.module.scss';
 import classNames from 'classnames/bind';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import { ConstructionOutlined } from '@mui/icons-material';
 
 const cx = classNames.bind(styles);
 

@@ -1,18 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import useElementOnScreen from '~/hooks/useElementOnScreen ';
 import classNames from 'classnames/bind';
 import './Video.css';
 import styles from './Video.module.scss';
 import VideoFooter from './videoFooter';
 import VideoSidebar from './videoSidebar';
-import VideoThumbnail from 'react-video-thumbnail';
+import CustomizedDialog from '~/components/customizedDialog';
 
+// mui
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { IconButton, Typography } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
+
+// redux
+import { useDispatch, useSelector } from 'react-redux';
+import { Slide } from '@mui/material';
 
 const cx = classNames.bind(styles);
 
-function Video({ index, url, avatarUser, song, title, channel, likes, comments, shares, muted, onEnableAudio }) {
+function Video({ index, id, url, avatarUser, song, title, channel, likes, comments, shares, muted, onEnableAudio }) {
+    const dispatch = useDispatch();
     const [playing, setPlaying] = useState(false);
 
     const videoRef = useRef(null);
@@ -94,8 +101,9 @@ function Video({ index, url, avatarUser, song, title, channel, likes, comments, 
                     </div>
                 </div>
             )}
-            <VideoSidebar id={index} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} />
+            <VideoSidebar id={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} />
             <VideoFooter playing={playing} channel={channel} title={title} song={song} />
+            <CustomizedDialog />
         </div>
     );
 }

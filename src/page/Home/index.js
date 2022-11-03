@@ -17,6 +17,7 @@ import Header from './Header';
 import { useLocation } from 'react-router-dom';
 
 import { urlFromDriveUrl } from '~/shared/helper';
+import Loading from '~/components/Layout/Loading';
 
 const cx = classNames.bind(styles);
 
@@ -128,23 +129,28 @@ function Home() {
                 <Header />
                 <div className={cx('video__container')}>
                     {videos.map((video, index) => (
-                        <Video key={index}
-                            index={video.id}
-                            avatarUser={video.user.avatar}
-                            comments='34'
-                            likes={video.heart}
-                            shares='123'
-                            title={video.title}
-                            channel={video.user.alias}
-                            song={video.musicUrl}
-                            url={urlFromDriveUrl(video.url)}
-                            muted={muted}
-                            onEnableAudio={onEnableAudio}
-                        />
+                        <div key={index}>
+                            <Video
+                                index={index}
+                                id={video.id}
+                                avatarUser={video.user.avatar}
+                                comments='34'
+                                likes={video.heart}
+                                shares='123'
+                                title={video.title}
+                                channel={video.user.alias}
+                                song={video.musicUrl}
+                                url={urlFromDriveUrl(video.url)}
+                                muted={muted}
+                                onEnableAudio={onEnableAudio}
+                            />
+                        </div>
                     ))}
                 </div>
             </div >
         );
+    } else {
+        return <Loading />
     }
 }
 
