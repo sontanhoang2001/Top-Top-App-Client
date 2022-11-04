@@ -1,0 +1,56 @@
+/* Box styles */
+.commentBox {
+    width: 100%;
+    height: 60vh;
+    overflow: scroll;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    border: 1px solid yellowgreen;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: yellowgreen;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #88ba1c;
+}
+
+.reply__container {
+    padding-left: 70px;
+}
+
+.reply__actionContainer {
+    display: flex;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    position: relative;
+}
+
+.reply__ActionText {
+    display: flex;
+    align-items: center;
+    color: #666666;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+}
+
+.reply__ActionText .chevronDownFill {
+    margin-left: 0.4rem;
+}
+
+.children__comment {
+    padding-left: 3rem;
+}

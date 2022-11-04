@@ -20,8 +20,6 @@ export const dialogSlice = createSlice({
         },
         closeDialog: (state) => {
             state.dialogStatus = false;
-            state.dialogName = "";
-            state.dialogId = "";
         }
     },
 });

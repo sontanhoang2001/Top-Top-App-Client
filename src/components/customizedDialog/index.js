@@ -7,7 +7,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 // redux
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide, Typography } from '@mui/material';
-import { dialogShare, closeDialog, selectDialogStatus, selectDialogName } from './dialogSlice'
+import { closeDialog, selectDialogStatus, selectDialogName } from './dialogSlice'
+import Comment from '../comment';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -77,11 +78,8 @@ function CustomizedDialog() {
                     >
                         <DialogTitle>4309 bình luận</DialogTitle>
                         <DialogContent>
-                            binh luan ne
+                            <Comment />
                         </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleCloseDialog}>Hủy</Button>
-                        </DialogActions>
                     </Dialog>
                 </ThemeProvider>
             );
