@@ -1,6 +1,7 @@
 import styles from './VideoSidebar.module.scss';
 import classNames from 'classnames/bind';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // mui
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -11,15 +12,27 @@ import musicImg from '~/static/image/music/hoang.jpg'
 import diskIcon from '~/static/image/core/disk.png';
 
 // redux
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 import { dialogComment, dialogShare } from '~/components/customizedDialog/dialogSlice'
+import { selectVideoId } from '../videoSlice';
+
+// api
+import apiVideo from '~/api/video';
+
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
+import useId from '@mui/material/utils/useId';
 
 const cx = classNames.bind(styles);
 function VideoSidebar({ playing, avatarUser, channel, comments, shares, likes }) {
+    const navigate = useNavigate();
     const dispatch = useDispatch()
+    const videoId = useSelector(selectVideoId);
+    const { user } = UserAuth();
+
     const [follow, setFollow] = useState(false);
-    const [liked, setLiked] = useState(false);
+    const [liked, setLiked] = useState(null);
 
     useEffect(() => {
         if (follow) {
@@ -38,6 +51,115 @@ function VideoSidebar({ playing, avatarUser, channel, comments, shares, likes })
         dispatch(dialogComment(payload));
     };
 
+    // useEffect(() => {
+    //     if (user) {
+    //         console.log("check userId: ", user.id);
+    //     }
+    //     if (liked) {
+    //         if (user)
+    //             if (user.id === undefined) {
+    //                 navigate("/login");
+    //             } else {
+    //                 const request = {
+    //                     "videoId": videoId,
+    //                     "userId": user.id,
+    //                     "status": true
+    //                 };
+    //                 console.log("liked", request)
+    //                 // apiVideo.likeVideo(request)
+    //                 //     .then(res => {
+    //                 //         console.log("res : ", res);
+    //                 //     })
+    //                 //     .catch((error) => {
+    //                 //         console.log("error : ", error);
+    //                 //     })
+
+    //             }
+    //     } else {
+    //         if (liked !== null) {
+    //             if (user)
+    //                 if (user.id === undefined) {
+    //                     navigate("/login");
+    //                 } else {
+    //                     const request = {
+    //                         "videoId": videoId,
+    //                         "userId": user.id,
+    //                         "status": false
+    //                     };
+    //                     console.log("unliked: ", request)
+    //                     // apiVideo.likeVideo(request)
+    //                     //     .then(res => {
+    //                     //         console.log("res : ", res);
+    //                     //     })
+    //                     //     .catch((error) => {
+    //                     //         console.log("error : ", error);
+    //                     //     })
+    //                 }
+    //         }
+    //     }
+    // }, [liked])
+
+    // const handleLike = () => {
+    //     if (user.id)
+    //         if (user.id === undefined) {
+    //             setLiked(false);
+    //         } else {
+    //             setLiked(true);
+    //         }
+    // }
+
+    // const handleUnLike = () => {
+    //     setLiked(false);
+    // }
+
+
+
+    useEffect(() => {
+        if (liked !== null)
+            if (user) {
+                if (liked) {
+                    const request = {
+                        "videoId": videoId,
+                        "userId": user.id,
+                        "status": true
+                    };
+                    apiVideo.likeVideo(request)
+                        .then(res => {
+                            console.log("res : ", res);
+                        })
+                        .catch((error) => {
+                            console.log("error : ", error);
+                        })
+                } else {
+                    const request = {
+                        "videoId": videoId,
+                        "userId": user.id,
+                        "status": false
+                    };
+                    apiVideo.likeVideo(request)
+                        .then(res => {
+                            console.log("res : ", res);
+                        })
+                        .catch((error) => {
+                            console.log("error : ", error);
+                        })
+                }
+            } else {
+                console.log("/login")
+            }
+    }, [liked])
+
+    const handleLike = () => {
+        if (user) {
+            setLiked(true);
+        } else {
+            console.log("/login")
+        }
+    }
+
+    const handleUnLike = () => {
+        setLiked(false);
+    }
 
     return (
         <>
@@ -55,11 +177,11 @@ function VideoSidebar({ playing, avatarUser, channel, comments, shares, likes })
                     {liked ? (
                         <FavoriteIcon
                             fontSize="large"
-                            onClick={(e) => setLiked(false)}
+                            onClick={handleUnLike}
                             style={{ color: 'var(--primary-btn-color)' }}
                         />
                     ) : (
-                        <FavoriteIcon fontSize="large" onClick={() => setLiked(true)} />
+                        <FavoriteIcon fontSize="large" onClick={handleLike} />
                     )}
                     <p className={cx('videoSideBar__text')}>{liked ? likes + 1 : likes}</p>
                 </div>

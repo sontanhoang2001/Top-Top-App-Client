@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 // form
 import { useForm } from 'react-hook-form';
@@ -19,7 +19,6 @@ import { UserAuth } from '~/context/AuthContext';
 // ----------------------------------------------------------------------
 
 export default function LoginForm({ socialLogin }) {
-  const navigate = useNavigate();
   const { login } = UserAuth();
 
   const [showPassword, setShowPassword] = useState(false);

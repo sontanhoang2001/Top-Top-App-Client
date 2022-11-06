@@ -99,7 +99,7 @@ export const AuthContextProvider = ({ children }) => {
                 const email = jwtDecoded.sub;
                 await profileApi.getProfile(email)
                     .then(res => {
-                        setUser({ uid: res.data.id, email: res.data.email, role: res.data.role.id });
+                        // setUser({ uid: res.data.id, email: res.data.email, role: res.data.role.id });
                         setLoginStatus(true);
                         const payload = {
                             loginStatus: true,
@@ -112,6 +112,7 @@ export const AuthContextProvider = ({ children }) => {
                             createdDate: res.data.createdDate,
                             role: res.data.role.id
                         };
+                        console.log("get profile: ", payload);
                         setUser(payload);
 
                         // setUserInfo(payload);

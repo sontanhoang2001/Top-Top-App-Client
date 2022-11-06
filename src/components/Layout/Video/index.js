@@ -11,10 +11,11 @@ import CustomizedDialog from '~/components/customizedDialog';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { IconButton, Typography } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
+import { Slide } from '@mui/material';
 
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { Slide } from '@mui/material';
+import { setVideoId } from '~/components/Layout/Video/videoSlice';
 
 const cx = classNames.bind(styles);
 
@@ -51,7 +52,6 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
         }
     };
 
-
     useEffect(() => {
         attemptPlay();
 
@@ -59,6 +59,10 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
             if (!playing) {
                 videoRef.current.play();
                 setPlaying(true);
+
+                const payload = { videoId: id };
+                dispatch(setVideoId(payload));
+                // console.log(`current video:  ${videoRef.current}, videoID: ${id}`);
             }
         } else {
             if (playing) {
@@ -107,4 +111,5 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
         </div>
     );
 }
+
 export default Video;

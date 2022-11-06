@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -19,6 +19,12 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { Chip } from '@mui/material';
+
+// notification
+import notification from '~/api/notification'
+
+// Auth provider
+import { UserAuth } from '~/context/AuthContext';
 
 const messages = [
     {
@@ -79,6 +85,23 @@ const StyledFab = styled(Fab)({
 });
 
 export default function BottomAppBar() {
+    const { user } = UserAuth();
+
+    useEffect(() => {
+        if (user.id) {
+            console.log("check userId: ", user.id)
+            try {
+                notification.getNotification(user.id).addEventListener("user-list-event", (event) => {
+                    const data = JSON.parse(event.data);
+                    if (data.length > 0) {
+                        console.log(data);
+                    }
+                })
+            } catch (error) {
+            }
+        }
+    })
+
     return (
         <Fragment>
             <CssBaseline />
@@ -88,7 +111,7 @@ export default function BottomAppBar() {
                 </Typography>
 
                 <Box sx={{ ml: 2 }}>
-                    <Chip label="Tất cả hoạt động" component="a" href="#all"  color="primary" clickable sx={{ marginRight: '0.4rem' }} />
+                    <Chip label="Tất cả hoạt động" component="a" href="#all" color="primary" clickable sx={{ marginRight: '0.4rem' }} />
                     <Chip label="Đã yêu thích" component="a" href="#heart" variant="outlined" clickable sx={{ marginRight: '0.4rem' }} />
                     <Chip label="Follow" component="a" href="#follow" variant="outlined" clickable sx={{ marginRight: '0.4rem' }} />
                     <Chip label="Lượt nhắc đến và lượt gắn thẻ" component="a" href="#tag" variant="outlined" clickable sx={{ marginRight: '0.4rem' }} />

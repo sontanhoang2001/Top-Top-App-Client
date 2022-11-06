@@ -10,6 +10,10 @@ const video = {
   loadVideoNewsFeed: (page) => {
     const url = `${pathname}/watch?pageNo=${page}`;
     return axiosClient.get(url);
+  },
+  likeVideo: (data) => {
+    const url = `${pathname}/heart`;
+    return axiosClient.put(url, data);
   }
 };
 

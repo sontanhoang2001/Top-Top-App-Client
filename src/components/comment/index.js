@@ -15,6 +15,7 @@ import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const ExpandMore = styled((props) => {
@@ -51,7 +52,7 @@ const theme = createTheme({
                     backgroundColor: "rgb(244, 67, 54)",
                 },
             },
-        },
+        }
     }
 })
 
@@ -83,14 +84,14 @@ function Comment() {
                             </Box>
                         )}
                     />
-                    {/* <CardMedia
-                component="img"
-                height="194"
-                image="/static/images/cards/paella.jpg"
-                alt="Paella dish"
-            /> */}
+                    <CardMedia
+                        component="img"
+                        height="194"
+                        width='auto'
+                        image="https://s3.cloud.cmctelecom.vn/tinhte1/2017/09/4127716_21370996_757732914433829_7941595007667006352_n.jpg"
+                        alt="Paella dish"
+                    />
                 </Card>
-
 
                 <Card sx={{ maxWidth: 345 }}>
                     <CardHeader
@@ -113,14 +114,16 @@ function Comment() {
                             <Box sx={{ display: "flex", marginTop: '0.4rem' }}>
                                 <Typography variant="subtitle2" align='left' marginRight='1.5rem'>04/11</Typography>
                                 <Typography variant="subtitle2" align='justify' marginRight='1.5rem' sx={{ cursor: "pointer" }}>Trả lời</Typography>
-                                <Typography variant="subtitle2" align='right' sx={{ cursor: "pointer" }}>Tim</Typography>
+                                <Typography variant="subtitle2" align='right' sx={{ cursor: "pointer" }}><FavoriteBorderIcon /></Typography>
                             </Box>
                         )}
                     />
+                    
                     <div className="reply__container">
                         <div className="reply__actionContainer">
                             <p className="reply__ActionText">Xem thêm câu trả lời khác (1)
-                                <svg className="chevronDownFill" width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M21.8788 33.1213L7.58586 18.8284C7.19534 18.4379 7.19534 17.8047 7.58586 17.4142L10.4143 14.5858C10.8048 14.1953 11.438 14.1953 11.8285 14.5858L24.0001 26.7574L36.1716 14.5858C36.5622 14.1953 37.1953 14.1953 37.5859 14.5858L40.4143 17.4142C40.8048 17.8047 40.8048 18.4379 40.4143 18.8284L26.1214 33.1213C24.9498 34.2929 23.0503 34.2929 21.8788 33.1213Z"></path></svg></p>
+                                <svg className="chevronDownFill" width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M21.8788 33.1213L7.58586 18.8284C7.19534 18.4379 7.19534 17.8047 7.58586 17.4142L10.4143 14.5858C10.8048 14.1953 11.438 14.1953 11.8285 14.5858L24.0001 26.7574L36.1716 14.5858C36.5622 14.1953 37.1953 14.1953 37.5859 14.5858L40.4143 17.4142C40.8048 17.8047 40.8048 18.4379 40.4143 18.8284L26.1214 33.1213C24.9498 34.2929 23.0503 34.2929 21.8788 33.1213Z"></path></svg>
+                            </p>
                         </div>
                     </div>
 
@@ -145,7 +148,7 @@ function Comment() {
                                 <Box sx={{ display: "flex", marginTop: '0.4rem' }}>
                                     <Typography variant="subtitle2" align='left' marginRight='1.5rem'>04/11</Typography>
                                     <Typography variant="subtitle2" align='justify' marginRight='1.5rem' sx={{ cursor: "pointer" }}>Trả lời</Typography>
-                                    <Typography variant="subtitle2" align='right' sx={{ cursor: "pointer" }}>Tim</Typography>
+                                    <Typography variant="subtitle2" align='right' sx={{ cursor: "pointer" }}><FavoriteBorderIcon /></Typography>
                                 </Box>
                             )}
                         />
@@ -179,13 +182,12 @@ function Comment() {
                         <div className="reply__container">
                             <div className="reply__actionContainer">
                                 <p className="reply__ActionText">Xem thêm
-                                    <svg className="chevronDownFill" width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M21.8788 33.1213L7.58586 18.8284C7.19534 18.4379 7.19534 17.8047 7.58586 17.4142L10.4143 14.5858C10.8048 14.1953 11.438 14.1953 11.8285 14.5858L24.0001 26.7574L36.1716 14.5858C36.5622 14.1953 37.1953 14.1953 37.5859 14.5858L40.4143 17.4142C40.8048 17.8047 40.8048 18.4379 40.4143 18.8284L26.1214 33.1213C24.9498 34.2929 23.0503 34.2929 21.8788 33.1213Z"></path></svg></p>
+                                    <svg className="chevronDownFill" width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M21.8788 33.1213L7.58586 18.8284C7.19534 18.4379 7.19534 17.8047 7.58586 17.4142L10.4143 14.5858C10.8048 14.1953 11.438 14.1953 11.8285 14.5858L24.0001 26.7574L36.1716 14.5858C36.5622 14.1953 37.1953 14.1953 37.5859 14.5858L40.4143 17.4142C40.8048 17.8047 40.8048 18.4379 40.4143 18.8284L26.1214 33.1213C24.9498 34.2929 23.0503 34.2929 21.8788 33.1213Z"></path></svg>
+                                </p>
                             </div>
                         </div>
                     </div>
                 </Card>
-
-
             </div>
 
         </ThemeProvider>
