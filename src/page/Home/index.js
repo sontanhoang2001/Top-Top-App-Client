@@ -21,7 +21,6 @@ import Loading from '~/components/Layout/Loading';
 
 const cx = classNames.bind(styles);
 
-
 const videosFake = [
     {
         url: video1,

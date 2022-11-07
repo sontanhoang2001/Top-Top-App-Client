@@ -5,6 +5,14 @@
     height: 64vh;
     border-top: 2px solid #fff;
     border-bottom: 2px solid #fff;
-    background-color: rgb(62, 137, 137);
+    background-color: rgba(122, 136, 136, 0.108);
     overflow-y: scroll;
+}
+
+.footerChat {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    margin: 1rem
 }

@@ -1,3 +1,5 @@
+import './Chat.scss';
+
 import { Fragment } from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -61,6 +63,36 @@ const messages = [
         primary: 'Summer BBQ',
         person: '/static/images/avatar/1.jpg',
     },
+    {
+        id: 8,
+        primary: 'Summer BBQ',
+        person: '/static/images/avatar/1.jpg',
+    },
+    {
+        id: 9,
+        primary: 'Summer BBQ',
+        person: '/static/images/avatar/1.jpg',
+    },
+    {
+        id: 10,
+        primary: 'Summer BBQ',
+        person: '/static/images/avatar/1.jpg',
+    },
+    {
+        id: 11,
+        primary: 'Summer BBQ',
+        person: '/static/images/avatar/1.jpg',
+    },
+    {
+        id: 12,
+        primary: 'Summer BBQ',
+        person: '/static/images/avatar/1.jpg',
+    },
+    {
+        id: 13,
+        primary: 'Summer BBQ',
+        person: '/static/images/avatar/1.jpg',
+    },
 ];
 
 const StyledFab = styled(Fab)({
@@ -78,9 +110,9 @@ export default function Chat() {
             <NavBar back namePage='Tin nhắn của bạn' />
             <CssBaseline />
 
-            <Grid container spacing={2} mt={5}>
-                <Grid item md={3}>
-                    <List sx={{ mb: 2 }}>
+            <Grid container spacing={2} mt={3} alignItems="center">
+                <Grid item xs={12} md={3}>
+                    <List sx={{ mb: 2 }} className='listFriend'>
                         {messages.map(({ id, primary, secondary, person }) => (
                             <Fragment key={id}>
                                 {id === 1 && (
@@ -105,26 +137,10 @@ export default function Chat() {
                         ))}
                     </List>
                 </Grid>
-                <Grid item md={9}>
+                <Grid item xs={12} md={9}>
                     <ChatBox />
-                    {/* <h1>Hiệp Đinh</h1>
-                    <Box>
-                        dfgfdgdf
-                    </Box>
-                    <Box flex >
-                        <TextField id="outlined-basic" variant="outlined" sx={{ width: '84%' }} />
-                        <Button variant="contained" size="large" endIcon={<SendIcon />} sx={{ ml: 1, mt: '2px' }}>
-                            Gửi
-                        </Button>
-                    </Box> */}
-
-
                 </Grid>
             </Grid>
-            <Paper square sx={{ pb: '50px', mt: '6rem' }}>
-
-
-            </Paper>
         </Fragment>
     );
 }
