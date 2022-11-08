@@ -1,6 +1,9 @@
 import './Chat.scss';
 
-import { Fragment } from 'react';
+import { over } from 'stompjs';
+import SockJS from 'sockjs-client';
+
+import { Fragment, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -26,6 +29,12 @@ import SendIcon from '@mui/icons-material/Send';
 // component
 import NavBar from '~/components/Layout/NavBarHeader'
 import ChatBox from './ChatBox'
+
+// api
+import chatApi from '~/api/chat';
+
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
 
 const messages = [
     {
@@ -104,7 +113,65 @@ const StyledFab = styled(Fab)({
     margin: '0 auto',
 });
 
+
+// ref truyen vao prop
+var stompClient = null;
+
 export default function Chat() {
+    const { user } = UserAuth();
+
+    const [friend, setFriend] = useState();
+    const [friendId, setFriendId] = useState("7be3bc09-ba7c-41a1-a449-dc3b9bd894b1");
+    const [friendInfo, setFriendInfo] = useState();
+
+    const connect = () => {
+        let Sock = new SockJS('http://localhost:8081/ws');
+        stompClient = over(Sock);
+        stompClient.connect({}, onConnected, onError);
+    }
+
+    const onConnected = () => {
+        // stompClient.subscribe('/chatroom/public', onMessageReceived);
+        stompClient.subscribe('/user/' + user.id + '/private', onPrivateMessage);
+        // userJoin();
+    }
+
+    const onError = (err) => {
+        console.log(err);
+    }
+
+    const onPrivateMessage = (payload) => {
+        var payloadData = JSON.parse(payload.body);
+        console.log("payloadData", payloadData);
+    }
+
+    const onMessageReceived = (payload) => {
+        var payloadData = JSON.parse(payload.body);
+        console.log("payloadData.senderName: ", payloadData.senderName)
+    }
+
+    useEffect(() => {
+        user &&
+            connect();
+    })
+
+    useEffect(() => {
+        if (user) {
+            chatApi.getAllFriends(user.id)
+                .then(res => {
+                    setFriend(res.data);
+                })
+                .catch(error => {
+                    console.log("error: ", error)
+                })
+        }
+    }, [user])
+
+    const handleLoadMessage = (id, index) => {
+        setFriendId(id);
+        setFriendInfo(friend[index]);
+    }
+
     return (
         <Fragment>
             <NavBar back namePage='Tin nhắn của bạn' />
@@ -113,9 +180,9 @@ export default function Chat() {
             <Grid container spacing={2} mt={3} alignItems="center">
                 <Grid item xs={12} md={3}>
                     <List sx={{ mb: 2 }} className='listFriend'>
-                        {messages.map(({ id, primary, secondary, person }) => (
+                        {friend && friend.map(({ id, fullName, avatar }, index) => (
                             <Fragment key={id}>
-                                {id === 1 && (
+                                {/* {id === 1 && (
                                     <ListSubheader sx={{ bgcolor: 'background.paper' }}>
                                         Hôm nay
                                     </ListSubheader>
@@ -125,21 +192,24 @@ export default function Chat() {
                                     <ListSubheader sx={{ bgcolor: 'background.paper' }}>
                                         Hôm qua
                                     </ListSubheader>
-                                )}
+                                )} */}
 
-                                <ListItem button>
+                                <ListItem button onClick={() => handleLoadMessage(id, index)}>
                                     <ListItemAvatar>
-                                        <Avatar alt="Profile Picture" src={person} />
+                                        <Avatar alt="Profile Picture" src={avatar} />
                                     </ListItemAvatar>
-                                    <ListItemText primary={primary} secondary={secondary} />
+                                    <ListItemText primary={fullName} secondary="Định làm rồi mà làm biến thêm" />
                                 </ListItem>
                             </Fragment>
                         ))}
                     </List>
                 </Grid>
-                <Grid item xs={12} md={9}>
-                    <ChatBox />
-                </Grid>
+
+                {user && (
+                    <Grid item xs={12} md={9}>
+                        <ChatBox friendInfo={friendInfo} userId={user.id} friendId={friendId} />
+                    </Grid>
+                )}
             </Grid>
         </Fragment>
     );

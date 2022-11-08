@@ -1,5 +1,6 @@
 import { Avatar, CardHeader, Chip, Typography } from "@mui/material";
 import { createTheme, ThemeProvider, styled, Box } from '@mui/material';
+import { memo } from "react";
 
 const theme = createTheme({
     components: {
@@ -19,7 +20,8 @@ const theme = createTheme({
     }
 })
 
-function Message({ message, direction }) {
+function Message({ message, direction, watched }) {
+
     return (
         <>
             <ThemeProvider theme={theme}>
@@ -36,9 +38,11 @@ function Message({ message, direction }) {
                     </Box>
                 ) : (
                     <>
-                        <Box display="flex" flexDirection="row" justifyContent="flex-end">
+                        <Box display="flex" flexDirection="column" alignItems="flex-end">
                             <Chip label={message} component="a" href="#basic-chip" />
-                            <Typography variant="caption">Đã xem</Typography>
+                            {watched && (
+                            <Typography variant="caption" sx={{marginTop: "1em"}}>Đã xem</Typography>
+                            )}
                         </Box>
                     </>
                 )}
@@ -48,4 +52,4 @@ function Message({ message, direction }) {
         </>);
 }
 
-export default Message;
+export default memo(Message);

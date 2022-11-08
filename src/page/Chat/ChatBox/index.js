@@ -1,8 +1,14 @@
 import './ChatBox.scss'
+import { memo, useEffect, useMemo, useState } from 'react';
 
-import { SentimentVerySatisfied, MicNone, Send } from '@mui/icons-material';
-import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip } from '@mui/material';
+import EmojiPicker from 'emoji-picker-react';
+
+import { SentimentVerySatisfied, MicNone, Send, Image as ImageIcon } from '@mui/icons-material';
+import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, IconButton } from '@mui/material';
 import Message from '../Message';
+
+// api
+import chatApi from '~/api/chat';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -33,49 +39,101 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     },
 }));
 
+function ChatBox({ friendInfo, userId, friendId }) {
+    console.log("re-render chatbox")
 
-function ChatBox() {
+    const [emoji, setEmoji] = useState(false);
+    const [messageInput, setMessageInput] = useState();
+    const [messages, setMessages] = useState("");
+
+    const getEmpji = (emojiData) => {
+        setMessageInput(messageInput + emojiData.emoji);
+    }
+
+    const handleSendMessage = () => {
+        console.log("message: ", messageInput);
+        const requestData = {
+            "content": messageInput,
+            "senderId": userId,
+            "reccive_id": friendId,
+            "status": true
+        };
+        
+        chatApi.sendMessage()
+            .then(res => {
+
+            })
+            .catch(error => {
+                console.log();
+            })
+    }
+
+    useEffect(() => {
+        console.log("friendInfo: ", friendInfo)
+        chatApi.getFriendMessage(userId, friendId, 1, 10)
+            .then(res => {
+                setMessages(res.data.data);
+            })
+            .catch(error => {
+                console.log("error: ", error)
+            })
+    }, [friendId])
+
     return (<>
         <Card>
-            <CardHeader
-                avatar={
-                    <StyledBadge
-                        overlap="circular"
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        variant="dot"
-                    >
-                        <Avatar sx={{ backgroundColor: "red" }} aria-label="recipe" src="https://scontent.fsgn5-2.fna.fbcdn.net/v/t39.30808-6/292390027_1755321011483231_2634012541279686139_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=90sm5X0Bn54AX8_iz2n&_nc_ht=scontent.fsgn5-2.fna&oh=00_AfAtFbJA6eqwNOWUkCyNkxfh6joDKI0pXPPEqlv-RwARBw&oe=636C6A80">
-                            R
-                        </Avatar>
-                    </StyledBadge>
-                }
-                title="Hiệp Định"
-                subheader="Đang hoạt động"
-            />
-            <Box className='chatBox'>
-                <Box sx={{ margin: '1rem' }}>
-                    <Message message="ngủ ngon nhé!" direction="left" />
-                    <Message message="Cậu cũng vậy nhé." direction="right" />
-                </Box>
+            {friendInfo && (
+                <CardHeader
+                    avatar={
+                        <StyledBadge
+                            overlap="circular"
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            variant="dot"
+                        >
+                            <Avatar aria-label="recipe" src={friendInfo.avatar}></Avatar>
+                        </StyledBadge>
+                    }
+                    title={friendInfo.fullName}
+                    subheader="Đang hoạt động"
+                />
+            )}
+            <Box className='chatBox' onClick={() => { setEmoji(false) }}>
+                {messages && messages.map(({ id, content, status, createdDate, senderUser, recciveUser }, index) =>
+                (
+                    <>
+                        {userId === senderUser.id ? (
+                            <>
+                                <Box sx={{ margin: '1rem' }}>
+                                    <Message message={content} direction="right" />
+                                </Box>
+                            </>
+                        ) : (
+                            <>
+                                <Box sx={{ margin: '1rem' }}>
+                                    <Message message={content} direction="left" />
+                                </Box>
+                            </>
+                        )}
+                    </>
+                ))}
             </Box>
+            {emoji && (
+                <Box className="EmojiPicker">
+                    <EmojiPicker onEmojiClick={(emojiData) => getEmpji(emojiData)} lazyLoadEmojis={true} />
+                </Box>
+            )}
             <Box className="footerChat">
-                <SentimentVerySatisfied />
-                <TextField hiddenLabel id="outlined-basic" variant="outlined" sx={{ width: '70%' }} placeholder="Aa" />
+                <IconButton onClick={() => { setEmoji(!emoji) }}>
+                    <SentimentVerySatisfied />
+                </IconButton>
+                <ImageIcon />
+                <TextField hiddenLabel id="outlined-basic" variant="outlined" sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => { setMessageInput(e.target.value) }} onClick={() => { setEmoji(false) }} />
                 <MicNone />
-                <Button variant="contained" endIcon={<Send />} >
+                <Button variant="contained" endIcon={<Send />} size="large" onClick={handleSendMessage}>
                     Gửi
                 </Button>
             </Box>
         </Card>
-
-
-        {/* 
-        <div class="chat-box-tray">
-            <input type="text" />
-            <MicNone />
-            <Send />
-        </div> */}
     </>);
 }
 
-export default ChatBox;
+export default memo(ChatBox);
