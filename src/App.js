@@ -11,60 +11,63 @@ import Protected from './Proteced';
 
 // import '@fontsource/roboto/300.css';
 import Home from './page/Home';
+import { SocketContextProvider } from './context/SocketContext';
 
 function App() {
     return (
         <ThemeProvider>
             <AuthContextProvider>
-                <Home />
-                <Routes>
-                    {publicRoutes.map((route, index) => {
-                        const Page = route.component;
-                        let Layout = DefaultLayout;
+                <SocketContextProvider>
+                    <Home />
+                    <Routes>
+                        {publicRoutes.map((route, index) => {
+                            const Page = route.component;
+                            let Layout = DefaultLayout;
 
-                        if (route.layout) {
-                            Layout = route.layout;
-                        } else if (route.layout === null) {
-                            Layout = Fragment;
-                        }
-                        return (
-                            <Route
-                                key={index}
-                                path={route.path}
-                                element={
-                                    <Layout>
-                                        <Page key={index} />
-                                    </Layout>
-                                }
-                            />
-                        );
-                    })}
-
-                    {privateRoutes.map((route, index) => {
-                        const Page = route.component;
-                        let Layout = DefaultLayout;
-
-                        if (route.layout) {
-                            Layout = route.layout;
-                        } else if (route.layout === null) {
-                            Layout = Fragment;
-                        }
-                        return (
-                            <Route
-                                key={index}
-                                path={route.path}
-                                element={
-                                    <Protected>
+                            if (route.layout) {
+                                Layout = route.layout;
+                            } else if (route.layout === null) {
+                                Layout = Fragment;
+                            }
+                            return (
+                                <Route
+                                    key={index}
+                                    path={route.path}
+                                    element={
                                         <Layout>
                                             <Page key={index} />
                                         </Layout>
-                                    </Protected>
-                                }
-                            />
-                        );
-                    })}
-                </Routes>
-                <Snackbar />
+                                    }
+                                />
+                            );
+                        })}
+
+                        {privateRoutes.map((route, index) => {
+                            const Page = route.component;
+                            let Layout = DefaultLayout;
+
+                            if (route.layout) {
+                                Layout = route.layout;
+                            } else if (route.layout === null) {
+                                Layout = Fragment;
+                            }
+                            return (
+                                <Route
+                                    key={index}
+                                    path={route.path}
+                                    element={
+                                        <Protected>
+                                            <Layout>
+                                                <Page key={index} />
+                                            </Layout>
+                                        </Protected>
+                                    }
+                                />
+                            );
+                        })}
+                    </Routes>
+                    <Snackbar />
+                </SocketContextProvider>
             </AuthContextProvider>
         </ThemeProvider>
     );

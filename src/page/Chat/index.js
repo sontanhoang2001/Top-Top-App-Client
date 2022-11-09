@@ -1,9 +1,6 @@
 import './Chat.scss';
 
-import { over } from 'stompjs';
-import SockJS from 'sockjs-client';
-
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -33,8 +30,9 @@ import ChatBox from './ChatBox'
 // api
 import chatApi from '~/api/chat';
 
-// auth provider
+// provider
 import { UserAuth } from '~/context/AuthContext';
+import { Socket } from '~/context/SocketContext';
 
 const messages = [
     {
@@ -114,46 +112,13 @@ const StyledFab = styled(Fab)({
 });
 
 
-// ref truyen vao prop
-var stompClient = null;
-
-export default function Chat() {
+function Chat() {
     const { user } = UserAuth();
+    const { stompClient, privateMessage } = Socket();
 
     const [friend, setFriend] = useState();
     const [friendId, setFriendId] = useState("7be3bc09-ba7c-41a1-a449-dc3b9bd894b1");
     const [friendInfo, setFriendInfo] = useState();
-
-    const connect = () => {
-        let Sock = new SockJS('http://localhost:8081/ws');
-        stompClient = over(Sock);
-        stompClient.connect({}, onConnected, onError);
-    }
-
-    const onConnected = () => {
-        // stompClient.subscribe('/chatroom/public', onMessageReceived);
-        stompClient.subscribe('/user/' + user.id + '/private', onPrivateMessage);
-        // userJoin();
-    }
-
-    const onError = (err) => {
-        console.log(err);
-    }
-
-    const onPrivateMessage = (payload) => {
-        var payloadData = JSON.parse(payload.body);
-        console.log("payloadData", payloadData);
-    }
-
-    const onMessageReceived = (payload) => {
-        var payloadData = JSON.parse(payload.body);
-        console.log("payloadData.senderName: ", payloadData.senderName)
-    }
-
-    useEffect(() => {
-        user &&
-            connect();
-    })
 
     useEffect(() => {
         if (user) {
@@ -207,10 +172,12 @@ export default function Chat() {
 
                 {user && (
                     <Grid item xs={12} md={9}>
-                        <ChatBox friendInfo={friendInfo} userId={user.id} friendId={friendId} />
+                        <ChatBox stompClient={stompClient} receiveMessage={privateMessage} friendInfo={friendInfo} userId={user.id} friendId={friendId} />
                     </Grid>
                 )}
             </Grid>
         </Fragment>
     );
 }
+
+export default memo(Chat)

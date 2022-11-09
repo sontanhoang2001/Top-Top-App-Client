@@ -10,6 +10,7 @@ import Message from '../Message';
 // api
 import chatApi from '~/api/chat';
 
+
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
         backgroundColor: '#44b700',
@@ -39,11 +40,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     },
 }));
 
-function ChatBox({ friendInfo, userId, friendId }) {
-    console.log("re-render chatbox")
-
+function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) {
     const [emoji, setEmoji] = useState(false);
-    const [messageInput, setMessageInput] = useState();
+    const [messageInput, setMessageInput] = useState("");
     const [messages, setMessages] = useState("");
 
     const getEmpji = (emojiData) => {
@@ -51,33 +50,51 @@ function ChatBox({ friendInfo, userId, friendId }) {
     }
 
     const handleSendMessage = () => {
-        console.log("message: ", messageInput);
-        const requestData = {
-            "content": messageInput,
-            "senderId": userId,
-            "reccive_id": friendId,
-            "status": true
-        };
-        
-        chatApi.sendMessage()
-            .then(res => {
+        if (stompClient) {
+            setMessageInput("");
+            const chatMessage = {
+                "content": messageInput,
+                "senderId": userId,
+                "reccive_id": friendId,
+                "status": true
+            };
 
-            })
-            .catch(error => {
-                console.log();
-            })
+            stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+
+            const newMessages =
+            {
+                content: messageInput,
+                status: true,
+                createdDate: "",
+                senderUser: {
+                    id: userId
+                }
+            };
+
+            setMessages([...messages, newMessages]);
+        }
     }
 
     useEffect(() => {
         console.log("friendInfo: ", friendInfo)
         chatApi.getFriendMessage(userId, friendId, 1, 10)
             .then(res => {
+                // console.log("message thu: ", res.data.data)
                 setMessages(res.data.data);
             })
             .catch(error => {
                 console.log("error: ", error)
             })
     }, [friendId])
+
+    useEffect(() => {
+        if (receiveMessage !== "") {
+            const { content, senderId } = receiveMessage;
+            const newReceiveMessage = { content: content, senderUser: { id: senderId }, createdDate: "" };
+            setMessages([...messages, newReceiveMessage]);
+        }
+
+    }, [receiveMessage])
 
     return (<>
         <Card>
@@ -97,9 +114,9 @@ function ChatBox({ friendInfo, userId, friendId }) {
                 />
             )}
             <Box className='chatBox' onClick={() => { setEmoji(false) }}>
-                {messages && messages.map(({ id, content, status, createdDate, senderUser, recciveUser }, index) =>
+                {messages && messages.map(({ content, senderUser, createdDate }, index) =>
                 (
-                    <>
+                    <li key={index}>
                         {userId === senderUser.id ? (
                             <>
                                 <Box sx={{ margin: '1rem' }}>
@@ -109,11 +126,11 @@ function ChatBox({ friendInfo, userId, friendId }) {
                         ) : (
                             <>
                                 <Box sx={{ margin: '1rem' }}>
-                                    <Message message={content} direction="left" />
+                                    <Message avatarUrl={friendInfo.avatar} message={content} direction="left" />
                                 </Box>
                             </>
                         )}
-                    </>
+                    </li>
                 ))}
             </Box>
             {emoji && (

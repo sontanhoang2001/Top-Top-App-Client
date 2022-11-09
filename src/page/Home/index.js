@@ -112,7 +112,7 @@ function Home() {
     useEffect(() => {
         videoApi.loadVideoNewsFeed(1)
             .then(res => {
-                console.log("res video ne: ", res.data.data);
+                // console.log("res video ne: ", res.data.data);
                 setVideo(res.data.data);
                 setIsLoaded(true);
             })
