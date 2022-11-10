@@ -126,7 +126,7 @@ function Home() {
         return (
             <div style={{ display: enable ? 'inherit' : 'none' }}>
                 <Header />
-                <div className={cx('video__container')}>
+                <div className={'video-scrollbar ' + cx('video__container')}>
                     {videos.map((video, index) => (
                         <div key={index}>
                             <Video

@@ -5,9 +5,18 @@
 }
 
 /* hide scrollbar but allow scrolling */
-::-webkit-scrollbar {
-    display: none;
-}
+// ::-webkit-scrollbar {
+//     display: none;
+// }
+
+// ::-webkit-scrollbar {
+//     display: none;
+// }
+
+/* width */
+// :nth-last-child(1)::-webkit-scrollbar {
+//     display: none;
+// }
 
 * {
     margin: 0;
@@ -17,7 +26,6 @@
 // html {
 //     font-size: 62.5%;
 // }
-
 
 body {
     font-family: ibm-plex-sans, sans-serif;

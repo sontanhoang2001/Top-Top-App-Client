@@ -117,7 +117,7 @@ function Chat() {
     const { stompClient, privateMessage } = Socket();
 
     const [friend, setFriend] = useState();
-    const [friendId, setFriendId] = useState("7be3bc09-ba7c-41a1-a449-dc3b9bd894b1");
+    const [friendId, setFriendId] = useState();
     const [friendInfo, setFriendInfo] = useState();
 
     useEffect(() => {
@@ -125,6 +125,9 @@ function Chat() {
             chatApi.getAllFriends(user.id)
                 .then(res => {
                     setFriend(res.data);
+
+                    setFriendId(res.data[0].id);
+                    setFriendInfo(res.data[0]);
                 })
                 .catch(error => {
                     console.log("error: ", error)
@@ -145,6 +148,9 @@ function Chat() {
             <Grid container spacing={2} mt={3} alignItems="center">
                 <Grid item xs={12} md={3}>
                     <List sx={{ mb: 2 }} className='listFriend'>
+                        <ListSubheader sx={{ bgcolor: 'background.paper' }}>
+                            Danh sách bạn bè
+                        </ListSubheader>
                         {friend && friend.map(({ id, fullName, avatar }, index) => (
                             <Fragment key={id}>
                                 {/* {id === 1 && (
@@ -159,11 +165,12 @@ function Chat() {
                                     </ListSubheader>
                                 )} */}
 
+
                                 <ListItem button onClick={() => handleLoadMessage(id, index)}>
                                     <ListItemAvatar>
                                         <Avatar alt="Profile Picture" src={avatar} />
                                     </ListItemAvatar>
-                                    <ListItemText primary={fullName} secondary="Định làm rồi mà làm biến thêm" />
+                                    <ListItemText primary={fullName} />
                                 </ListItem>
                             </Fragment>
                         ))}

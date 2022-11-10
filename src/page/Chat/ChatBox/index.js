@@ -1,5 +1,5 @@
 import './ChatBox.scss'
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 
 import EmojiPicker from 'emoji-picker-react';
 
@@ -9,6 +9,7 @@ import Message from '../Message';
 
 // api
 import chatApi from '~/api/chat';
+import { async } from '@firebase/util';
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -44,12 +45,16 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
     const [emoji, setEmoji] = useState(false);
     const [messageInput, setMessageInput] = useState("");
     const [messages, setMessages] = useState("");
+    const [messagesPage, setMessagesPage] = useState(1);
+
+    const messageEl = useRef(null)
 
     const getEmpji = (emojiData) => {
         setMessageInput(messageInput + emojiData.emoji);
     }
 
     const handleSendMessage = () => {
+        handleCloseEmoji(false);
         if (stompClient) {
             setMessageInput("");
             const chatMessage = {
@@ -72,15 +77,19 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
             };
 
             setMessages([...messages, newMessages]);
+            scrollToBottom();
         }
     }
 
+
     useEffect(() => {
         console.log("friendInfo: ", friendInfo)
-        chatApi.getFriendMessage(userId, friendId, 1, 10)
+        chatApi.getFriendMessage(userId, friendId, 1, 15)
             .then(res => {
                 // console.log("message thu: ", res.data.data)
                 setMessages(res.data.data);
+                setMessagesPage(res.data.pageNo)
+                console.log("pageNo: ", messagesPage)
             })
             .catch(error => {
                 console.log("error: ", error)
@@ -93,8 +102,41 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
             const newReceiveMessage = { content: content, senderUser: { id: senderId }, createdDate: "" };
             setMessages([...messages, newReceiveMessage]);
         }
-
     }, [receiveMessage])
+
+    const scrollToBottom = () => {
+        if (messageEl) {
+            messageEl.current.addEventListener('DOMNodeInserted', event => {
+                const { currentTarget: target } = event;
+                target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+            });
+        }
+    }
+
+    const handleLoadOldMessage = async e => {
+        let element = e.target;
+        if (element.scrollTop === 0) {
+            //fetch messages
+            console.log("fetch");
+
+            setMessagesPage(messagesPage + 1);
+            await chatApi.getFriendMessage(userId, friendId, messagesPage + 1, 15)
+                .then(res => {
+                    // console.log("message thu: ", res.data.data)
+                    const responseOldMessage = res.data.data;
+                    console.log("new ")
+                    setMessages([...responseOldMessage, ...messages]);
+                })
+                .catch(error => {
+                    console.log("error: ", error)
+                })
+        }
+    }
+
+
+    const handleCloseEmoji = (value) => {
+        setEmoji(value);
+    }
 
     return (<>
         <Card>
@@ -113,25 +155,27 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
                     subheader="Đang hoạt động"
                 />
             )}
-            <Box className='chatBox' onClick={() => { setEmoji(false) }}>
-                {messages && messages.map(({ content, senderUser, createdDate }, index) =>
-                (
-                    <li key={index}>
-                        {userId === senderUser.id ? (
-                            <>
-                                <Box sx={{ margin: '1rem' }}>
-                                    <Message message={content} direction="right" />
-                                </Box>
-                            </>
-                        ) : (
-                            <>
-                                <Box sx={{ margin: '1rem' }}>
-                                    <Message avatarUrl={friendInfo.avatar} message={content} direction="left" />
-                                </Box>
-                            </>
-                        )}
-                    </li>
-                ))}
+            <Box className='chatBox' ref={messageEl} onClick={() => { handleCloseEmoji(false) }} onScroll={handleLoadOldMessage} >
+                <ul>
+                    {messages && messages.map(({ content, senderUser, createdDate }, index) =>
+                    (
+                        <li key={index}>
+                            {userId === senderUser.id ? (
+                                <>
+                                    <Box sx={{ margin: '1rem' }}>
+                                        <Message message={content} direction="right" />
+                                    </Box>
+                                </>
+                            ) : (
+                                <>
+                                    <Box sx={{ margin: '1rem' }}>
+                                        <Message avatarUrl={friendInfo.avatar} message={content} direction="left" />
+                                    </Box>
+                                </>
+                            )}
+                        </li>
+                    ))}
+                </ul>
             </Box>
             {emoji && (
                 <Box className="EmojiPicker">
@@ -139,11 +183,11 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
                 </Box>
             )}
             <Box className="footerChat">
-                <IconButton onClick={() => { setEmoji(!emoji) }}>
+                <IconButton onClick={() => { handleCloseEmoji(!emoji) }}>
                     <SentimentVerySatisfied />
                 </IconButton>
                 <ImageIcon />
-                <TextField hiddenLabel id="outlined-basic" variant="outlined" sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => { setMessageInput(e.target.value) }} onClick={() => { setEmoji(false) }} />
+                <TextField hiddenLabel id="outlined-basic" variant="outlined" sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => { setMessageInput(e.target.value) }} onClick={() => { handleCloseEmoji(false) }} />
                 <MicNone />
                 <Button variant="contained" endIcon={<Send />} size="large" onClick={handleSendMessage}>
                     Gửi
