@@ -34,73 +34,6 @@ import chatApi from '~/api/chat';
 import { UserAuth } from '~/context/AuthContext';
 import { Socket } from '~/context/SocketContext';
 
-const messages = [
-    {
-        id: 1,
-        primary: 'Brunch this week?',
-        person: '/static/images/avatar/5.jpg',
-    },
-    {
-        id: 2,
-        primary: 'Birthday Gift',
-        person: '/static/images/avatar/1.jpg',
-    },
-    {
-        id: 3,
-        primary: 'Recipe to try',
-        person: '/static/images/avatar/2.jpg',
-    },
-    {
-        id: 4,
-        primary: 'Yes!',
-        person: '/static/images/avatar/3.jpg',
-    },
-    {
-        id: 5,
-        primary: "Doctor's Appointment",
-        person: '/static/images/avatar/4.jpg',
-    },
-    {
-        id: 6,
-        primary: 'Discussion',
-        person: '/static/images/avatar/5.jpg',
-    },
-    {
-        id: 7,
-        primary: 'Summer BBQ',
-        person: '/static/images/avatar/1.jpg',
-    },
-    {
-        id: 8,
-        primary: 'Summer BBQ',
-        person: '/static/images/avatar/1.jpg',
-    },
-    {
-        id: 9,
-        primary: 'Summer BBQ',
-        person: '/static/images/avatar/1.jpg',
-    },
-    {
-        id: 10,
-        primary: 'Summer BBQ',
-        person: '/static/images/avatar/1.jpg',
-    },
-    {
-        id: 11,
-        primary: 'Summer BBQ',
-        person: '/static/images/avatar/1.jpg',
-    },
-    {
-        id: 12,
-        primary: 'Summer BBQ',
-        person: '/static/images/avatar/1.jpg',
-    },
-    {
-        id: 13,
-        primary: 'Summer BBQ',
-        person: '/static/images/avatar/1.jpg',
-    },
-];
 
 const StyledFab = styled(Fab)({
     position: 'absolute',
@@ -139,7 +72,7 @@ function Chat() {
         setFriendId(id);
         setFriendInfo(friend[index]);
     }
-
+    
     return (
         <Fragment>
             <NavBar back namePage='Tin nhắn của bạn' />

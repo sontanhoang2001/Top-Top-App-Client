@@ -14,7 +14,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
-    margin: 1rem
+    margin: 1rem;
 }
 
 .EmojiPicker {
@@ -23,3 +23,10 @@
     left: 0;
     z-index: 99;
 }
+
+// .btn__scrollToBottom {
+//     position: absolute;
+//     top: 540px;
+//     left: 45%;
+//     z-index: 99;
+// }

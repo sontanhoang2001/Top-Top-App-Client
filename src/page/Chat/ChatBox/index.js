@@ -1,16 +1,16 @@
 import './ChatBox.scss'
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 import EmojiPicker from 'emoji-picker-react';
 
 import { SentimentVerySatisfied, MicNone, Send, Image as ImageIcon } from '@mui/icons-material';
-import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, IconButton } from '@mui/material';
+import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, IconButton, CircularProgress } from '@mui/material';
 import Message from '../Message';
+
+import InfiniteScroll from "react-infinite-scroll-component";
 
 // api
 import chatApi from '~/api/chat';
-import { async } from '@firebase/util';
-
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -41,55 +41,34 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     },
 }));
 
+const initialPageSize = 15;
+
 function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) {
     const [emoji, setEmoji] = useState(false);
     const [messageInput, setMessageInput] = useState("");
     const [messages, setMessages] = useState("");
     const [messagesPage, setMessagesPage] = useState(1);
+    const [totalElements, setTotalElements] = useState();
+
+    const [pageSize, setPageSize] = useState(initialPageSize);
+    const [hasMore, setHasMore] = useState(true);
 
     const messageEl = useRef(null)
 
-    const getEmpji = (emojiData) => {
-        setMessageInput(messageInput + emojiData.emoji);
+    const initialState = () => {
+        setMessagesPage(1);
+        setPageSize(initialPageSize);
+        setHasMore(true);
     }
-
-    const handleSendMessage = () => {
-        handleCloseEmoji(false);
-        if (stompClient) {
-            setMessageInput("");
-            const chatMessage = {
-                "content": messageInput,
-                "senderId": userId,
-                "reccive_id": friendId,
-                "status": true
-            };
-
-            stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-
-            const newMessages =
-            {
-                content: messageInput,
-                status: true,
-                createdDate: "",
-                senderUser: {
-                    id: userId
-                }
-            };
-
-            setMessages([...messages, newMessages]);
-            scrollToBottom();
-        }
-    }
-
 
     useEffect(() => {
+        initialState();
         console.log("friendInfo: ", friendInfo)
-        chatApi.getFriendMessage(userId, friendId, 1, 15)
+        chatApi.getFriendMessage(userId, friendId, 1, initialPageSize)
             .then(res => {
-                // console.log("message thu: ", res.data.data)
                 setMessages(res.data.data);
                 setMessagesPage(res.data.pageNo)
-                console.log("pageNo: ", messagesPage)
+                setTotalElements(res.data.totalElements)
             })
             .catch(error => {
                 console.log("error: ", error)
@@ -100,43 +79,80 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
         if (receiveMessage !== "") {
             const { content, senderId } = receiveMessage;
             const newReceiveMessage = { content: content, senderUser: { id: senderId }, createdDate: "" };
-            setMessages([...messages, newReceiveMessage]);
+            setMessages([newReceiveMessage, ...messages]);
+            handleScrollToBottom();
         }
     }, [receiveMessage])
 
-    const scrollToBottom = () => {
+    const handleScrollToBottom = () => {
         if (messageEl) {
-            messageEl.current.addEventListener('DOMNodeInserted', event => {
-                const { currentTarget: target } = event;
-                target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
-            });
+            // messageEl.current.addEventListener('DOMNodeInserted', event => {
+            //     const { currentTarget: target } = event;
+            //     target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+            // });
+
+            const scroll =
+                messageEl.current.scrollHeight -
+                messageEl.current.clientHeight;
+            messageEl.current.scrollTo(0, scroll);
         }
     }
-
-    const handleLoadOldMessage = async e => {
-        let element = e.target;
-        if (element.scrollTop === 0) {
-            //fetch messages
-            console.log("fetch");
-
-            setMessagesPage(messagesPage + 1);
-            await chatApi.getFriendMessage(userId, friendId, messagesPage + 1, 15)
-                .then(res => {
-                    // console.log("message thu: ", res.data.data)
-                    const responseOldMessage = res.data.data;
-                    console.log("new ")
-                    setMessages([...responseOldMessage, ...messages]);
-                })
-                .catch(error => {
-                    console.log("error: ", error)
-                })
-        }
-    }
-
 
     const handleCloseEmoji = (value) => {
         setEmoji(value);
     }
+
+    const fetchMoreData = async () => {
+        if (pageSize >= totalElements) {
+            setHasMore(false);
+            return;
+        }
+
+        await chatApi.getFriendMessage(userId, friendId, messagesPage + 1, initialPageSize)
+            .then(res => {
+                const responseOldMessage = res.data.data;
+                setMessages([...messages, ...responseOldMessage]);
+                setPageSize(pageSize + initialPageSize);
+                setMessagesPage(messagesPage + 1);
+            })
+            .catch(error => {
+                console.log("error: ", error)
+            })
+    };
+
+    const getEmpji = (emojiData) => {
+        setMessageInput(messageInput + emojiData.emoji);
+    }
+
+    const handleSendMessage = () => {
+        handleCloseEmoji(false);
+        if (messageInput != "")
+            if (stompClient) {
+                setMessageInput("");
+                const chatMessage = {
+                    "content": messageInput,
+                    "senderId": userId,
+                    "reccive_id": friendId,
+                    "status": true
+                };
+
+                stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+
+                const newMessages =
+                {
+                    content: messageInput,
+                    status: true,
+                    createdDate: "",
+                    senderUser: {
+                        id: userId
+                    }
+                };
+
+                setMessages([newMessages, ...messages]);
+                handleScrollToBottom();
+            }
+    }
+
 
     return (<>
         <Card>
@@ -155,11 +171,33 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
                     subheader="Đang hoạt động"
                 />
             )}
-            <Box className='chatBox' ref={messageEl} onClick={() => { handleCloseEmoji(false) }} onScroll={handleLoadOldMessage} >
-                <ul>
+            <div
+                id="scrollableDiv"
+                style={{
+                    height: '64vh',
+                    overflow: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column-reverse',
+                }}
+                ref={messageEl}
+                onClick={() => { handleCloseEmoji(false) }}
+            >
+                <InfiniteScroll
+                    dataLength={pageSize}
+                    next={fetchMoreData}
+                    style={{ display: 'flex', flexDirection: 'column-reverse' }} //To put endMessage and loader to the top.
+                    inverse={true}
+                    hasMore={hasMore}
+                    loader={<Box className='circularProgress'>
+                        <CircularProgress />
+                    </Box>}
+                    scrollableTarget="scrollableDiv"
+                    className='chatBox'
+                    ref={messageEl} onClick={() => { handleCloseEmoji(false) }}
+                >
                     {messages && messages.map(({ content, senderUser, createdDate }, index) =>
                     (
-                        <li key={index}>
+                        <div key={index}>
                             {userId === senderUser.id ? (
                                 <>
                                     <Box sx={{ margin: '1rem' }}>
@@ -173,10 +211,11 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
                                     </Box>
                                 </>
                             )}
-                        </li>
+                        </div>
                     ))}
-                </ul>
-            </Box>
+                </InfiniteScroll>
+            </div>
+
             {emoji && (
                 <Box className="EmojiPicker">
                     <EmojiPicker onEmojiClick={(emojiData) => getEmpji(emojiData)} lazyLoadEmojis={true} />

@@ -36,3 +36,13 @@ body {
 .react-thumbnail-generator img {
     width: 100%;
 }
+
+.circularProgress {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}

@@ -14,6 +14,7 @@ import Otp from '~/page/Otp';
 import ForgotPassword from '~/page/ForgotPassword';
 import ResetPassword from '~/page/ResetPassword';
 import Chat from '~/page/Chat/index';
+import Test from '~/page/Test';
 
 
 // Public routes
@@ -29,6 +30,8 @@ const publicRoutes = [
     { path: '/@', component: Profile },
     { path: '/register', component: Register, layout: FooterOnly },
     { path: '/counter', component: Counter },
+    { path: '/test', component: Test },
+
 ];
 
 const privateRoutes = [

@@ -20,7 +20,20 @@ const theme = createTheme({
     }
 })
 
-function Message({ avatarUrl, message, direction, watched }) {
+const myMessage = createTheme({
+    components: {
+        MuiChip: {
+            styleOverrides: {
+                root: {
+                    color: '#fff',
+                    backgroundColor: 'rgb(32 101 209)',
+                },
+            }
+        },
+    }
+});
+
+function Message({ avatarUrl, message, direction }) {
 
     return (
         <>
@@ -31,18 +44,15 @@ function Message({ avatarUrl, message, direction, watched }) {
                             avatar={
                                 <Avatar sx={{ width: "2rem", height: '2rem' }} aria-label="recipe" src={avatarUrl}></Avatar>
                             }
-                            subheader={(<Chip label={message} component="a" href="#basic-chip" />)}
+                            subheader={(<Chip label={<Typography variant="subtitle1">{message}</Typography>} component="p" />)}
                         />
                     </Box>
                 ) : (
-                    <>
-                        <Box display="flex" flexDirection="column" alignItems="flex-end">
-                            <Chip label={message} component="p" />
-                            {watched && (
-                                <Typography variant="caption" sx={{ marginTop: "1em" }}>Đã xem</Typography>
-                            )}
-                        </Box>
-                    </>
+                    <Box display="flex" flexDirection="column" alignItems="flex-end">
+                        <ThemeProvider theme={myMessage}>
+                            <Chip label={<Typography variant="subtitle1">{message}</Typography>} component="p" />
+                        </ThemeProvider>
+                    </Box>
                 )}
 
 
@@ -51,3 +61,7 @@ function Message({ avatarUrl, message, direction, watched }) {
 }
 
 export default memo(Message);
+
+{/* {watched && (
+                                <Typography variant="caption" sx={{ marginTop: "1em" }}>Đã xem</Typography>
+                            )} */}
