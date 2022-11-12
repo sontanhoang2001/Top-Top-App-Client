@@ -1,0 +1,11 @@
+.message {
+    width: fit-content;
+    background-color: #e4e6eb;
+    padding: 0.8rem;
+    border-radius: 15px;
+    color: #050505;
+}
+.messageImage {
+    width: 25%;
+    border-radius: 15px;
+}

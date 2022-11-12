@@ -71,7 +71,7 @@ export default function UploadVideoForm() {
         reader.readAsDataURL(e.target.files[0]) //start conversion...
         reader.onload = function (e) { //.. once finished..
             var rawLog = reader.result.split(',')[1]; //extract only thee file data part
-            var dataSend = { dataReq: { data: rawLog, name: file.name, type: file.type }, fname: "uploadFilesToGoogleDrive" }; //preapre info to send to API
+            var dataSend = { dataReq: { data: rawLog, name: file.name, type: file.type }, fname: "uploadUserVideo" }; //preapre info to send to API
 
             methods.setValue("videoUrl", dataSend);
             setReviewVideo(filePath);

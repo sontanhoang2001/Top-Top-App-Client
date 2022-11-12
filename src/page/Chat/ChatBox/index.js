@@ -4,13 +4,16 @@ import { memo, useEffect, useRef, useState } from 'react';
 import EmojiPicker from 'emoji-picker-react';
 
 import { SentimentVerySatisfied, MicNone, Send, Image as ImageIcon } from '@mui/icons-material';
-import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, IconButton, CircularProgress } from '@mui/material';
+import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, IconButton, CircularProgress, LinearProgress } from '@mui/material';
 import Message from '../Message';
 
 import InfiniteScroll from "react-infinite-scroll-component";
 
 // api
 import chatApi from '~/api/chat';
+import mediaApi from '~/api/media';
+import { async } from '@firebase/util';
+
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -126,33 +129,72 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
 
     const handleSendMessage = () => {
         handleCloseEmoji(false);
-        if (messageInput != "")
-            if (stompClient) {
-                setMessageInput("");
-                const chatMessage = {
-                    "content": messageInput,
-                    "senderId": userId,
-                    "reccive_id": friendId,
-                    "status": true
-                };
-
-                stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-
-                const newMessages =
-                {
-                    content: messageInput,
-                    status: true,
-                    createdDate: "",
-                    senderUser: {
-                        id: userId
-                    }
-                };
-
-                setMessages([newMessages, ...messages]);
-                handleScrollToBottom();
-            }
+        if (messageInput.trim() == "") {
+            return;
+        } else {
+            sendMessageSoket(messageInput);
+        }
     }
 
+    const sendMessageSoket = (content) => {
+        if (stompClient) {
+            setMessageInput("");
+            const chatMessage = {
+                "content": content,
+                "senderId": userId,
+                "reccive_id": friendId,
+                "status": true
+            };
+
+            stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+
+            const newMessages =
+            {
+                content: content,
+                status: true,
+                createdDate: "",
+                senderUser: {
+                    id: userId
+                }
+            };
+
+            setMessages([newMessages, ...messages]);
+            handleScrollToBottom();
+        }
+    }
+
+    const handleUploadMessageImage = (e) => {
+        var filePath = URL.createObjectURL(e.target.files[0]);
+        var file = e.target.files[0] //the file
+        var reader = new FileReader() //this for convert to Base64 
+        reader.readAsDataURL(e.target.files[0]) //start conversion...
+        reader.onload = async function (e) { //.. once finished..
+            var rawLog = reader.result.split(',')[1]; //extract only thee file data part
+            var dataSend = { dataReq: { data: rawLog, name: file.name, type: file.type }, fname: "uploadUserMessageImage" }; //preapre info to send to API
+
+            // console.log("dataSend: ", dataSend);
+            // render image in myMessage
+            const newMessages =
+            {
+                content: "Đang tải ảnh...",
+                status: true,
+                createdDate: "",
+                senderUser: {
+                    id: userId
+                }
+            };
+
+            setMessages([newMessages, ...messages]);
+
+            await mediaApi.uploadMessageImage(dataSend)
+                .then(res => res.json())
+                .then((res) => {
+                    console.log("upload image: ", res);
+                    // send message image
+                    sendMessageSoket(res.url);
+                }).catch(e => console.log(e))
+        }
+    }
 
     return (<>
         <Card>
@@ -225,7 +267,12 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
                 <IconButton onClick={() => { handleCloseEmoji(!emoji) }}>
                     <SentimentVerySatisfied />
                 </IconButton>
-                <ImageIcon />
+
+                <IconButton sx={{ color: '#637381' }} component="label">
+                    <input hidden type="file" accept="application/video, image/*" onChange={(e) => handleUploadMessageImage(e)} />
+                    <ImageIcon />
+                </IconButton>
+
                 <TextField hiddenLabel id="outlined-basic" variant="outlined" sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => { setMessageInput(e.target.value) }} onClick={() => { handleCloseEmoji(false) }} />
                 <MicNone />
                 <Button variant="contained" endIcon={<Send />} size="large" onClick={handleSendMessage}>

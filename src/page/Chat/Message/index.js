@@ -1,6 +1,12 @@
+import styles from './message.css';
+import classNames from 'classnames/bind';
+
+import { memo, useRef, useState } from "react";
 import { Avatar, CardHeader, Chip, Typography } from "@mui/material";
 import { createTheme, ThemeProvider, styled, Box } from '@mui/material';
-import { memo } from "react";
+import { urlFromDriveUrl } from '~/shared/helper';
+
+const cx = classNames.bind(styles);
 
 const theme = createTheme({
     components: {
@@ -10,30 +16,22 @@ const theme = createTheme({
                 },
             },
         },
-        MuiChip: {
-            styleOverrides: {
-                root: {
-                    maxWidth: "48%"
-                },
-            },
-        },
     }
 })
 
-const myMessage = createTheme({
-    components: {
-        MuiChip: {
-            styleOverrides: {
-                root: {
-                    color: '#fff',
-                    backgroundColor: 'rgb(32 101 209)',
-                },
-            }
-        },
-    }
-});
 
 function Message({ avatarUrl, message, direction }) {
+
+    var messageRender = <></>;
+
+    if (message) {
+        let position = message.search("https://drive.google.com");
+        if (position == -1) {
+            messageRender = (<div className={cx('message')}>{message}</div>);
+        } else {
+            messageRender = (<img className={cx('messageImage')} src={urlFromDriveUrl(message)} />)
+        }
+    }
 
     return (
         <>
@@ -44,17 +42,14 @@ function Message({ avatarUrl, message, direction }) {
                             avatar={
                                 <Avatar sx={{ width: "2rem", height: '2rem' }} aria-label="recipe" src={avatarUrl}></Avatar>
                             }
-                            subheader={(<Chip label={<Typography variant="subtitle1">{message}</Typography>} component="p" />)}
+                            subheader={messageRender}
                         />
                     </Box>
                 ) : (
                     <Box display="flex" flexDirection="column" alignItems="flex-end">
-                        <ThemeProvider theme={myMessage}>
-                            <Chip label={<Typography variant="subtitle1">{message}</Typography>} component="p" />
-                        </ThemeProvider>
+                        {messageRender}
                     </Box>
                 )}
-
 
             </ThemeProvider>
         </>);
