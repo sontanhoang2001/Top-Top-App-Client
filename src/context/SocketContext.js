@@ -8,7 +8,7 @@ import { UserAuth } from '~/context/AuthContext';
 
 const SocketContext = createContext();
 
-var stompClient = null;
+var stompClient = false;
 
 export const SocketContextProvider = ({ children }) => {
     const { user } = UserAuth();
@@ -41,8 +41,14 @@ export const SocketContextProvider = ({ children }) => {
             connect();
     }, [user])
 
+    // useEffect(() => {
+    //     if (stompClient)
+    //         console.log("ket noi thanh cong: ", stompClient)
+    // })
+
+
     return (
-        <SocketContext.Provider value={{ stompClient, privateMessage}}>{children}</SocketContext.Provider>
+        <SocketContext.Provider value={{ stompClient, privateMessage }}>{children}</SocketContext.Provider>
     );
 };
 

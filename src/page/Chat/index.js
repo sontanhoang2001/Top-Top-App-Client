@@ -1,7 +1,7 @@
 import './Chat.scss';
 
 import { Fragment, memo, useEffect, useRef, useState } from 'react';
-import { styled } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,11 +20,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { Button, Chip, Grid, TextField } from '@mui/material';
+import { Button, Chip, Grid, InputBase, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 
 // component
-import NavBar from '~/components/Layout/NavBarHeader'
 import ChatBox from './ChatBox'
 
 // api
@@ -34,6 +33,49 @@ import chatApi from '~/api/chat';
 import { UserAuth } from '~/context/AuthContext';
 import { Socket } from '~/context/SocketContext';
 
+
+
+const Search = styled('div')(({ theme }) => ({
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(1),
+        width: 'auto',
+    },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    color: 'inherit',
+    '& .MuiInputBase-input': {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            width: '12ch',
+            '&:focus': {
+                width: '20ch',
+            },
+        },
+    },
+}));
 
 const StyledFab = styled(Fab)({
     position: 'absolute',
@@ -65,6 +107,7 @@ function Chat() {
                 .catch(error => {
                     console.log("error: ", error)
                 })
+
         }
     }, [user])
 
@@ -72,18 +115,30 @@ function Chat() {
         setFriendId(id);
         setFriendInfo(friend[index]);
     }
-    
+
+    // useEffect(() => {
+    //     console.log("stompClient: ", stompClient)
+
+    // })
+
     return (
         <Fragment>
-            <NavBar back namePage='Tin nhắn của bạn' />
-            <CssBaseline />
 
-            <Grid container spacing={2} mt={3} alignItems="center">
-                <Grid item xs={12} md={3}>
+            <Grid container spacing={2} alignItems="center">
+                <Grid item xs={2} md={3}>
                     <List sx={{ mb: 2 }} className='listFriend'>
                         <ListSubheader sx={{ bgcolor: 'background.paper' }}>
                             Danh sách bạn bè
                         </ListSubheader>
+                        <Search>
+                            <SearchIconWrapper>
+                                <SearchIcon />
+                            </SearchIconWrapper>
+                            <StyledInputBase
+                                placeholder="Tìm bạn bè..."
+                                inputProps={{ 'aria-label': 'search' }}
+                            />
+                        </Search>
                         {friend && friend.map(({ id, fullName, avatar }, index) => (
                             <Fragment key={id}>
                                 {/* {id === 1 && (
@@ -111,7 +166,7 @@ function Chat() {
                 </Grid>
 
                 {user && (
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={10} md={9}>
                         <ChatBox stompClient={stompClient} receiveMessage={privateMessage} friendInfo={friendInfo} userId={user.id} friendId={friendId} />
                     </Grid>
                 )}

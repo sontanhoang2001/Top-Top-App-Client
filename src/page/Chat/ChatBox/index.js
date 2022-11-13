@@ -1,5 +1,5 @@
 import './ChatBox.scss'
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import EmojiPicker from 'emoji-picker-react';
 
@@ -8,6 +8,11 @@ import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, 
 import Message from '../Message';
 
 import InfiniteScroll from "react-infinite-scroll-component";
+import ImageViewer from "react-simple-image-viewer";
+
+// redux
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentImage, selectIsViewerOpen, selectListImagesViewer, imageViewer } from '../chatSlice';
 
 // api
 import chatApi from '~/api/chat';
@@ -130,15 +135,15 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
     const handleSendMessage = () => {
         handleCloseEmoji(false);
         if (messageInput.trim() == "") {
-            return;
+
         } else {
+            setMessageInput("");
             sendMessageSoket(messageInput);
         }
     }
 
     const sendMessageSoket = (content) => {
         if (stompClient) {
-            setMessageInput("");
             const chatMessage = {
                 "content": content,
                 "senderId": userId,
@@ -160,6 +165,8 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
 
             setMessages([newMessages, ...messages]);
             handleScrollToBottom();
+        } else {
+            console.log("ket noi that bai!")
         }
     }
 
@@ -168,7 +175,7 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
         var file = e.target.files[0] //the file
         var reader = new FileReader() //this for convert to Base64 
         reader.readAsDataURL(e.target.files[0]) //start conversion...
-        reader.onload = async function (e) { //.. once finished..
+        reader.onload = function (e) { //.. once finished..
             var rawLog = reader.result.split(',')[1]; //extract only thee file data part
             var dataSend = { dataReq: { data: rawLog, name: file.name, type: file.type }, fname: "uploadUserMessageImage" }; //preapre info to send to API
 
@@ -176,7 +183,7 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
             // render image in myMessage
             const newMessages =
             {
-                content: "Đang tải ảnh...",
+                content: 'Đang gửi ảnh...',
                 status: true,
                 createdDate: "",
                 senderUser: {
@@ -186,7 +193,7 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
 
             setMessages([newMessages, ...messages]);
 
-            await mediaApi.uploadMessageImage(dataSend)
+            mediaApi.uploadMessageImage(dataSend)
                 .then(res => res.json())
                 .then((res) => {
                     console.log("upload image: ", res);
@@ -196,10 +203,30 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
         }
     }
 
+    // image viewer
+    const dispatch = useDispatch();
+    const currentImage = useSelector(selectCurrentImage);
+    const isViewerOpen = useSelector(selectIsViewerOpen);
+    const listImagesViewer = useSelector(selectListImagesViewer);
+
+    const closeImageViewer = () => {
+        const payload = { currentImage: 0, isViewerOpen: false };
+        dispatch(imageViewer(payload))
+    };
+
+
+    // useEffect(() => {
+    //     console.log("selectListImagesViewer: ", listImagesViewer)
+    //     console.log("currentImage: ", currentImage)
+    //     console.log("isViewerOpen: ", isViewerOpen)
+
+    // })
+
     return (<>
-        <Card>
+        <Card sx={{marginTop: '8px'}}>
             {friendInfo && (
                 <CardHeader
+                sx={{padding: '10px 10px 10px'}}
                     avatar={
                         <StyledBadge
                             overlap="circular"
@@ -243,13 +270,13 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
                             {userId === senderUser.id ? (
                                 <>
                                     <Box sx={{ margin: '1rem' }}>
-                                        <Message message={content} direction="right" />
+                                        <Message index={index} message={content} direction="right" createdDate={createdDate} />
                                     </Box>
                                 </>
                             ) : (
                                 <>
                                     <Box sx={{ margin: '1rem' }}>
-                                        <Message avatarUrl={friendInfo.avatar} message={content} direction="left" />
+                                        <Message index={index} avatarUrl={friendInfo.avatar} message={content} direction="left" createdDate={createdDate} />
                                     </Box>
                                 </>
                             )}
@@ -280,6 +307,20 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
                 </Button>
             </Box>
         </Card>
+
+
+        {isViewerOpen && (
+            <ImageViewer
+                src={listImagesViewer}
+                currentIndex={currentImage}
+                onClose={closeImageViewer}
+                disableScroll={false}
+                backgroundStyle={{
+                    backgroundColor: "rgba(0,0,0,0.9)"
+                }}
+                closeOnClickOutside={true}
+            />
+        )}
     </>);
 }
 

@@ -63,8 +63,8 @@ function Footer() {
             case '/upload':
                 setPage('upload');
                 break;
-            case '/chat':
-                setPage('chat');
+            case '/notification':
+                setPage('notification');
                 break;
             case '/@':
                 setPage('profile');

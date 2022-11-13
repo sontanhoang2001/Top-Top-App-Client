@@ -4,6 +4,7 @@ import currentPageReducer from '~/router/routerPathSlice'
 import authReducer from './context/authSlice';
 import dialogReducer from '~/components/customizedDialog/dialogSlice';
 import videoReducer from '~/components/Layout/Video/videoSlice';
+import chatReducer from '~/page/Chat/chatSlice';
 
 export default configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export default configureStore({
     currentPage: currentPageReducer,
     auth: authReducer,
     dialog: dialogReducer,
-    video: videoReducer
+    video: videoReducer,
+    chat: chatReducer
   },
 });
