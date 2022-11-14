@@ -19,6 +19,14 @@ import { useLocation } from 'react-router-dom';
 import { urlFromDriveUrl } from '~/shared/helper';
 import Loading from '~/components/Layout/Loading';
 
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Box, CircularProgress } from '@mui/material';
+import CustomizedDialog from '~/components/customizedDialog';
+
+// redux
+import { useSelector } from 'react-redux';
+import { selectTotalVideoPlayed } from '~/components/Layout/Video/videoSlice';
+
 const cx = classNames.bind(styles);
 
 const videosFake = [
@@ -88,6 +96,8 @@ const videosFake = [
     },
 ];
 
+const initialPageSize = 4;
+
 function Home() {
     const location = useLocation();
     const pathName = location.pathname;
@@ -95,6 +105,12 @@ function Home() {
     const [enable, setEnable] = useState(false);
     const [videos, setVideo] = useState({});
     const [muted, setMuted] = useState(true);
+
+    const [pageNo, setPageNo] = useState(1);
+    const [pageSize, setPageSize] = useState(initialPageSize);
+    const [hasMore, setHasMore] = useState(true);
+    const [totalElements, setTotalElements] = useState();
+    const totalVideoPlayed = useSelector(selectTotalVideoPlayed);
 
     const onEnableAudio = () => {
         setMuted(false);
@@ -109,11 +125,14 @@ function Home() {
     }, [pathName])
 
     const [isLoaded, setIsLoaded] = useState(false);
+    // fetch first page video
     useEffect(() => {
-        videoApi.loadVideoNewsFeed(1)
+        videoApi.loadVideoNewsFeed(pageNo, pageSize)
             .then(res => {
                 // console.log("res video ne: ", res.data.data);
                 setVideo(res.data.data);
+                setPageNo(res.data.pageNo);
+                setTotalElements(res.data.totalElements)
                 setIsLoaded(true);
             })
             .catch((error) => {
@@ -121,6 +140,24 @@ function Home() {
                 setIsLoaded(false);
             })
     }, [])
+
+    // fetch more video
+    useEffect(() => {
+        // check limit 
+        if (totalVideoPlayed >= pageSize - 1) {
+            videoApi.loadVideoNewsFeed(pageNo + 1, pageSize)
+                .then(res => {
+                    setVideo([...videos, ...res.data.data]);
+                    setPageNo(res.data.pageNo + 1);
+                    setTotalElements(res.data.totalElements)
+                })
+                .catch((error) => {
+                    console.log("error ne: ", error);
+                    setIsLoaded(false);
+                })
+        }
+    }, [totalVideoPlayed])
+
 
     if (isLoaded) {
         return (
@@ -146,6 +183,7 @@ function Home() {
                         </div>
                     ))}
                 </div>
+                <CustomizedDialog />
             </div >
         );
     } else {

@@ -55,7 +55,7 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
     const [emoji, setEmoji] = useState(false);
     const [messageInput, setMessageInput] = useState("");
     const [messages, setMessages] = useState("");
-    const [messagesPage, setMessagesPage] = useState(1);
+    const [pageNo, setPageNo] = useState(1);
     const [totalElements, setTotalElements] = useState();
 
     const [pageSize, setPageSize] = useState(initialPageSize);
@@ -64,7 +64,7 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
     const messageEl = useRef(null)
 
     const initialState = () => {
-        setMessagesPage(1);
+        setPageNo(1);
         setPageSize(initialPageSize);
         setHasMore(true);
     }
@@ -75,7 +75,7 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
         chatApi.getFriendMessage(userId, friendId, 1, initialPageSize)
             .then(res => {
                 setMessages(res.data.data);
-                setMessagesPage(res.data.pageNo)
+                setPageNo(res.data.pageNo)
                 setTotalElements(res.data.totalElements)
             })
             .catch(error => {
@@ -116,12 +116,12 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
             return;
         }
 
-        await chatApi.getFriendMessage(userId, friendId, messagesPage + 1, initialPageSize)
+        await chatApi.getFriendMessage(userId, friendId, pageNo + 1, initialPageSize)
             .then(res => {
                 const responseOldMessage = res.data.data;
                 setMessages([...messages, ...responseOldMessage]);
                 setPageSize(pageSize + initialPageSize);
-                setMessagesPage(messagesPage + 1);
+                setPageNo(pageNo + 1);
             })
             .catch(error => {
                 console.log("error: ", error)

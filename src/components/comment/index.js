@@ -1,7 +1,12 @@
-import './comment.css'
+import styles from './comment.scss'
+
+
+// api
+import commentApi from '~/api/comment';
+import { async } from '@firebase/util';
 
 // mui
-import { createTheme, ThemeProvider, styled, Box } from '@mui/material';
+import { createTheme, ThemeProvider, styled, Box, TextField, Button } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
@@ -12,11 +17,14 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { Send, FavoriteIcon as Favorite, SentimentVerySatisfied, FavoriteBorder as FavoriteBorderIcon, ExpandMore as ExpandMoreIcon, MapsUgc as MapsUgcIcon } from '@mui/icons-material';
+
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { memo, useEffect, useState } from 'react';
+
+import classNames from 'classnames/bind';
+const cx = classNames.bind(styles);
+
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -28,7 +36,6 @@ const ExpandMore = styled((props) => {
         duration: theme.transitions.duration.shortest,
     }),
 }));
-
 
 const theme = createTheme({
     components: {
@@ -56,11 +63,38 @@ const theme = createTheme({
     }
 })
 
+
 function Comment() {
+    const [emoji, setEmoji] = useState(false);
+    const [messageInput, setMessageInput] = useState("");
+
+    const handleCloseEmoji = (value) => {
+        setEmoji(value);
+    }
+
+    useEffect(() => {
+        const videoId = 1;
+        const pageNo = 1;
+        const pageSize = 4;
+        commentApi.getCommentParent(videoId, pageNo, pageSize)
+            .then(res => {
+                console.log("res comment: ", res.data.data)
+            })
+            .catch(error => console.log(error))
+    }, [])
+
+    const handleSendMessage = async () => {
+        handleCloseEmoji(false);
+        if (messageInput.trim() == "") {
+
+        } else {
+            setMessageInput("");
+        }
+    }
     return (<>
         <ThemeProvider theme={theme}>
             <div className='commentBox'>
-                <Card sx={{ maxWidth: 345 }}>
+                {/* <Card sx={{ maxWidth: 345 }}>
                     <CardHeader
                         avatar={
                             <Avatar aria-label="recipe">
@@ -91,9 +125,9 @@ function Comment() {
                         image="https://s3.cloud.cmctelecom.vn/tinhte1/2017/09/4127716_21370996_757732914433829_7941595007667006352_n.jpg"
                         alt="Paella dish"
                     />
-                </Card>
+                </Card> */}
 
-                <Card sx={{ maxWidth: 345 }}>
+                <Box >
                     <CardHeader
                         avatar={
                             <Avatar aria-label="recipe">
@@ -118,7 +152,7 @@ function Comment() {
                             </Box>
                         )}
                     />
-                    
+
                     <div className="reply__container">
                         <div className="reply__actionContainer">
                             <p className="reply__ActionText">Xem thêm câu trả lời khác (1)
@@ -187,11 +221,21 @@ function Comment() {
                             </div>
                         </div>
                     </div>
-                </Card>
+
+
+                </Box>
+                <Box className={cx('footerComment')}>
+                    <IconButton onClick={() => { handleCloseEmoji(!emoji) }}>
+                        <SentimentVerySatisfied />
+                    </IconButton>
+                    <TextField className={cx('inputComment')} hiddenLabel variant="outlined" placeholder="Thêm bình luận..." value={messageInput} onChange={(e) => { setMessageInput(e.target.value) }} onClick={() => { handleCloseEmoji(false) }} />
+                    <Button className={cx('btnCommentMd')} variant="contained" endIcon={<MapsUgcIcon />} size="large" onClick={handleSendMessage}>Bình luận</Button>
+                    <Button className={cx('btnCommentSm')} variant="contained" size="large" onClick={handleSendMessage}><MapsUgcIcon /></Button>
+                </Box>
             </div>
 
         </ThemeProvider>
     </>);
 }
 
-export default Comment;
+export default memo(Comment);

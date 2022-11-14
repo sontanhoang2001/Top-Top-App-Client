@@ -5,7 +5,6 @@ import './Video.css';
 import styles from './Video.module.scss';
 import VideoFooter from './videoFooter';
 import VideoSidebar from './videoSidebar';
-import CustomizedDialog from '~/components/customizedDialog';
 
 // mui
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
@@ -15,7 +14,7 @@ import { Slide } from '@mui/material';
 
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { setVideoId } from '~/components/Layout/Video/videoSlice';
+import { setVideo } from '~/components/Layout/Video/videoSlice';
 
 const cx = classNames.bind(styles);
 
@@ -60,8 +59,10 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
                 videoRef.current.play();
                 setPlaying(true);
 
-                const payload = { videoId: id };
-                dispatch(setVideoId(payload));
+                const payload = { videoId: id, totalVideoPlayed: index };
+                dispatch(setVideo(payload));
+
+                // console.log(`video playing total:  ${index}`);
                 // console.log(`current video:  ${videoRef.current}, videoID: ${id}`);
             }
         } else {
@@ -70,6 +71,8 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
                 setPlaying(false);
             }
         }
+
+
     }, [isVisibile]);
 
     return (
@@ -107,9 +110,8 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
             )}
             <VideoSidebar id={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} />
             <VideoFooter playing={playing} channel={channel} title={title} song={song} />
-            <CustomizedDialog />
         </div>
     );
 }
 
-export default Video;
+export default  Video;

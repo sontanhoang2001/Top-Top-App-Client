@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, memo, useEffect, useState } from 'react';
 
 import ShareSocialList from '../shareSocialNetwork';
 // mui
@@ -62,6 +62,8 @@ function CustomizedDialog() {
         dispatch(closeDialog());
     };
 
+    console.log("re-render dialog")
+
     switch (dialogName) {
         case 'comment': {
             return (
@@ -112,4 +114,4 @@ function CustomizedDialog() {
         default: <></>
     }
 }
-export default CustomizedDialog;
+export default memo(CustomizedDialog);

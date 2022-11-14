@@ -7,8 +7,8 @@ const video = {
     const url = `${pathname}/interactive`;
     return axiosClient.post(url, data);
   },
-  loadVideoNewsFeed: (page) => {
-    const url = `${pathname}/watch?pageNo=${page}`;
+  loadVideoNewsFeed: (pageNo, pageSize) => {
+    const url = `${pathname}/watch?pageNo=${pageNo}&pageSize=${pageSize}`;
     return axiosClient.get(url);
   },
   likeVideo: (data) => {
