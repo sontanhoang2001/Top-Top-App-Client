@@ -14,7 +14,7 @@ export const SocketContextProvider = ({ children }) => {
     const { user } = UserAuth();
     const [socket, setSocket] = useState(false);
     const [privateMessage, setPrivateMessage] = useState("");
-
+    const [pendingMessage, setPendingMessage] = useState(false);
 
     const connect = () => {
         let Sock = new SockJS('http://localhost:8081/ws');
@@ -24,6 +24,9 @@ export const SocketContextProvider = ({ children }) => {
 
     const onConnected = () => {
         stompClient.subscribe('/user/' + user.id + '/private', onPrivateMessage);
+
+        // đk khi click vào route /chat
+        stompClient.subscribe('/user/' + user.id + '/pending', onPendingMessage);
     }
 
     const onError = (err) => {
@@ -36,19 +39,26 @@ export const SocketContextProvider = ({ children }) => {
         setPrivateMessage(payloadData);
     }
 
+    // nhận tin nhắn trạng thái đang soạn tin nhắn
+    const onPendingMessage = (payload) => {
+        const payloadData = JSON.parse(payload.body);
+        setPendingMessage(payloadData);
+    }
+
+
     useEffect(() => {
         user &&
             connect();
     }, [user])
 
     // useEffect(() => {
-    //     if (stompClient)
-    //         console.log("ket noi thanh cong: ", stompClient)
+    //     // if (stompClient)
+    //         console.log("Trang thai stompClient: ", stompClient)
     // })
 
 
     return (
-        <SocketContext.Provider value={{ stompClient, privateMessage }}>{children}</SocketContext.Provider>
+        <SocketContext.Provider value={{ stompClient, privateMessage, pendingMessage }}>{children}</SocketContext.Provider>
     );
 };
 

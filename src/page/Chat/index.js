@@ -89,7 +89,7 @@ const StyledFab = styled(Fab)({
 
 function Chat() {
     const { user } = UserAuth();
-    const { stompClient, privateMessage } = Socket();
+    const { stompClient, privateMessage, pendingMessage} = Socket();
 
     const [friend, setFriend] = useState();
     const [friendId, setFriendId] = useState();
@@ -167,7 +167,7 @@ function Chat() {
 
                 {user && (
                     <Grid item xs={10} md={9}>
-                        <ChatBox stompClient={stompClient} receiveMessage={privateMessage} friendInfo={friendInfo} userId={user.id} friendId={friendId} />
+                        <ChatBox stompClient={stompClient} receiveMessage={privateMessage} pendingMessage={pendingMessage} friendInfo={friendInfo} userId={user.id} friendId={friendId} />
                     </Grid>
                 )}
             </Grid>

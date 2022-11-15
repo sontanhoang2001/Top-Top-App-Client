@@ -3,7 +3,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import EmojiPicker from 'emoji-picker-react';
 
-import { SentimentVerySatisfied, MicNone, Send, Image as ImageIcon } from '@mui/icons-material';
+import { SentimentVerySatisfied, MicNone, Send, Image as ImageIcon, ConstructionOutlined } from '@mui/icons-material';
 import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, IconButton, CircularProgress, LinearProgress } from '@mui/material';
 import Message from '../Message';
 
@@ -51,10 +51,11 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const initialPageSize = 15;
 
-function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) {
+function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, userId, friendId }) {
     const [emoji, setEmoji] = useState(false);
     const [messageInput, setMessageInput] = useState("");
     const [messages, setMessages] = useState("");
+    const [messagePending, setMessagePending] = useState(false);
     const [pageNo, setPageNo] = useState(1);
     const [totalElements, setTotalElements] = useState();
 
@@ -83,6 +84,7 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
             })
     }, [friendId])
 
+    // Nhận tin nhắn
     useEffect(() => {
         if (receiveMessage !== "") {
             const { content, senderId } = receiveMessage;
@@ -91,6 +93,20 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
             handleScrollToBottom();
         }
     }, [receiveMessage])
+
+    // Lắng nghe đang soạn tin nhắn
+    useEffect(() => {
+        console.log("pendingMessage: ", pendingMessage)
+        setMessagePending(pendingMessage);
+    }, [pendingMessage])
+
+
+
+
+    // useEffect(() => {
+    //     console.log("Messages lengh: ", messages.length - 1)
+
+    // })
 
     const handleScrollToBottom = () => {
         if (messageEl) {
@@ -138,6 +154,7 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
 
         } else {
             setMessageInput("");
+            clearPending();
             sendMessageSoket(messageInput);
         }
     }
@@ -170,6 +187,20 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
         }
     }
 
+    const clearPending = () => {
+        if (stompClient) {
+            const chatMessage = {
+                "content": "",
+                "senderId": userId,
+                "reccive_id": friendId,
+                "status": true
+            };
+
+            stompClient.send("/app/pending-message", {}, JSON.stringify(chatMessage));
+        } else {
+            console.log("ket noi that bai!")
+        }
+    }
     const handleUploadMessageImage = (e) => {
         var filePath = URL.createObjectURL(e.target.files[0]);
         var file = e.target.files[0] //the file
@@ -222,11 +253,29 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
 
     // })
 
+    const handleMessageInput = (e) => {
+        // console.log("check keyword: ", e.target.value)
+        setMessageInput(e.target.value);
+        const content = e.target.value;
+        if (stompClient) {
+            const chatMessage = {
+                "content": content,
+                "senderId": userId,
+                "reccive_id": friendId,
+                "status": true
+            };
+
+            stompClient.send("/app/pending-message", {}, JSON.stringify(chatMessage));
+        } else {
+            console.log("ket noi that bai!")
+        }
+    }
+
     return (<>
-        <Card sx={{marginTop: '8px'}}>
+        <Card sx={{ marginTop: '8px' }}>
             {friendInfo && (
                 <CardHeader
-                sx={{padding: '10px 10px 10px'}}
+                    sx={{ padding: '10px 10px 10px' }}
                     avatar={
                         <StyledBadge
                             overlap="circular"
@@ -264,6 +313,11 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
                     className='chatBox'
                     ref={messageEl} onClick={() => { handleCloseEmoji(false) }}
                 >
+                    {messagePending && (
+                        <Box sx={{ margin: '1rem' }}>
+                            <Message avatarUrl={friendInfo.avatar} message="Đang soạn tin nhắn..." direction="left" createdDate="" />
+                        </Box>
+                    )}
                     {messages && messages.map(({ content, senderUser, createdDate }, index) =>
                     (
                         <div key={index}>
@@ -300,14 +354,13 @@ function ChatBox({ stompClient, receiveMessage, friendInfo, userId, friendId }) 
                     <ImageIcon />
                 </IconButton>
 
-                <TextField hiddenLabel id="outlined-basic" variant="outlined" sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => { setMessageInput(e.target.value) }} onClick={() => { handleCloseEmoji(false) }} />
+                <TextField hiddenLabel id="outlined-basic" variant="outlined" sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => handleMessageInput(e)} onClick={() => { handleCloseEmoji(false) }} />
                 <MicNone />
                 <Button variant="contained" endIcon={<Send />} size="large" onClick={handleSendMessage}>
                     Gửi
                 </Button>
             </Box>
         </Card>
-
 
         {isViewerOpen && (
             <ImageViewer
