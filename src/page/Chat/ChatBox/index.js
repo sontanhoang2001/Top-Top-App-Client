@@ -19,6 +19,10 @@ import chatApi from '~/api/chat';
 import mediaApi from '~/api/media';
 import { async } from '@firebase/util';
 
+// audio
+import urlAudioTyping from '~/assets/audio/mixkit-smartphone-typing-1393.wav';
+import urlAudioReceiveMessage from '~/assets/audio/mixkit-alert-quick-chime-766.wav'
+
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -63,6 +67,8 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
     const [hasMore, setHasMore] = useState(true);
 
     const messageEl = useRef(null)
+    const [audioTyping] = useState(new Audio(urlAudioTyping));
+    const [audioReceiveMessage] = useState(new Audio(urlAudioReceiveMessage));
 
     const initialState = () => {
         setPageNo(1);
@@ -87,6 +93,7 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
     // Nhận tin nhắn
     useEffect(() => {
         if (receiveMessage !== "") {
+            audioReceiveMessage.play();
             const { content, senderId } = receiveMessage;
             const newReceiveMessage = { content: content, senderUser: { id: senderId }, createdDate: "" };
             setMessages([newReceiveMessage, ...messages]);
@@ -98,8 +105,28 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
     useEffect(() => {
         console.log("pendingMessage: ", pendingMessage)
         setMessagePending(pendingMessage);
+        if (pendingMessage) {
+            audioTyping.loop = true;
+            audioTyping.play();
+        } else {
+            audioTyping.pause();
+        }
     }, [pendingMessage])
 
+    useEffect(() => {
+        if (stompClient) {
+            const chatMessage = {
+                "content": messageInput,
+                "senderId": userId,
+                "reccive_id": friendId,
+                "status": true
+            };
+
+            stompClient.send("/app/pending-message", {}, JSON.stringify(chatMessage));
+        } else {
+            console.log("ket noi that bai!")
+        }
+    }, [messageInput])
 
 
 
@@ -256,19 +283,6 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
     const handleMessageInput = (e) => {
         // console.log("check keyword: ", e.target.value)
         setMessageInput(e.target.value);
-        const content = e.target.value;
-        if (stompClient) {
-            const chatMessage = {
-                "content": content,
-                "senderId": userId,
-                "reccive_id": friendId,
-                "status": true
-            };
-
-            stompClient.send("/app/pending-message", {}, JSON.stringify(chatMessage));
-        } else {
-            console.log("ket noi that bai!")
-        }
     }
 
     return (<>

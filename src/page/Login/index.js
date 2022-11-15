@@ -1,3 +1,5 @@
+import './login.css'
+
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
@@ -9,6 +11,8 @@ import useResponsive from '../../hooks/useResponsive';
 import { LoginForm } from '../sections/auth/login';
 import AuthSocial from '~/page/sections/auth/AuthSocial';
 
+// video
+import urlVideoIntro from '~/assets/video/How Do Small Businesses Win On TikTok-.mp4'
 // ----------------------------------------------------------------------
 
 
@@ -65,7 +69,7 @@ export default function Login() {
       <HeaderStyle>
 
         {smUp && (
-          <Typography variant="body2" sx={{ mt: { md: -2 } }}>
+          <Typography variant="body2" sx={{ mt: { md: -2 } }} className='register'>
             Bạn chưa có tài khoản? {''}
             <Link variant="subtitle2" component={RouterLink} to="/register">
               Đăng ký
@@ -76,10 +80,16 @@ export default function Login() {
 
       {mdUp && (
         <SectionStyle>
-          <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
+          <video
+            className='bgvideo__login'
+            src={urlVideoIntro}
+            autoPlay={true}
+            muted
+            loop
+          />
+          {/* <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
             Chào mừng đến với mạng xã hội TopTop
-          </Typography>
-          <img src="/static/illustrations/illustration_login.png" alt="login" />
+          </Typography> */}
         </SectionStyle>
       )}
 
