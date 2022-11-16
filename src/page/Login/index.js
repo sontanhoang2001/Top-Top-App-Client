@@ -1,4 +1,5 @@
-import './login.css'
+import styles from './login.css'
+import classNames from 'classnames/bind';
 
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
@@ -13,6 +14,8 @@ import AuthSocial from '~/page/sections/auth/AuthSocial';
 
 // video
 import urlVideoIntro from '~/assets/video/How Do Small Businesses Win On TikTok-.mp4'
+
+const cx = classNames.bind(styles);
 // ----------------------------------------------------------------------
 
 
@@ -69,7 +72,7 @@ export default function Login() {
       <HeaderStyle>
 
         {smUp && (
-          <Typography variant="body2" sx={{ mt: { md: -2 } }} className='register'>
+          <Typography variant="body2" sx={{ mt: { md: -2 } }} className={cx('register')}>
             Bạn chưa có tài khoản? {''}
             <Link variant="subtitle2" component={RouterLink} to="/register">
               Đăng ký
@@ -81,7 +84,7 @@ export default function Login() {
       {mdUp && (
         <SectionStyle>
           <video
-            className='bgvideo__login'
+            className={cx('bgvideo__login')}
             src={urlVideoIntro}
             autoPlay={true}
             muted

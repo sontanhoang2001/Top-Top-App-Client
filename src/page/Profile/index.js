@@ -1,6 +1,13 @@
 
 import { useEffect, useState } from 'react';
 
+
+// form
+import * as Yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+
 // material
 import {
     styled,
@@ -26,16 +33,22 @@ import {
     DialogContent,
     TextField,
     DialogActions,
+    InputAdornment,
 } from '@mui/material';
-import { EmailOutlined, ArticleOutlined, Edit } from '@mui/icons-material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import propTypes from 'prop-types';
+import { EmailOutlined, ArticleOutlined, Edit, Save } from '@mui/icons-material';
 
 import { red } from '@mui/material/colors';
 
+
 // component
 import NavBar from '~/components/Layout/NavBarHeader'
+import { FormProvider, RHFTextField } from '~/components/hook-form';
 
 // api
 import profileApi from '~/api/profile'
+
 
 // redux
 import { useSelector } from 'react-redux';
@@ -48,7 +61,8 @@ import useResponsive from '~/hooks/useResponsive';
 
 // image
 import userDefaultImg from '~/assets/image/user-profile-default.png'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import Loading from '~/components/Layout/Loading';
 // ----------------------------------------------------------------------
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode !== 'dark' ? '#1A2027' : '#fff',
@@ -87,18 +101,101 @@ const itemData = [{
 {
     img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
 }]
+
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+TabPanel.propTypes = {
+    children: propTypes.node,
+    index: propTypes.number.isRequired,
+    value: propTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
+
 export default function Profile() {
+    const { userAlias } = useParams();
     const { user, loginStatus, logOut } = UserAuth();
 
     const smUp = useResponsive('up', 'sm');
     const mdUp = useResponsive('up', 'md');
+    const [userProfile, setUserProfile] = useState();
+    const [isLoad, setIsLoad] = useState(false);
 
-    // const email = userInfo(userInfo.email);
-    // const alias = userInfo(userInfo.alias);
-    // const avatar = userInfo(userInfo.avatar);
-    // const fullName = userInfo(userInfo.fullName);
-    // const history = userInfo(userInfo.history);
-    // const createdDate = userInfo(userInfo.createdDate);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+
+    const profileSchema = Yup.object().shape({
+        fullName: Yup.string()
+            .max(80, 'Tên tối đa 80 ký tự!')
+            .required('Bạn chưa nhập tên!'),
+    });
+
+    const defaultValues = {
+        id: "",
+        fullName: "",
+        avatar: "",
+        history: "",
+        alias: ""
+    };
+
+    const methods = useForm({
+        resolver: yupResolver(profileSchema),
+        defaultValues,
+    });
+
+    const {
+        handleSubmit
+    } = methods;
+
+    const onSubmit = async (data) => {
+        console.log("submit profile: ", data);
+        // uploadVideo(data);
+    }
+
+
+    useEffect(() => {
+        if (userAlias) {
+            profileApi.getProfileByAlias(userAlias)
+                .then(res => {
+                    setUserProfile(res.data);
+                    setIsLoad(true);
+
+                    methods.setValue("id", res.data.id);
+                    methods.setValue("fullName", res.data.fullName);
+                    methods.setValue("avatar", res.data.avatar);
+                    methods.setValue("history", res.data.history);
+                    methods.setValue("alias", res.data.alias);
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        }
+    }, [userAlias])
+
 
     const handleSignOut = async () => {
         try {
@@ -107,14 +204,6 @@ export default function Profile() {
             console.log(error);
         }
     };
-
-    // const [avatar, setAvatar] = useState();
-    // const [fullName, setFullName] = useState();
-    // const [alias, setAlias] = useState();
-    // const [email, setEmail] = useState();
-    // const [history, setHistory] = useState();
-    // const [createdDate, setCreatedDate] = useState();
-
 
     const [imageListCol, setImageListCol] = useState();
 
@@ -126,7 +215,7 @@ export default function Profile() {
         }
     })
 
-    const [value, setValue] = useState('one');
+    const [value, setValue] = useState(0);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -142,107 +231,113 @@ export default function Profile() {
         setOpen(false);
     };
 
-    return (
-        <Container>
-            <NavBar namePage='Thông tin cá nhân' />
 
-            <Stack direction="column" alignItems="center" justifyContent="space-between" mt={10} mb={2}>
-                {user && (
-                    <>
-                        <Card>
-                            <CardContent>
-                                <CardHeader
-                                    avatar={
-                                        <Avatar sx={{ bgcolor: red[500], width: 66, height: 66 }} aria-label="recipe" src={user.avatar} >
-                                            {user.fullName[0]}
-                                        </Avatar>
-                                    }
-                                    title={user.fullName}
-                                    subheader={'@' + user.alias}
-                                />
+    if (isLoad) {
+        return (
+            <>
+                <NavBar namePage='Thông tin cá nhân' />
+                <Card>
+                    <CardContent>
+                        <CardHeader
+                            avatar={
+                                <Avatar sx={{ bgcolor: red[500], width: 66, height: 66 }} aria-label="recipe" src={userProfile.avatar} >
+                                    {userProfile.fullName[0]}
+                                </Avatar>
+                            }
+                            title={userProfile.fullName}
+                            subheader={'@' + userProfile.alias}
+                        />
 
-                                <Box sx={{ m: 3 }}>
-                                    <Box mb={2}>
-                                        <Button variant="contained">Theo dõi</Button>
-                                        <Button variant="outlined">Nhắn tin</Button>
-                                        <Button variant="outlined" onClick={handleClickOpen}><Edit /> Chỉnh sửa hồ sơ</Button>
-                                    </Box>
+                        <Box sx={{ m: 3 }}>
+                            <Box mb={2}>
+                                {user.alias === userProfile.alias ? (
+                                    <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleClickOpen}><Edit /> Chỉnh sửa hồ sơ</Button>
+                                ) : (
+                                    <>
+                                        <Button variant="contained" sx={{ margin: '5px' }}>Theo dõi</Button>
+                                        <Button variant="outlined" sx={{ margin: '5px' }}>Nhắn tin</Button>
+                                    </>
+                                )}
+                            </Box>
 
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        flexWrap: 'wrap',
-                                        marginBottom: '0.6rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        <EmailOutlined sx={{ mr: 1 }} /> <Typography>Email: </Typography>
-                                        <Typography sx={{ ml: 1 }} color="text.secondary">{user.email}</Typography>
-                                    </div>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexWrap: 'wrap',
+                                marginBottom: '0.6rem',
+                                marginRight: '1rem'
+                            }}>
+                                <EmailOutlined sx={{ mr: 1 }} /> <Typography>Email: </Typography>
+                                <Typography sx={{ ml: 1 }} color="text.secondary">{userProfile.email}</Typography>
+                            </div>
 
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        flexWrap: 'wrap',
-                                        marginBottom: '0.6rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        <Typography color="text.secondary">Đang follow: </Typography>
-                                        <Typography sx={{ mr: 3, m: 1 }}>4523</Typography>
-                                        <Typography color="text.secondary">follower: </Typography>
-                                        <Typography sx={{ mr: 3, m: 1 }}>234</Typography>
-                                        <Typography color="text.secondary">Thích: </Typography>
-                                        <Typography sx={{ mr: 3, m: 1 }} >453</Typography>
-                                    </div>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexWrap: 'wrap',
+                                marginBottom: '0.6rem',
+                                marginRight: '1rem'
+                            }}>
+                                <Typography color="text.secondary">Đang follow: </Typography>
+                                <Typography sx={{ mr: 3, m: 1 }}>{userProfile.following}</Typography>
+                                <Typography color="text.secondary">follower: </Typography>
+                                <Typography sx={{ mr: 3, m: 1 }}>{userProfile.followers}</Typography>
+                                <Typography color="text.secondary">Thích: </Typography>
+                                <Typography sx={{ mr: 3, m: 1 }} >{userProfile.heart}</Typography>
+                            </div>
 
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        flexWrap: 'wrap',
-                                        marginBottom: '0.6rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        <ArticleOutlined sx={{ mr: 1 }} /> <Typography>Tiểu sử: </Typography>
-                                        <Typography sx={{ ml: 1 }} color="text.secondary">{user.history === null ? 'Chưa có tiểu sử' : user.history}</Typography>
-                                    </div>
-                                    <Stack spacing={2} direction="column" alignItems='center' >
-                                        <Typography onClick={handleSignOut}>Đăng xuất</Typography>
-                                    </Stack>
-                                </Box>
-                            </CardContent>
-                        </Card>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexWrap: 'wrap',
+                                marginBottom: '0.6rem',
+                                marginRight: '1rem'
+                            }}>
+                                <ArticleOutlined sx={{ mr: 1 }} /> <Typography>Tiểu sử: </Typography>
+                                <Typography sx={{ ml: 1 }} color="text.secondary">{userProfile.history === null ? 'Chưa có tiểu sử' : userProfile.history}</Typography>
+                            </div>
 
-
-                        <Box sx={{ width: '100%' }} mt={2}>
-                            <Tabs
-                                value={value}
-                                onChange={handleChange}
-                                textColor="secondary"
-                                indicatorColor="secondary"
-                                aria-label="secondary tabs example"
-                            >
-                                <Tab value="one" label="Video Của Bạn" />
-                                <Tab value="two" label="Yêu Thích" />
-                            </Tabs>
+                            {user.alias === userProfile.alias ? (
+                                <Stack spacing={2} direction="column" alignItems='center' >
+                                    <Typography onClick={handleSignOut}>Đăng xuất</Typography>
+                                </Stack>) : <></>}
                         </Box>
+                    </CardContent>
+                </Card>
 
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} md={12} sx={{ mt: 2 }}>
-                                <ImageList sx={{ width: '100%', minHeight: 350 }} cols={imageListCol} gap={10}>
-                                    {itemData.map((item) => (
-                                        <ImageListItem key={item.img}>
-                                            <img
-                                                src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                                                srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                                                alt={item.title}
-                                                loading="lazy"
-                                            />
-                                        </ImageListItem>
-                                    ))}
-                                </ImageList>
-                            </Grid>
-                        </Grid>
-                    </>
-                )}
+                {/* <Box sx={{ width: '100%' }} mt={2}>
+                    <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        textColor="secondary"
+                        indicatorColor="secondary"
+                        aria-label="secondary tabs example"
+                    >
+                        <Tab value="one" label="Video Của Bạn" />
+                        <Tab value="two" label="Yêu Thích" />
+                    </Tabs>
+                </Box> */}
+
+
+                <Box sx={{ width: '100%' }}>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                            <Tab label="Video của bạn" {...a11yProps(0)} />
+                            <Tab label="Riêng tư" {...a11yProps(1)} />
+                            <Tab label="Yêu thích" {...a11yProps(2)} />
+                        </Tabs>
+                    </Box>
+                    <TabPanel value={value} index={0}>
+                        Video của bạn
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        Riêng tư
+                    </TabPanel>
+                    <TabPanel value={value} index={2}>
+                        Yêu thích
+                    </TabPanel>
+                </Box>
+
 
                 {loginStatus || (
                     <Card>
@@ -260,32 +355,41 @@ export default function Profile() {
                     </Card>
                 )}
 
+                <Dialog open={open} fullWidth>
+                    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+                        <DialogTitle>Cập nhật thông tin cá nhân</DialogTitle>
+                        <DialogContent>
+                            <Stack spacing={3} sx={{ marginTop: '1rem' }}>
+                                <RHFTextField name="fullName" label="Tên của bạn"
+                                />
+                                <RHFTextField
+                                    name='alias'
+                                    label="TopTop ID"
+                                    sx={{ m: 1 }}
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">@</InputAdornment>,
+                                    }}
+                                />
+                                <RHFTextField
+                                    name='history'
+                                    label="Tiểu sử"
+                                    sx={{ m: 1 }}
 
-            </Stack>
-            <Dialog open={open}>
-                <DialogTitle>Subscribe</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        To subscribe to this website, please enter your email address here. We
-                        will send updates occasionally.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                        variant="standard"
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleClose}>Subscribe</Button>
-                </DialogActions>
-            </Dialog>
-        </Container >
-    );
+                                />
+                            </Stack>
+
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Hủy bỏ</Button>
+                            <Button type='submit'>Cập nhật</Button>
+                        </DialogActions>
+                    </FormProvider>
+                </Dialog>
+            </ >
+        );
+    } else {
+        <Loading />
+    }
 }
 
 

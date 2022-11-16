@@ -15,6 +15,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
 
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
 
 const cx = classNames.bind(styles);
 
@@ -44,6 +46,8 @@ const theme = createTheme({
 });
 
 function Footer() {
+    const { user } = UserAuth();
+    const pathProfile = `/@${user.alias}`;
     const location = useLocation();
     const pathName = location.pathname;
 
@@ -66,7 +70,7 @@ function Footer() {
             case '/notification':
                 setPage('notification');
                 break;
-            case '/@':
+            case pathProfile:
                 setPage('profile');
                 break;
             default:
@@ -130,7 +134,7 @@ function Footer() {
                     />
                     <BottomNavigationAction
                         component={Link}
-                        to="/@"
+                        to={pathProfile}
                         label="Cá Nhân"
                         value="profile"
                         icon={<PersonIcon fontSize={matchesSM ? 'large' : 'medium'} />}

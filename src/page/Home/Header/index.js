@@ -2,7 +2,6 @@ import classNames from 'classnames/bind';
 // import styles from './Header.module.scss';
 // import   './Header.css';
 
-import * as React from 'react';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 
@@ -33,6 +32,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import PersonIcon from '@mui/icons-material/Person';
+import { useEffect, useState } from 'react';
 
 const StyledSearch = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -97,8 +97,8 @@ const appBarStyles = styled({
 
 function Header() {
     // START HEADER
-    const [value, setValue] = React.useState('');
-    React.useEffect(() => {
+    const [value, setValue] = useState('');
+    useEffect(() => {
         const pathName = window.location.pathname.split('/')[1];
         // console.log('current Pathname 👉️', pathName);
         switch (pathName) {
@@ -132,7 +132,7 @@ function Header() {
 
     // START HAMBURGER MENU NAVIGATION
     //react useState hook to save the current open/close state of the drawer, normally variables dissapear afte the function was executed
-    const [open, setState] = React.useState(false);
+    const [open, setState] = useState(false);
 
     //function that is being called every time the drawer should open or close, the keys tab and shift are excluded so the user can focus between the elements with the keys
     const toggleDrawer = (open) => (event) => {

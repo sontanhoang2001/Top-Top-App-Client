@@ -16,7 +16,6 @@ import ResetPassword from '~/page/ResetPassword';
 import Chat from '~/page/Chat/index';
 import Test from '~/page/Test';
 
-
 // Public routes
 const publicRoutes = [
     { path: '*', component: NotFoundPage },
@@ -27,7 +26,7 @@ const publicRoutes = [
     { path: '/upload', component: Upload },
     { path: '/notification', component: Notification },
     { path: '/chat', component: Chat },
-    { path: '/@', component: Profile },
+    { path: `/@:userAlias`, component: Profile },
     { path: '/register', component: Register, layout: FooterOnly },
     { path: '/counter', component: Counter },
     { path: '/test', component: Test },
