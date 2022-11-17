@@ -26,6 +26,9 @@ import videoApi from '~/api/video';
 import { UserAuth } from '~/context/AuthContext';
 import { Container } from '@mui/system';
 
+// helper
+import { urlFromDriveUrl } from '~/shared/helper';
+
 // ----------------------------------------------------------------------
 
 export default function UploadVideoForm() {
@@ -35,6 +38,7 @@ export default function UploadVideoForm() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [reviewVideo, setReviewVideo] = useState();
+    const [professed, setProfessed] = useState(true);
 
     const UploadSchema = Yup.object().shape({
         title: Yup.string()
@@ -48,7 +52,8 @@ export default function UploadVideoForm() {
         videoUrl: null,
         music: '',
         enableComment: true,
-        hashTag: ''
+        hashTag: '',
+        professed: true
     };
 
     const methods = useForm({
@@ -91,13 +96,12 @@ export default function UploadVideoForm() {
                 .then((res) => {
                     console.log(res.url) //See response
 
-                    const videoUrl = res.url;
+                    const videoUrl = urlFromDriveUrl(res.url);
                     if (videoUrl !== "") {
                         // lọc dữ liệu trước khi gửi lên
-                        console.log("upload video...", data)
+                        // console.log("upload video...", data)
 
-                        const hashTag = data.hashTag.split("#");
-                        console.log("hashTag", hashTag);
+                        const hashTag = data.hashTag.split(" ").join('').split("#");
 
                         const dataVideo = {
                             title: data.title,
@@ -105,10 +109,13 @@ export default function UploadVideoForm() {
                             music: data.music,
                             enableComment: true,
                             userid: userId,
-                            hashTag: hashTag
+                            hashTag: hashTag,
+                            professed: methods.getValues("professed")
                         };
 
-                        // gọi tiếp method post db lên database
+                        console.log("dataVideo: ", dataVideo)
+
+                        // // gọi tiếp method post db lên database
                         createVideoInfo(dataVideo);
                     }
                 }).catch(e => console.log(e)) // Or Error in console
@@ -146,15 +153,16 @@ export default function UploadVideoForm() {
         methods.resetField("music");
         methods.resetField("enableComment");
         methods.resetField("hashTag");
+        methods.setValue("professed", true);
     }
 
     return (
         <>
             <NavBar namePage='Đăng Video mới' />
 
-            <Container>
-                <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                    <Card sx={{ marginLeft: '1rem', marginRight: '1rem', marginTop: '5rem', marginBottom: '1rem' }}>
+            <div className='container__center'>
+                <Card sx={{ marginLeft: '1rem', marginRight: '1rem', marginTop: '5rem', marginBottom: '1rem' }}>
+                    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
                         <CardContent>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={4}>
@@ -166,7 +174,7 @@ export default function UploadVideoForm() {
                                         {reviewVideo || (
                                             <Button variant="outlined" component="label" startIcon={<CloudUpload />} sx={{ height: '450px' }}>
                                                 Tải video lên
-                                                <input hidden type="file" accept="application/video" onChange={(e) => handleReviewVideo(e)} />
+                                                <input hidden type="file" accept="video/mp4,video/x-m4v,video/*" onChange={(e) => handleReviewVideo(e)} />
                                             </Button>
                                         )}
                                     </Stack>
@@ -196,16 +204,16 @@ export default function UploadVideoForm() {
                                             <FormControlLabel onChange={(e) => methods.setValue("enableComment", e.target.checked)} control={<Checkbox defaultChecked />} label="Cho phép bình luận video" />
                                         </FormGroup>
                                         <FormControl fullWidth sx={{ width: '26ch' }}>
-                                            <InputLabel id="demo-simple-select-label">Ai có thể xem video này</InputLabel>
+                                            <InputLabel id="professed">Ai có thể xem video này</InputLabel>
                                             <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                value={1}
+                                                labelId="professed"
                                                 label="Ai có thể xem video này"
-                                            // onChange={handleChange}
+                                                name='professed'
+                                                value={professed}
+                                                onChange={(e) => { methods.setValue("professed", e.target.value); setProfessed(e.target.value) }}
                                             >
-                                                <MenuItem value={1}>Công khai</MenuItem>
-                                                <MenuItem value={2}>Riêng Tư</MenuItem>
+                                                <MenuItem value={true}>Công khai</MenuItem>
+                                                <MenuItem value={false}>Riêng Tư</MenuItem>
                                             </Select>
                                         </FormControl>
                                     </Stack>
@@ -229,25 +237,25 @@ export default function UploadVideoForm() {
                                 </Grid>
                             </Grid>
                         </CardContent>
-                    </Card>
-                </FormProvider>
+                    </FormProvider>
+                </Card>
+            </div>
 
 
 
-                <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle>Subscribe</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            To subscribe to this website, please enter your email address here. We
-                            will send updates occasionally.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={handleClose}>Subscribe</Button>
-                    </DialogActions>
-                </Dialog>
-            </Container>
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Subscribe</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        To subscribe to this website, please enter your email address here. We
+                        will send updates occasionally.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClose}>Subscribe</Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }

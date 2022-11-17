@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-
+import { useNavigate } from "react-router-dom";
 
 // form
 import * as Yup from 'yup';
@@ -40,7 +40,7 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import propTypes from 'prop-types';
-import { EmailOutlined, ArticleOutlined, Edit, Save, CameraAltRounded } from '@mui/icons-material';
+import { EmailOutlined, ArticleOutlined, Edit, Save, CameraAltRounded, Logout } from '@mui/icons-material';
 
 import { red } from '@mui/material/colors';
 
@@ -63,7 +63,6 @@ import { UserAuth } from '~/context/AuthContext';
 // api
 import mediaApi from '~/api/media';
 
-import useResponsive from '~/hooks/useResponsive';
 
 // helper
 import { urlFromDriveUrl } from '~/shared/helper'
@@ -72,6 +71,7 @@ import { urlFromDriveUrl } from '~/shared/helper'
 import userDefaultImg from '~/assets/image/user-profile-default.png'
 import { Link, useParams } from 'react-router-dom';
 import Loading from '~/components/Layout/Loading';
+import ListVideo from './listVideo';
 // ----------------------------------------------------------------------
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode !== 'dark' ? '#1A2027' : '#fff',
@@ -80,36 +80,6 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-const itemData = [{
-    img: "https://images.unsplash.com/photo-1589118949245-7d38baf380d6?w=164&h=164&fit=crop&auto=format"
-},
-{
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
-},
-{
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
-},
-{
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
-},
-{
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
-},
-{
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
-},
-{
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
-},
-{
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
-},
-{
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
-},
-{
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1?w=164&h=164&fit=crop&auto=format"
-}]
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -146,17 +116,15 @@ function a11yProps(index) {
 
 
 export default function Profile() {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { userAlias } = useParams();
     const { user, loginStatus, logOut } = UserAuth();
 
-    const smUp = useResponsive('up', 'sm');
-    const mdUp = useResponsive('up', 'md');
     const [userProfile, setUserProfile] = useState();
     const [isLoad, setIsLoad] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [uploadedImage, setUploadedImage] = useState();
     const [btnSubmitLoading, setBtnSubmitLoading] = useState(false);
 
 
@@ -167,6 +135,8 @@ export default function Profile() {
         alias: Yup.string()
             .max(15, 'TopTop ID tối đa 15 ký tự!')
             .required('Bạn chưa nhập TopTop ID!'),
+        alias: Yup.string()
+            .max(80, 'Tiểu sử tối đa 80 ký tự')
     });
 
     const defaultValues = {
@@ -186,7 +156,7 @@ export default function Profile() {
         handleSubmit
     } = methods;
 
-
+    // load profile info
     useEffect(() => {
         if (userAlias) {
             profileApi.getProfileByAlias(userAlias)
@@ -211,23 +181,13 @@ export default function Profile() {
         }
     };
 
-    const [imageListCol, setImageListCol] = useState();
-
-    useEffect(() => {
-        if (smUp) {
-            setImageListCol(3);
-        } else {
-            setImageListCol(2);
-        }
-    })
-
-    const [value, setValue] = useState(0);
+    const [tabMenu, setTabMenu] = useState(0);
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+        setTabMenu(newValue);
     };
 
-    const [open, setOpen] = useState(false);
+    const [openDialogUpdate, setOpenDialogUpdate] = useState(false);
 
     const setFormState = (id, fullName, avatar, history, alias) => {
         methods.setValue("id", id);
@@ -239,19 +199,17 @@ export default function Profile() {
 
     const handleClickOpen = () => {
         setFormState(userProfile.id, userProfile.fullName, userProfile.avatar, userProfile.history, userProfile.alias);
-        setOpen(true);
+        setOpenDialogUpdate(true);
     };
 
     const handleClose = () => {
         setBtnSubmitLoading(false);
-        setUploadedImage(false);
-        setOpen(false);
+        setOpenDialogUpdate(false);
     };
 
     // handle change event of input file
     const onChangeFile = async (e) => {
         setBtnSubmitLoading(true);
-        setUploadedImage(true);
 
         var filePath = URL.createObjectURL(e.target.files[0]);
         var file = e.target.files[0] //the file
@@ -264,81 +222,86 @@ export default function Profile() {
             mediaApi.uploadUserAvatar(dataSend)
                 .then(res => res.json())
                 .then((res) => {
-                    console.log("res upload avatar: ", urlFromDriveUrl(res.url))
                     methods.setValue("avatar", urlFromDriveUrl(res.url))
                     setBtnSubmitLoading(false);
-                    setUploadedImage(false);
                 })
                 .catch((error) => {
                     setBtnSubmitLoading(false);
-                    setUploadedImage(false);
                     console.error(error)
                     const snackBarPayload = { type: 'error', message: 'Tải avatar không thành công!' };
                     dispatch(openSnackbar(snackBarPayload))
                 });
         }
-
-
-
     };
 
     const onSubmit = async (data) => {
         // check nếu thay đổi thì cho update
         const history = methods.getValues("history") === "" ? null : methods.getValues("history");
-        if (userProfile.fullName !== methods.getValues("fullName") || userProfile.alias !== methods.getValues("alias") || userProfile.history !== history) {
-            console.log("submit profile: ", data);
+        if (userProfile.avatar !== methods.getValues("avatar") || userProfile.fullName !== methods.getValues("fullName") || (userProfile.alias !== methods.getValues("alias")) || userProfile.history !== history) {
 
-            // check TopTop ID
-            profileApi.findByAlias(methods.getValues("alias"))
-                .then((res) => {
-                    if (res.data.result == true) {
-                        updateProfile();
-                    } else {
-                        const snackBarPayload = { type: 'error', message: 'TopTop ID vừa nhập đã tồn tại. Vui lòng thử lại!' };
-                        dispatch(openSnackbar(snackBarPayload))
+            if (userProfile.alias !== methods.getValues("alias")) {
+                // check TopTop ID
+                profileApi.findByAlias(methods.getValues("alias"))
+                    .then((res) => {
+                        console.log("check toptop id: ", res.data)
+                        // nếu check chưa trùng thì cho phép update
+                        if (res.data.result == false) {
+                            updateProfile();
+                        } else {
+                            methods.setError("alias");
+                            const snackBarPayload = { type: 'error', message: 'TopTop ID vừa nhập đã tồn tại. Vui lòng thử lại!', duration: 8000 };
+                            dispatch(openSnackbar(snackBarPayload))
+                            setBtnSubmitLoading(false);
+                        }
+                    })
+                    .catch((error) => {
                         setBtnSubmitLoading(false);
-                        setUploadedImage(false);
-                    }
-                })
-                .catch((error) => {
-                    setBtnSubmitLoading(false);
-                    setUploadedImage(false);
-                    console.error(error)
-                });
-            // khi update thanh cong update lai user Profile
-        } else {
-            console.log("ko thay doi: ");
+
+                        console.error(error)
+                    });
+            } else {
+                // alias không có sự thay đổi nên ko cần check
+                updateProfile();
+            }
         }
-
-        // uploadVideo(data);
-
-        // const snackBarPayload = { type: 'error', message: 'Tải avatar không thành công!' };
-        // dispatch(openSnackbar(snackBarPayload))
     }
 
 
     const updateProfile = async (data) => {
-        // check TopTop ID
-        profileApi.findByAlias(methods.getValues("alias"))
+        // Put update profile
+        const resqestData = {
+            "id": user.id,
+            "fullName": methods.getValues("fullName"),
+            "avatar": methods.getValues("avatar"),
+            "history": methods.getValues("history"),
+            "alias": methods.getValues("alias"),
+        };
+        profileApi.updateProfile(resqestData)
             .then((res) => {
-                
+                setUserProfile(res.data);
                 const snackBarPayload = { type: 'success', message: 'Cập nhật thông tin thành công!' };
-                dispatch(openSnackbar(snackBarPayload))
+                dispatch(openSnackbar(snackBarPayload));
+
+                if (userProfile.alias !== methods.getValues("alias")) {
+                    navigate(`/@${res.data.alias}`);
+                    window.location.reload();
+                }
+                handleClose();
             })
             .catch((error) => {
                 setBtnSubmitLoading(false);
-                setUploadedImage(false);
                 console.error(error)
 
                 const snackBarPayload = { type: 'error', message: 'Cập nhật thông tin thất bại. Vui lòng thử lại!' };
                 dispatch(openSnackbar(snackBarPayload))
             });
     }
+
     if (isLoad) {
         return (
             <>
                 <NavBar namePage='Thông tin cá nhân' />
-                <Card>
+                <Card sx={{ margin: '5rem 1rem 1rem 1rem', display: 'flex', justifyContent: 'center' }} >
                     <CardContent>
                         <CardHeader
                             avatar={
@@ -353,7 +316,11 @@ export default function Profile() {
                         <Box sx={{ m: 3 }}>
                             <Box mb={2}>
                                 {user.alias === userProfile.alias ? (
-                                    <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleClickOpen}><Edit /> Chỉnh sửa hồ sơ</Button>
+                                    <>
+                                        <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleClickOpen}><Edit /> Chỉnh sửa hồ sơ</Button>
+                                        <Button variant="contained" sx={{ margin: '5px' }} onClick={handleSignOut}><Logout /> Đăng xuất</Button>
+                                    </>
+
                                 ) : (
                                     <>
                                         <Button variant="contained" sx={{ margin: '5px' }}>Theo dõi</Button>
@@ -398,48 +365,28 @@ export default function Profile() {
                                 <ArticleOutlined sx={{ mr: 1 }} /> <Typography>Tiểu sử: </Typography>
                                 <Typography sx={{ ml: 1 }} color="text.secondary">{userProfile.history === null ? 'Chưa có tiểu sử' : userProfile.history}</Typography>
                             </div>
-
-                            {user.alias === userProfile.alias ? (
-                                <Stack spacing={2} direction="column" alignItems='center' >
-                                    <Typography onClick={handleSignOut}>Đăng xuất</Typography>
-                                </Stack>) : <></>}
                         </Box>
                     </CardContent>
                 </Card>
 
-                {/* <Box sx={{ width: '100%' }} mt={2}>
-                    <Tabs
-                        value={value}
-                        onChange={handleChange}
-                        textColor="secondary"
-                        indicatorColor="secondary"
-                        aria-label="secondary tabs example"
-                    >
-                        <Tab value="one" label="Video Của Bạn" />
-                        <Tab value="two" label="Yêu Thích" />
-                    </Tabs>
-                </Box> */}
-
-
-                <Box sx={{ width: '100%' }}>
+                <Box sx={{ margin: '1rem 1rem 1rem 1rem' }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                        <Tabs value={tabMenu} onChange={handleChange} aria-label="basic tabs example">
                             <Tab label="Video của bạn" {...a11yProps(0)} />
                             <Tab label="Riêng tư" {...a11yProps(1)} />
                             <Tab label="Yêu thích" {...a11yProps(2)} />
                         </Tabs>
                     </Box>
-                    <TabPanel value={value} index={0}>
-                        Video của bạn
+                    <TabPanel value={tabMenu} index={0}>
+                        <ListVideo index={0} />
                     </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        Riêng tư
+                    <TabPanel value={tabMenu} index={1}>
+                        <ListVideo index={1} />
                     </TabPanel>
-                    <TabPanel value={value} index={2}>
-                        Yêu thích
+                    <TabPanel value={tabMenu} index={2}>
+                        <ListVideo index={2} />
                     </TabPanel>
                 </Box>
-
 
                 {loginStatus || (
                     <Card>
@@ -457,7 +404,7 @@ export default function Profile() {
                     </Card>
                 )}
 
-                <Dialog open={open} fullWidth>
+                <Dialog open={openDialogUpdate} fullWidth>
                     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
                         <DialogTitle>Cập nhật thông tin cá nhân</DialogTitle>
                         <DialogContent>
@@ -479,12 +426,11 @@ export default function Profile() {
                                             </Avatar>
                                         </Badge>
                                     }
-                                    title=""
-                                    subheader=""
+                                // title={methods.getValues("fullName")}
+                                // subheader={methods.getValues("alias")}
                                 />
 
-                                <RHFTextField name="fullName" label="Tên của bạn"
-                                />
+                                <RHFTextField name="fullName" label="Tên của bạn" />
                                 <RHFTextField
                                     name='alias'
                                     label="TopTop ID"
@@ -507,7 +453,7 @@ export default function Profile() {
                             <Button type='submit' disabled={btnSubmitLoading}>Cập nhật</Button>
                         </DialogActions>
                     </FormProvider>
-                    {uploadedImage && (
+                    {btnSubmitLoading && (
                         <Box sx={{ width: '100%' }}>
                             <LinearProgress />
                         </Box>

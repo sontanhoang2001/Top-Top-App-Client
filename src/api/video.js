@@ -14,6 +14,10 @@ const video = {
   likeVideo: (data) => {
     const url = `${pathname}/heart`;
     return axiosClient.put(url, data);
+  },
+  findHashTag: (params) => {
+    const url = `hashtag?name=${params}`;
+    return axiosClient.get(url);
   }
 };
 

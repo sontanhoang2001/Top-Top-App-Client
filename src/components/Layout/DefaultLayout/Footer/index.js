@@ -11,9 +11,10 @@ import HomeIcon from '@mui/icons-material/Home';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
-import { useMediaQuery } from '@mui/material';
+import { Button, useMediaQuery } from '@mui/material';
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
@@ -116,13 +117,13 @@ function Footer() {
                         icon={<ChatBubbleIcon fontSize={matchesSM ? 'large' : 'medium'} />}
                         className={cx(page == 'home' ? 'btnNav__light' : null)}
                     />
+                    <BottomNavigationAction />
                     <BottomNavigationAction
                         component={Link}
                         to="/upload"
-                        label="Đăng Video"
                         value="upload"
-                        icon={<VideoCallIcon fontSize={matchesSM ? 'large' : 'medium'} />}
-                        className={cx(page == 'home' ? 'btnNav__light' : null)}
+                        icon={<AddIcon fontSize={matchesSM ? 'large' : 'medium'} />}
+                        className={cx('btnVideo', page == 'home' ? 'btnNav__light' : 'btnVideo__Active')}
                     />
                     <BottomNavigationAction
                         component={Link}
