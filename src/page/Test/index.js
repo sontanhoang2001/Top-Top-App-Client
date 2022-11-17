@@ -8,16 +8,21 @@ import { useEffect } from 'react';
 
 export default function ComboBox() {
     const [input, setInput] = useState([]);
-    const [search, setSearch] = useState();
-    const [listHashTag, setListHashTag] = useState();
-
+    const [search, setSearch] = useState("toptop2022");
+    const [listHashTag, setListHashTag] = useState([]);
+    const [newHashTag, setNewListHashTag] = useState();
 
 
     useEffect(() => {
         videoApi.findHashTag(search)
             .then(res => {
                 console.log("res: ", res.data);
-                setListHashTag(res.data);
+
+                if (res.data.length == 0) {
+                    setListHashTag([{ name: search }]);
+                } else {
+                    setListHashTag(res.data);
+                }
             })
             .catch(error => {
                 console.log(error);
@@ -34,11 +39,13 @@ export default function ComboBox() {
 
     const handleInputChange = (e) => {
         console.log("handleInputChange", e.target.value);
-        let inputValue = e.target.value.split(" ").join('#');
+        let inputValue = e.target.value.split(" ").join('\n');
         console.log("inputValue", inputValue);
 
-        setSearch(e.target.value);
-
+        if (inputValue.trim() != '') {
+            setSearch(e.target.value);
+            setNewListHashTag(e.target.value);
+        }
     }
 
     return [
