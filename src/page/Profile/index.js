@@ -34,10 +34,13 @@ import {
     TextField,
     DialogActions,
     InputAdornment,
+    Badge,
+    IconButton,
+    LinearProgress,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import propTypes from 'prop-types';
-import { EmailOutlined, ArticleOutlined, Edit, Save } from '@mui/icons-material';
+import { EmailOutlined, ArticleOutlined, Edit, Save, CameraAltRounded } from '@mui/icons-material';
 
 import { red } from '@mui/material/colors';
 
@@ -51,13 +54,19 @@ import profileApi from '~/api/profile'
 
 
 // redux
-import { useSelector } from 'react-redux';
-import { selectEmail } from "~/context/authSlice";
+import { useDispatch } from 'react-redux';
+import { openSnackbar } from '~/components/customizedSnackbars/snackbarSlice';
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
 
+// api
+import mediaApi from '~/api/media';
+
 import useResponsive from '~/hooks/useResponsive';
+
+// helper
+import { urlFromDriveUrl } from '~/shared/helper'
 
 // image
 import userDefaultImg from '~/assets/image/user-profile-default.png'
@@ -137,6 +146,7 @@ function a11yProps(index) {
 
 
 export default function Profile() {
+    const dispatch = useDispatch();
     const { userAlias } = useParams();
     const { user, loginStatus, logOut } = UserAuth();
 
@@ -146,12 +156,17 @@ export default function Profile() {
     const [isLoad, setIsLoad] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uploadedImage, setUploadedImage] = useState();
+    const [btnSubmitLoading, setBtnSubmitLoading] = useState(false);
 
 
     const profileSchema = Yup.object().shape({
         fullName: Yup.string()
-            .max(80, 'Tên tối đa 80 ký tự!')
+            .max(40, 'Tên tối đa 40 ký tự!')
             .required('Bạn chưa nhập tên!'),
+        alias: Yup.string()
+            .max(15, 'TopTop ID tối đa 15 ký tự!')
+            .required('Bạn chưa nhập TopTop ID!'),
     });
 
     const defaultValues = {
@@ -171,11 +186,6 @@ export default function Profile() {
         handleSubmit
     } = methods;
 
-    const onSubmit = async (data) => {
-        console.log("submit profile: ", data);
-        // uploadVideo(data);
-    }
-
 
     useEffect(() => {
         if (userAlias) {
@@ -184,11 +194,7 @@ export default function Profile() {
                     setUserProfile(res.data);
                     setIsLoad(true);
 
-                    methods.setValue("id", res.data.id);
-                    methods.setValue("fullName", res.data.fullName);
-                    methods.setValue("avatar", res.data.avatar);
-                    methods.setValue("history", res.data.history);
-                    methods.setValue("alias", res.data.alias);
+                    setFormState(res.data.id, res.data.fullName, res.data.avatar, res.data.history, res.data.alias);
                 })
                 .catch(error => {
                     console.log(error)
@@ -223,15 +229,111 @@ export default function Profile() {
 
     const [open, setOpen] = useState(false);
 
+    const setFormState = (id, fullName, avatar, history, alias) => {
+        methods.setValue("id", id);
+        methods.setValue("fullName", fullName);
+        methods.setValue("avatar", avatar);
+        methods.setValue("history", history === null ? "" : history);
+        methods.setValue("alias", alias);
+    }
+
     const handleClickOpen = () => {
+        setFormState(userProfile.id, userProfile.fullName, userProfile.avatar, userProfile.history, userProfile.alias);
         setOpen(true);
     };
 
     const handleClose = () => {
+        setBtnSubmitLoading(false);
+        setUploadedImage(false);
         setOpen(false);
     };
 
+    // handle change event of input file
+    const onChangeFile = async (e) => {
+        setBtnSubmitLoading(true);
+        setUploadedImage(true);
 
+        var filePath = URL.createObjectURL(e.target.files[0]);
+        var file = e.target.files[0] //the file
+        var reader = new FileReader() //this for convert to Base64 
+        reader.readAsDataURL(e.target.files[0]) //start conversion...
+        reader.onload = function (e) { //.. once finished..
+            var rawLog = reader.result.split(',')[1]; //extract only thee file data part
+            var dataSend = { dataReq: { data: rawLog, name: file.name, type: file.type }, fname: "uploadUserAvatar" }; //preapre info to send to API
+
+            mediaApi.uploadUserAvatar(dataSend)
+                .then(res => res.json())
+                .then((res) => {
+                    console.log("res upload avatar: ", urlFromDriveUrl(res.url))
+                    methods.setValue("avatar", urlFromDriveUrl(res.url))
+                    setBtnSubmitLoading(false);
+                    setUploadedImage(false);
+                })
+                .catch((error) => {
+                    setBtnSubmitLoading(false);
+                    setUploadedImage(false);
+                    console.error(error)
+                    const snackBarPayload = { type: 'error', message: 'Tải avatar không thành công!' };
+                    dispatch(openSnackbar(snackBarPayload))
+                });
+        }
+
+
+
+    };
+
+    const onSubmit = async (data) => {
+        // check nếu thay đổi thì cho update
+        const history = methods.getValues("history") === "" ? null : methods.getValues("history");
+        if (userProfile.fullName !== methods.getValues("fullName") || userProfile.alias !== methods.getValues("alias") || userProfile.history !== history) {
+            console.log("submit profile: ", data);
+
+            // check TopTop ID
+            profileApi.findByAlias(methods.getValues("alias"))
+                .then((res) => {
+                    if (res.data.result == true) {
+                        updateProfile();
+                    } else {
+                        const snackBarPayload = { type: 'error', message: 'TopTop ID vừa nhập đã tồn tại. Vui lòng thử lại!' };
+                        dispatch(openSnackbar(snackBarPayload))
+                        setBtnSubmitLoading(false);
+                        setUploadedImage(false);
+                    }
+                })
+                .catch((error) => {
+                    setBtnSubmitLoading(false);
+                    setUploadedImage(false);
+                    console.error(error)
+                });
+            // khi update thanh cong update lai user Profile
+        } else {
+            console.log("ko thay doi: ");
+        }
+
+        // uploadVideo(data);
+
+        // const snackBarPayload = { type: 'error', message: 'Tải avatar không thành công!' };
+        // dispatch(openSnackbar(snackBarPayload))
+    }
+
+
+    const updateProfile = async (data) => {
+        // check TopTop ID
+        profileApi.findByAlias(methods.getValues("alias"))
+            .then((res) => {
+                
+                const snackBarPayload = { type: 'success', message: 'Cập nhật thông tin thành công!' };
+                dispatch(openSnackbar(snackBarPayload))
+            })
+            .catch((error) => {
+                setBtnSubmitLoading(false);
+                setUploadedImage(false);
+                console.error(error)
+
+                const snackBarPayload = { type: 'error', message: 'Cập nhật thông tin thất bại. Vui lòng thử lại!' };
+                dispatch(openSnackbar(snackBarPayload))
+            });
+    }
     if (isLoad) {
         return (
             <>
@@ -360,6 +462,27 @@ export default function Profile() {
                         <DialogTitle>Cập nhật thông tin cá nhân</DialogTitle>
                         <DialogContent>
                             <Stack spacing={3} sx={{ marginTop: '1rem' }}>
+                                <CardHeader sx={{ mb: 3 }}
+                                    avatar={
+                                        <Badge
+                                            overlap="circular"
+                                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                            badgeContent={
+                                                <IconButton aria-label="upload picture" component="label">
+                                                    <input hidden accept="image/*" type="file" onChange={onChangeFile} />
+                                                    <CameraAltRounded />
+                                                </IconButton>
+                                            }
+                                        >
+                                            <Avatar sx={{ bgcolor: red[500], width: 66, height: 66 }} aria-label="recipe" src={methods.getValues("avatar")} >
+                                                {methods.getValues("avatar") === "" ? methods.getValues("fullName")[0] : methods.getValues("avatar")}
+                                            </Avatar>
+                                        </Badge>
+                                    }
+                                    title=""
+                                    subheader=""
+                                />
+
                                 <RHFTextField name="fullName" label="Tên của bạn"
                                 />
                                 <RHFTextField
@@ -380,10 +503,15 @@ export default function Profile() {
 
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleClose}>Hủy bỏ</Button>
-                            <Button type='submit'>Cập nhật</Button>
+                            <Button onClick={handleClose} disabled={btnSubmitLoading}>Hủy bỏ</Button>
+                            <Button type='submit' disabled={btnSubmitLoading}>Cập nhật</Button>
                         </DialogActions>
                     </FormProvider>
+                    {uploadedImage && (
+                        <Box sx={{ width: '100%' }}>
+                            <LinearProgress />
+                        </Box>
+                    )}
                 </Dialog>
             </ >
         );
@@ -391,35 +519,3 @@ export default function Profile() {
         <Loading />
     }
 }
-
-
-
-
-// import { useEffect } from 'react';
-// import { UserAuth } from '~/context/AuthContext';
-
-// function Profile() {
-//     const { user, logOut } = UserAuth();
-
-//     const handleSignOut = async () => {
-//         try {
-//             await logOut();
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     };
-
-//     useEffect(() => {
-//         console.log("get profile")
-//     }, [])
-
-//     return (
-//         <>
-//             <h1>Account</h1>
-//             <p>Welcome, {user?.displayName}</p>
-//             <button onClick={handleSignOut}>Logout</button>
-//         </>
-//     );
-// }
-
-// export default Profile;

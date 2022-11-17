@@ -1,5 +1,5 @@
-const url = "https://script.google.com/macros/s/AKfycbyqw9C9zV1327MJqrInIJepZGhJnpz4dcvpmZ144eRCtkj851XpAJKggRGMHxr8IZwW/exec";
-// const url = "https://script.google.com/macros/s/AKfycbwfLwoXDC50zx5lLJHv9mTRlxOQmvNiAcqYb31cGwlns_Rl62pfEWs8JBm3UCzlAxku/exec";
+const scriptId = "AKfycbyISVUKqbQ4Z6qGcWqjgNhaLrukqTZlemeNsVidY8CPzIum67Fy-sBpECoo2G-b8Kpd";
+const url = `https://script.google.com/macros/s/${scriptId}/exec`;
 
 const uploadMedia = {
     uploadVideo: (dataSend) => {
@@ -7,11 +7,15 @@ const uploadMedia = {
             { method: "POST", body: JSON.stringify(dataSend) }) //send to Api
     },
     uploadMessageImage: (dataSend) => {
-        return fetch(url, //your AppsScript URL
+        return fetch(url,
             { method: "POST", body: JSON.stringify(dataSend) })
     },
     uploadMessageAudioRecorder: (dataSend) => {
-        return fetch(url, //your AppsScript URL
+        return fetch(url,
+            { method: "POST", body: JSON.stringify(dataSend) })
+    },
+    uploadUserAvatar: (dataSend) => {
+        return fetch(url,
             { method: "POST", body: JSON.stringify(dataSend) })
     }
 };
