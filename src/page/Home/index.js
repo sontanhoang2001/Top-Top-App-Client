@@ -29,72 +29,6 @@ import { selectTotalVideoPlayed } from '~/components/Layout/Video/videoSlice';
 
 const cx = classNames.bind(styles);
 
-const videosFake = [
-    {
-        url: video1,
-        likes: 581.7,
-        comments: 3146,
-        shares: 580,
-        title: 'Em này dễ thương quá @xuhuong @cover @hathay @amnhac',
-        channel: 'my30.01',
-        song: 'nhạc nền - I ❤ My IDOL',
-    },
-    {
-        url: video3,
-        likes: 950,
-        comments: 49,
-        shares: 100,
-        title:
-            'Các vị trí trong bộ phận IT của FPT software #fptsoftwareacademy #LearnOnTikTok #tuyendungit #fypシ #xuhuong',
-        channel: 'fptsoftwareacademy',
-        song: 'nhạc nền - FSoft Academy - Học viện CNTT',
-    },
-    {
-        url: video4,
-        likes: 850,
-        comments: 29,
-        shares: 78,
-        title: 'Vào đây mê không lối thoát lunnn #cantho #review #theanh28',
-        channel: 'fptsoftwareacademy',
-        song: 'nhạc nền - Di s Story in Can Tho',
-    },
-    {
-        url: video5,
-        likes: 479,
-        comments: 876,
-        shares: 26,
-        title: 'Bạn thích mẫu áo nào? #jteeman #thoitrangdinh #outfitideas #99tiktokshoppingsale',
-        channel: 'jteeman',
-        song: 'follow liz sanchez if you are hot - LIZ SANCHEZ',
-    },
-    {
-        url: video6,
-        likes: 329,
-        comments: 124,
-        shares: 34,
-        title: 'Nhìn như này mà đòi nhảy au với mình 😗',
-        channel: 'piitien1603',
-        song: 'Aloha remix nhảy Au thả thính - SPX Entertainment',
-    },
-    {
-        url: video7,
-        likes: 129,
-        comments: 24,
-        shares: 14,
-        title: 'Nhìn như này mà đòi nhảy au với mình 😗',
-        channel: 'piitien1603',
-        song: 'Aloha remix nhảy Au thả thính - SPX Entertainment',
-    },
-    {
-        url: "https://drive.google.com/uc?export=download&id=11t80AH_PK8JJSxWMjPDll4cCNsDRcrVT",
-        likes: 829,
-        comments: 324,
-        shares: 4,
-        title: 'Nhìn như này mà đòi nhảy au với mình 😗',
-        channel: 'piitien1603',
-        song: 'Aloha remix nhảy Au thả thính - SPX Entertainment',
-    },
-];
 
 const initialPageSize = 4;
 
@@ -117,7 +51,7 @@ function Home() {
     };
 
     useEffect(() => {
-        if (pathName == '/' || pathName == '/home') {
+        if (pathName === '/' || pathName === '/home') {
             setEnable(true)
         } else {
             setEnable(false)
@@ -136,7 +70,7 @@ function Home() {
                 setIsLoaded(true);
             })
             .catch((error) => {
-                console.log("error ne: ", error);
+                console.log(error);
                 setIsLoaded(false);
             })
     }, [])
@@ -170,9 +104,9 @@ function Home() {
                                 index={index}
                                 id={video.id}
                                 avatarUser={video.user.avatar}
-                                comments='34'
+                                comments={video.comment}
                                 likes={video.heart}
-                                shares='123'
+                                shares={video.share}
                                 title={video.title}
                                 channel={video.user.alias}
                                 song={video.musicUrl}

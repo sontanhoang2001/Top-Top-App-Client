@@ -48,9 +48,9 @@ function ListVideo({ index }) {
     })
 
     return (<>
-        <Grid container spacing={2}>
-            <Grid item xs={12} md={12} sx={{ mt: 2 }}>
-                <ImageList sx={{ width: '100%', minHeight: 350 }} cols={imageListCol} gap={10}>
+        {/* <Grid container spacing={2}>
+            <Grid item xs={12} md={12} sx={{ mt: 2 }}> */}
+                <ImageList sx={{ width: '100%', minHeight: 350 }} cols={imageListCol} gap={10} component='div'>
                     {itemData.map((item, index) => (
                         <ImageListItem key={index} sx={{cursor: 'pointer'}}>
                             <img
@@ -63,8 +63,8 @@ function ListVideo({ index }) {
                         </ImageListItem>
                     ))}
                 </ImageList>
-            </Grid>
-        </Grid>
+            {/* </Grid>
+        </Grid> */}
     </>);
 }
 

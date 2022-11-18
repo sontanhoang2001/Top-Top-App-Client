@@ -15,6 +15,7 @@ import ForgotPassword from '~/page/ForgotPassword';
 import ResetPassword from '~/page/ResetPassword';
 import Chat from '~/page/Chat/index';
 import Test from '~/page/Test';
+import StartProfile from '~/page/startProfile';
 
 // Public routes
 const publicRoutes = [
@@ -34,6 +35,7 @@ const publicRoutes = [
 ];
 
 const privateRoutes = [
+    { path: '/profile', component: StartProfile },
     { path: '/login', component: Login, layout: FooterOnly },
     { path: '/register', component: Register, layout: FooterOnly },
     { path: '/otp', component: Otp, layout: FooterOnly },

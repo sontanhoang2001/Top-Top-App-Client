@@ -47,7 +47,7 @@ const theme = createTheme({
 });
 
 function Footer() {
-    const { user } = UserAuth();
+    const { loginStatus, user } = UserAuth();
     const pathProfile = `/@${user.alias}`;
     const location = useLocation();
     const pathName = location.pathname;
@@ -71,13 +71,17 @@ function Footer() {
             case '/notification':
                 setPage('notification');
                 break;
+            case '/profile':
+                setPage('profile');
+                break;
             case pathProfile:
                 setPage('profile');
                 break;
             default:
                 setPage('/');
         }
-    });
+
+    }, [location]);
 
     const handleChange = (event, newPage) => {
         setPage(newPage);
@@ -135,7 +139,7 @@ function Footer() {
                     />
                     <BottomNavigationAction
                         component={Link}
-                        to={pathProfile}
+                        to={loginStatus === true ? pathProfile : "/profile"}
                         label="Cá Nhân"
                         value="profile"
                         icon={<PersonIcon fontSize={matchesSM ? 'large' : 'medium'} />}

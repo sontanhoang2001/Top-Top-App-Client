@@ -51,69 +51,6 @@ function VideoSidebar({ playing, avatarUser, channel, comments, shares, likes })
         dispatch(dialogComment(payload));
     };
 
-    // useEffect(() => {
-    //     if (user) {
-    //         console.log("check userId: ", user.id);
-    //     }
-    //     if (liked) {
-    //         if (user)
-    //             if (user.id === undefined) {
-    //                 navigate("/login");
-    //             } else {
-    //                 const request = {
-    //                     "videoId": videoId,
-    //                     "userId": user.id,
-    //                     "status": true
-    //                 };
-    //                 console.log("liked", request)
-    //                 // apiVideo.likeVideo(request)
-    //                 //     .then(res => {
-    //                 //         console.log("res : ", res);
-    //                 //     })
-    //                 //     .catch((error) => {
-    //                 //         console.log("error : ", error);
-    //                 //     })
-
-    //             }
-    //     } else {
-    //         if (liked !== null) {
-    //             if (user)
-    //                 if (user.id === undefined) {
-    //                     navigate("/login");
-    //                 } else {
-    //                     const request = {
-    //                         "videoId": videoId,
-    //                         "userId": user.id,
-    //                         "status": false
-    //                     };
-    //                     console.log("unliked: ", request)
-    //                     // apiVideo.likeVideo(request)
-    //                     //     .then(res => {
-    //                     //         console.log("res : ", res);
-    //                     //     })
-    //                     //     .catch((error) => {
-    //                     //         console.log("error : ", error);
-    //                     //     })
-    //                 }
-    //         }
-    //     }
-    // }, [liked])
-
-    // const handleLike = () => {
-    //     if (user.id)
-    //         if (user.id === undefined) {
-    //             setLiked(false);
-    //         } else {
-    //             setLiked(true);
-    //         }
-    // }
-
-    // const handleUnLike = () => {
-    //     setLiked(false);
-    // }
-
-
-
     useEffect(() => {
         if (liked !== null)
             if (user) {
@@ -193,7 +130,7 @@ function VideoSidebar({ playing, avatarUser, channel, comments, shares, likes })
                     <ShareIcon fontSize="large" />
                     <p className={cx('videoSideBar__text')}>{shares}</p>
                 </div>
-                <div className={cx('videoSidebar__musicCover')}>
+                {/* <div className={cx('videoSidebar__musicCover')}>
                     <div
                         className={cx('diskMusic')}
                         style={{
@@ -208,7 +145,7 @@ function VideoSidebar({ playing, avatarUser, channel, comments, shares, likes })
                             }}
                         ></div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </>
     );

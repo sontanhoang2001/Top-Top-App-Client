@@ -1,11 +1,11 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Stack, IconButton, InputAdornment, Card, CardContent, TextField, Button, Grid, FormControl, Select, MenuItem, InputLabel, Chip, Avatar, Typography, Box, FormGroup, FormControlLabel, Checkbox, DialogContent, DialogTitle, DialogContentText, DialogActions, Dialog } from '@mui/material';
+import { Stack, IconButton, InputAdornment, Card, CardContent, TextField, Button, Grid, FormControl, Select, MenuItem, InputLabel, Chip, Avatar, Typography, Box, FormGroup, FormControlLabel, Checkbox, DialogContent, DialogTitle, DialogContentText, DialogActions, Dialog, Autocomplete } from '@mui/material';
 import { LibraryMusic, CloudUpload, Save } from '@mui/icons-material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
@@ -43,8 +43,9 @@ export default function UploadVideoForm() {
     const UploadSchema = Yup.object().shape({
         title: Yup.string()
             .max(80, 'Tên tối đa 80 ký tự!')
-            .required('Bạn chưa nhập tiêu đề!'),
-        hashTag: Yup.string("Hash Tag bạn vừa nhập chưa đúng định dạng!")
+            .required('Bạn chưa nhập tiêu đề cho video!'),
+        hashTag: Yup.string("HashTag bạn vừa nhập chưa đúng định dạng!")
+            .max(50, 'Đã vướt quá giới hạn HashTag!')
     });
 
     const defaultValues = {
@@ -85,7 +86,7 @@ export default function UploadVideoForm() {
 
     const uploadVideo = (data) => {
         if (data.videoUrl === null) {
-            const snackBarPayload = { type: 'error', message: 'Bạn chưa tải video!', duration: 5000 };
+            const snackBarPayload = { type: 'error', message: 'Bạn chưa chọn video tải lên!', duration: 8000 };
             dispatch(openSnackbar(snackBarPayload))
             setIsSubmitting(false);
         } else {
@@ -99,23 +100,19 @@ export default function UploadVideoForm() {
                     const videoUrl = urlFromDriveUrl(res.url);
                     if (videoUrl !== "") {
                         // lọc dữ liệu trước khi gửi lên
-                        // console.log("upload video...", data)
-
-                        const hashTag = data.hashTag.split(" ").join('').split("#");
 
                         const dataVideo = {
                             title: data.title,
                             videoUrl: videoUrl,
                             music: data.music,
-                            enableComment: true,
+                            enableComment: methods.getValues("enableComment"),
                             userid: userId,
                             hashTag: hashTag,
                             professed: methods.getValues("professed")
                         };
 
-                        console.log("dataVideo: ", dataVideo)
-
-                        // // gọi tiếp method post db lên database
+                        // gọi tiếp method post db lên database
+                        // console.log("dataVideo: ", dataVideo)
                         createVideoInfo(dataVideo);
                     }
                 }).catch(e => console.log(e)) // Or Error in console
@@ -156,6 +153,47 @@ export default function UploadVideoForm() {
         methods.setValue("professed", true);
     }
 
+    // autoComplete
+    const [hashTag, setHashTag] = useState([]);
+    const [search, setSearch] = useState("toptop2022");
+    const [autoCompleteListHashTag, setAutoCompleteListHashTag] = useState([]);
+
+    useEffect(() => {
+        videoApi.findHashTag(search)
+            .then(res => {
+                if (res.data.length === 0) {
+                    setAutoCompleteListHashTag([{ name: search }]);
+                } else {
+                    setAutoCompleteListHashTag(res.data);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }, [search])
+
+    const onTagsChange = (event, values) => {
+        //   debugger;
+        setHashTag(values);
+    };
+
+    // convert arrray HashTag to string
+    useEffect(() => {
+        let hashTagTemp = "";
+        hashTag.forEach(({ name }) => {
+            hashTagTemp += name;
+        });
+        methods.setValue("hashTag", hashTagTemp);
+    }, [hashTag])
+
+    const handleHashTagChange = (e) => {
+        let inputValue = e.target.value.split(" ").join('\n');
+
+        if (inputValue.trim() != '') {
+            setSearch(e.target.value);
+        }
+    }
+
     return (
         <>
             <NavBar namePage='Đăng Video mới' />
@@ -182,16 +220,27 @@ export default function UploadVideoForm() {
                                 <Grid item xs={12} md={8}>
                                     <Stack spacing={3}>
                                         <RHFTextField name="title" label="Tiêu đề video" />
-                                        <RHFTextField
-                                            name='hashTag'
-                                            label="Hash tag"
-                                            sx={{ m: 1 }}
-                                            InputProps={{
-                                                startAdornment: <InputAdornment position="start">#</InputAdornment>,
-                                            }}
+                                        <Autocomplete
+                                            multiple
+                                            freeSolo
+                                            options={autoCompleteListHashTag}
+                                            getOptionLabel={option => option.name || option}
+                                            onChange={onTagsChange}
+                                            renderInput={(params) => (
+                                                <RHFTextField
+                                                    name='hashTag'
+                                                    {...params}
+                                                    variant="outlined"
+                                                    label="HashTag"
+                                                    placeholder="#"
+                                                    margin="normal"
+                                                    fullWidth
+                                                    onChange={e => handleHashTagChange(e)}
+                                                />
+                                            )}
                                         />
 
-                                        <Button variant="outlined" startIcon={<LibraryMusic />} sx={{ m: 1, width: '36ch' }} onClick={handleClickOpen}>
+                                        {/* <Button variant="outlined" startIcon={<LibraryMusic />} sx={{ m: 1, width: '36ch' }} onClick={handleClickOpen}>
                                             Chọn âm nhạc cho video
                                         </Button>
 
@@ -199,7 +248,7 @@ export default function UploadVideoForm() {
                                             <InputLabel id="demo-simple-select-label">Âm nhạc cho video</InputLabel>
 
                                             <Chip avatar={<Avatar>M</Avatar>} label="Đã có anh ở đây rồi - Chi Dân" sx={{ padding: '1rem' }} variant="outlined" />
-                                        </Box>
+                                        </Box> */}
                                         <FormGroup>
                                             <FormControlLabel onChange={(e) => methods.setValue("enableComment", e.target.checked)} control={<Checkbox defaultChecked />} label="Cho phép bình luận video" />
                                         </FormGroup>
