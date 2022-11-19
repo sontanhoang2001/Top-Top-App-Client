@@ -158,11 +158,8 @@ export default function Profile() {
 
     // load profile info
     useEffect(() => {
-        console.log("userAlias: ", userAlias)
-
         profileApi.getProfileByAlias(userAlias)
             .then(res => {
-                console.log("res data", res.data)
                 setIsLoad(true);
                 if (res.data !== "") {
                     setUserProfile(res.data);

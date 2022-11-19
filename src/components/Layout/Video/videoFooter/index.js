@@ -22,7 +22,7 @@ function VideoFooter({ channel, title }) {
     return (
         <div className={cx('videoFooter')}>
             <div className={cx('videoFooter__text')}>
-                <h3 className={cx('videoFooter__text--channel')}><Link to={`@${channel}`}>@{channel}</Link></h3>
+                <Link className={cx('videoFooter__text--channel')} to={`@${channel}`}>@{channel}</Link>
                 <p className={cx('videoFooter__text--description')}>{title}</p>
                 {/* <div className={cx('videoFooter_ticker')}>
                     <MusicNoteIcon className={cx('videoFooter__icon')} />

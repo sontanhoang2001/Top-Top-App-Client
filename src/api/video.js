@@ -18,6 +18,10 @@ const video = {
   findHashTag: (params) => {
     const url = `hashtag?name=${params}`;
     return axiosClient.get(url);
+  },
+  isYouHeartThisVideo: (videoId, userId) => {
+    const url = `${pathname}/heart/${videoId}/user/${userId}`;
+    return axiosClient.get(url);
   }
 };
 

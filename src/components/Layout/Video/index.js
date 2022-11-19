@@ -108,10 +108,10 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
                     </div>
                 </div>
             )}
-            <VideoSidebar id={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} />
+            <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes}/>
             <VideoFooter playing={playing} channel={channel} title={title} song={song} />
         </div>
     );
 }
 
-export default  Video;
+export default Video;
