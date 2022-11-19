@@ -390,12 +390,12 @@ export default function Profile() {
                             <TabPanel value={tabMenu} index={0}>
                                 <ListVideo index={0} />
                             </TabPanel>
-                            {/* <TabPanel value={tabMenu} index={1}>
+                            <TabPanel value={tabMenu} index={1}>
                                 <ListVideo index={1} />
                             </TabPanel>
                             <TabPanel value={tabMenu} index={2}>
                                 <ListVideo index={2} />
-                            </TabPanel> */}
+                            </TabPanel>
                         </Box>
                     </>
                 )}

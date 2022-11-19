@@ -45,13 +45,12 @@ export default function UploadVideoForm() {
             .max(80, 'Tên tối đa 80 ký tự!')
             .required('Bạn chưa nhập tiêu đề cho video!'),
         hashTag: Yup.string("HashTag bạn vừa nhập chưa đúng định dạng!")
-            .max(50, 'Đã vướt quá giới hạn HashTag!')
+            .max(100, 'Đã vướt quá giới hạn HashTag!')
     });
 
     const defaultValues = {
         title: '',
         videoUrl: null,
-        music: '',
         enableComment: true,
         hashTag: '',
         professed: true
@@ -101,18 +100,18 @@ export default function UploadVideoForm() {
                     if (videoUrl !== "") {
                         // lọc dữ liệu trước khi gửi lên
 
+                        const finalHashTag = hashTag.map(item => item.name);
                         const dataVideo = {
                             title: data.title,
                             videoUrl: videoUrl,
-                            music: data.music,
                             enableComment: methods.getValues("enableComment"),
                             userid: userId,
-                            hashTag: hashTag,
+                            hashTag: finalHashTag,
                             professed: methods.getValues("professed")
                         };
 
                         // gọi tiếp method post db lên database
-                        // console.log("dataVideo: ", dataVideo)
+                        // console.log("dataVideo: ", finalHashTag)
                         createVideoInfo(dataVideo);
                     }
                 }).catch(e => console.log(e)) // Or Error in console
@@ -147,7 +146,6 @@ export default function UploadVideoForm() {
         setReviewVideo("");
         methods.resetField("title");
         methods.resetField("videoUrl");
-        methods.resetField("music");
         methods.resetField("enableComment");
         methods.resetField("hashTag");
         methods.setValue("professed", true);
@@ -188,10 +186,15 @@ export default function UploadVideoForm() {
 
     const handleHashTagChange = (e) => {
         let inputValue = e.target.value.split(" ").join('\n');
+        inputValue = inputValue.trim();
 
-        if (inputValue.trim() != '') {
-            setSearch(e.target.value);
+        const regular_expression = /^[A-Za-z0-9\)\(+\=\._-]+$/g
+        const isValid = regular_expression.test(inputValue);
+
+        if (isValid) {
+            setSearch(inputValue);
         }
+
     }
 
     return (
@@ -266,23 +269,24 @@ export default function UploadVideoForm() {
                                             </Select>
                                         </FormControl>
                                     </Stack>
-                                </Grid>
-                                <Grid item xs={12} md={8}>
-                                    <Stack spacing={2} direction="row" mt={3}>
-                                        <Button size="large" variant="outlined" disabled={isSubmitting} onClick={resetForm}>
-                                            Hủy bỏ
-                                        </Button >
 
-                                        <LoadingButton
-                                            loading={isSubmitting}
-                                            loadingPosition="start"
-                                            startIcon={<Save />}
-                                            variant="contained"
-                                            size="large" type="submit"
-                                        >
-                                            Đăng Video
-                                        </LoadingButton>
-                                    </Stack>
+                                    <Grid item xs={12} md={8}>
+                                        <Stack spacing={2} direction="row" mt={3}>
+                                            <Button size="large" variant="outlined" disabled={isSubmitting} onClick={resetForm}>
+                                                Hủy bỏ
+                                            </Button >
+
+                                            <LoadingButton
+                                                loading={isSubmitting}
+                                                loadingPosition="start"
+                                                startIcon={<Save />}
+                                                variant="contained"
+                                                size="large" type="submit"
+                                            >
+                                                Đăng Video
+                                            </LoadingButton>
+                                        </Stack>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </CardContent>

@@ -86,12 +86,11 @@ function Home() {
                     setTotalElements(res.data.totalElements)
                 })
                 .catch((error) => {
-                    console.log("error ne: ", error);
+                    console.log(error);
                     setIsLoaded(false);
                 })
         }
     }, [totalVideoPlayed])
-
 
     if (isLoaded) {
         return (

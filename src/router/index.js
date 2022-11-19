@@ -24,14 +24,10 @@ const publicRoutes = [
     { path: '/home', component: Fragment },
     { path: '/search', component: Search },
     { path: '/following', component: Following },
-    { path: '/upload', component: Upload },
-    { path: '/notification', component: Notification },
-    { path: '/chat', component: Chat },
     { path: `/@:userAlias`, component: Profile },
     { path: '/register', component: Register, layout: FooterOnly },
     { path: '/counter', component: Counter },
     { path: '/test', component: Test },
-
 ];
 
 const privateRoutes = [
@@ -43,4 +39,11 @@ const privateRoutes = [
     { path: '/resetpassword', component: ResetPassword, layout: FooterOnly },
 ];
 
-export { publicRoutes, privateRoutes };
+const loginRoutes = [
+    { path: '/upload', component: Upload },
+    { path: '/notification', component: Notification },
+    { path: '/chat', component: Chat },
+];
+
+
+export { publicRoutes, privateRoutes, loginRoutes };

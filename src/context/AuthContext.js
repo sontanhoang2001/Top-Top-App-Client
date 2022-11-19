@@ -25,7 +25,7 @@ export const AuthContextProvider = ({ children }) => {
     const dispatch = useDispatch();
 
     const [user, setUser] = useState(false);
-    const [userInfo, setUserInfo] = useState(false);
+    // const [userInfo, setUserInfo] = useState(false);
     const [loginStatus, setLoginStatus] = useState(false);
 
 

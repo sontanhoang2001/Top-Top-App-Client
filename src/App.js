@@ -4,10 +4,10 @@ import { Route, Routes } from 'react-router-dom';
 import ThemeProvider from './theme';
 import Snackbar from '~/components/customizedSnackbars';
 
-import { publicRoutes, privateRoutes } from './router';
+import { publicRoutes, privateRoutes, loginRoutes } from './router';
 import { DefaultLayout } from './components/Layout';
 import { AuthContextProvider } from './context/AuthContext';
-import Protected from './Proteced';
+import { ProtectedPrivate, ProtectedLogin } from './Proteced';
 
 // import '@fontsource/roboto/300.css';
 import Home from './page/Home';
@@ -42,6 +42,30 @@ function App() {
                             );
                         })}
 
+                        {loginRoutes.map((route, index) => {
+                            const Page = route.component;
+                            let Layout = DefaultLayout;
+
+                            if (route.layout) {
+                                Layout = route.layout;
+                            } else if (route.layout === null) {
+                                Layout = Fragment;
+                            }
+                            return (
+                                <Route
+                                    key={index}
+                                    path={route.path}
+                                    element={
+                                        <ProtectedLogin>
+                                            <Layout>
+                                                <Page key={index} />
+                                            </Layout>
+                                        </ProtectedLogin>
+                                    }
+                                />
+                            );
+                        })}
+
                         {privateRoutes.map((route, index) => {
                             const Page = route.component;
                             let Layout = DefaultLayout;
@@ -56,11 +80,11 @@ function App() {
                                     key={index}
                                     path={route.path}
                                     element={
-                                        <Protected>
+                                        <ProtectedPrivate>
                                             <Layout>
                                                 <Page key={index} />
                                             </Layout>
-                                        </Protected>
+                                        </ProtectedPrivate>
                                     }
                                 />
                             );

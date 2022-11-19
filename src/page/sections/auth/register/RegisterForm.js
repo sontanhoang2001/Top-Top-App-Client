@@ -39,7 +39,7 @@ export default function RegisterForm({ setUserTempId }) {
       .required('Bạn chưa nhập tên!'),
     email: Yup.string().email('Email vừa nhập chưa đúng định dạng!').required('Bạn chưa nhập email!'),
     password: Yup.string()
-      .matches(REGEX_PASSWORD, 'Mật khẩu phải trên 8 ký tự tối đã 15 ký tự, phải có số và ít nhất một chữ cái in hoa'),
+      .matches(REGEX_PASSWORD, 'Mật khẩu phải trên 8 ký tự tối đa 15 ký tự, phải có số và ít nhất một chữ cái in hoa'),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], 'Nhập lại mật khẩu không khớp!')
       .required("Bạn chưa nhập lại mật khẩu!")
