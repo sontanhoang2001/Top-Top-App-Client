@@ -15,7 +15,7 @@ import Avatar from '@mui/material/Avatar';
 import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 import { dialogComment, dialogShare } from '~/components/customizedDialog/dialogSlice'
-import { selectVideoId } from '../videoSlice';
+// import { selectVideoId } from '../videoSlice';
 
 // api
 import videoApi from '~/api/video';
@@ -39,7 +39,6 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
     useEffect(() => {
         videoApi.isYouHeartThisVideo(videoId, user.id)
             .then(res => {
-                console.log("check heart: ", res.data)
                 if(res.data === true) {
                     favoriteIcon.current.style.color = 'var(--primary-btn-color)';
                 }
@@ -57,12 +56,12 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
     }, [follow])
 
     const handleClickOpenDialogShare = () => {
-        const payload = { dialogStatus: true, dialogId: "id ne" };
+        const payload = { dialogStatus: true, videoId: videoId };
         dispatch(dialogShare(payload));
     };
 
     const handleClickOpenDialogComment = () => {
-        const payload = { dialogStatus: true, dialogId: "id ne" };
+        const payload = { dialogStatus: true, videoId: videoId };
         dispatch(dialogComment(payload));
     };
 

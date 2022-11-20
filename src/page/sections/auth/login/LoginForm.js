@@ -24,15 +24,13 @@ export default function LoginForm({ socialLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const REGEX_PASSWORD = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,15}$/
-
   const LoginSchema = Yup.object().shape({
     email: Yup
       .string()
       .email('Email vừa nhập chưa đúng định dạng!')
       .required('Bạn chưa nhập Email!'),
     password: Yup.string()
-      .matches(REGEX_PASSWORD, 'Mật khẩu phải trên 8 ký tự tối đã 15 ký tự, phải có số và ít nhất một chữ cái in hoa'),
+      .required('Bạn chưa nhập mật khẩu!'),
   });
 
   // load remember

@@ -28,9 +28,9 @@ import ChildrenComment from './childrenComment';
 import EmojiPicker from 'emoji-picker-react';
 import classNames from 'classnames/bind';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { selectVideoId } from '~/components/customizedDialog/dialogSlice'
+import { useSelector } from 'react-redux';
 const cx = classNames.bind(styles);
-
-
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -85,9 +85,9 @@ function Comment() {
     const [pageSize, setPageSize] = useState(initialPageSize);
     const [totalElements, setTotalElements] = useState();
     const [hasMore, setHasMore] = useState(true);
+    const videoId = useSelector(selectVideoId);
 
     useEffect(() => {
-        const videoId = 1;
         commentApi.getCommentParent(videoId, pageNo, pageSize)
             .then(res => {
                 console.log("res comment: ", res.data.data)
@@ -118,15 +118,15 @@ function Comment() {
     };
 
 
-    const handleSendMessage = async () => {
+    const handleCreateComment = async () => {
         handleCloseEmoji(false);
-        if (commentInput.trim() == "") {
+        if (commentInput.trim() === "") {
 
         } else {
             const dataRequest = {
                 "content": commentInput,
                 "parentId": null,
-                "videoId": 1,
+                "videoId": videoId,
                 "userId": user.id
             };
 

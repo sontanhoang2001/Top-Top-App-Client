@@ -62,7 +62,6 @@ function CustomizedDialog() {
         dispatch(closeDialog());
     };
 
-    console.log("re-render dialog")
 
     switch (dialogName) {
         case 'comment': {

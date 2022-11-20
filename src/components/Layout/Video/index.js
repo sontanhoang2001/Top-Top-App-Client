@@ -41,18 +41,18 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
     };
 
     // tự động phát cho video đầu tiên
-    const attemptPlay = () => {
-        if (index == 0) {
-            videoRef &&
-                videoRef.current &&
-                videoRef.current.play().catch((error) => {
-                    console.error('Error attempting to play', error);
-                });
-        }
-    };
+    // const attemptPlay = () => {
+    //     if (index == 0) {
+    //         videoRef &&
+    //             videoRef.current &&
+    //             videoRef.current.play().catch((error) => {
+    //                 console.error('Error attempting to play', error);
+    //             });
+    //     }
+    // };
 
     useEffect(() => {
-        attemptPlay();
+        // attemptPlay();
 
         if (isVisibile) {
             if (!playing) {
@@ -71,8 +71,6 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
                 setPlaying(false);
             }
         }
-
-
     }, [isVisibile]);
 
     return (
