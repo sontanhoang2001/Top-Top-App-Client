@@ -27,12 +27,22 @@ import CustomizedDialog from '~/components/customizedDialog';
 import { useSelector } from 'react-redux';
 import { selectTotalVideoPlayed } from '~/components/Layout/Video/videoSlice';
 
+// notification
+import notification from '~/api/notification'
+
+// Auth provider
+import { UserAuth } from '~/context/AuthContext';
+
+import urlAudioNotification from '~/assets/audio/iphone_notification_ringtone_iphone_sms_ringtones.mp3';
+
+
 const cx = classNames.bind(styles);
 
 
 const initialPageSize = 4;
 
 function Home() {
+    const { user } = UserAuth();
     const location = useLocation();
     const pathName = location.pathname;
 
@@ -42,9 +52,29 @@ function Home() {
 
     const [pageNo, setPageNo] = useState(1);
     const [pageSize, setPageSize] = useState(initialPageSize);
-    const [hasMore, setHasMore] = useState(true);
+    // const [hasMore, setHasMore] = useState(true);
     const [totalElements, setTotalElements] = useState();
     const totalVideoPlayed = useSelector(selectTotalVideoPlayed);
+
+    const [audioNotification] = useState(new Audio(urlAudioNotification));
+    // thông báo
+    // useEffect(() => {
+    //     if (user) {
+    //         try {
+    //             notification.getNotification(user.id).addEventListener("user-list-event", (event) => {
+    //                 const data = JSON.parse(event.data);
+
+    //                 if (data.length > 0) {
+    //                     audioNotification.play();
+    //                     // console.log("thông báo nè: ", data);
+    //                 } else {
+    //                     // console.log("Chưa có thông báo...");
+    //                 }
+    //             })
+    //         } catch (error) {
+    //         }
+    //     }
+    // }, [user])
 
     const onEnableAudio = () => {
         setMuted(false);

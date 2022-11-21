@@ -37,15 +37,17 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
     const favoriteIcon = useRef()
 
     useEffect(() => {
-        videoApi.isYouHeartThisVideo(videoId, user.id)
-            .then(res => {
-                if(res.data === true) {
-                    favoriteIcon.current.style.color = 'var(--primary-btn-color)';
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            })
+        if (videoId)
+            if (user)
+                videoApi.isYouHeartThisVideo(videoId, user.id)
+                    .then(res => {
+                        if (res.data === true) {
+                            favoriteIcon.current.style.color = 'var(--primary-btn-color)';
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
     }, [])
 
     useEffect(() => {

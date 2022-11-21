@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -19,9 +19,6 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { Chip } from '@mui/material';
-
-// notification
-import notification from '~/api/notification'
 
 // Auth provider
 import { UserAuth } from '~/context/AuthContext';
@@ -84,23 +81,9 @@ const StyledFab = styled(Fab)({
     margin: '0 auto',
 });
 
+var resoureUrl;
 export default function BottomAppBar() {
-    const { user } = UserAuth();
-
-    useEffect(() => {
-        if (user.id) {
-            console.log("check userId: ", user.id)
-            try {
-                notification.getNotification(user.id).addEventListener("user-list-event", (event) => {
-                    const data = JSON.parse(event.data);
-                    if (data.length > 0) {
-                        console.log(data);
-                    }
-                })
-            } catch (error) {
-            }
-        }
-    })
+    // const { user } = UserAuth();
 
     return (
         <Fragment>

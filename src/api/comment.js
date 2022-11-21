@@ -11,8 +11,8 @@ const comment = {
     const url = `${pathname}/video/${videoId}?pageNo=${pageNo}&pageSize=${pageSize}&sortBy=createdDate&sortDir=desc`;
     return axiosClient.get(url);
   },
-  getChildrenComment: (childrend, pageNo, pageSize) => {
-    const url = `${pathname}/childrend/${childrend}?pageNo=${pageNo}&pageSize=${pageSize}&sortBy=createdDate&sortDir=desc`;
+  getChildrenComment: (children, pageNo, pageSize) => {
+    const url = `${pathname}/children/${children}?pageNo=${pageNo}&pageSize=${pageSize}&sortBy=createdDate&sortDir=desc`;
     return axiosClient.get(url);
   }
 };
