@@ -19,13 +19,14 @@ import { dialogComment, dialogShare } from '~/components/customizedDialog/dialog
 
 // api
 import videoApi from '~/api/video';
+import accountApi from '~/api/account';
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
 // import useId from '@mui/material/utils/useId';
 
 const cx = classNames.bind(styles);
-function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares, likes }) {
+function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares, likes, userVideo }) {
     const navigate = useNavigate();
     const dispatch = useDispatch()
     // const videoId = useSelector(selectVideoId);
@@ -52,8 +53,19 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
 
     useEffect(() => {
         if (follow) {
-            const snackBarPayload = { type: 'success', message: `Bạn đã follow @${channel}` };
-            dispatch(openSnackbar(snackBarPayload))
+            const data = {
+                requestId: user.id,
+                accetpId: userVideo.id,
+            };
+            videoApi.folllow(data)
+                .then(res => {
+                    console.log("res follow: ", res.data)
+                    const snackBarPayload = { type: 'success', message: `Bạn đã follow @${channel}` };
+                    dispatch(openSnackbar(snackBarPayload))
+                })
+                .catch(error => {
+                    console.log(error);
+                })
         }
     }, [follow])
 

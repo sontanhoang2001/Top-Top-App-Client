@@ -1,5 +1,5 @@
 import './shareSocialNetwork.css'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     FacebookShareButton,
     FacebookMessengerShareButton,
@@ -31,25 +31,28 @@ import { Button, IconButton, Typography } from "@mui/material";
 import { AppsRounded, LinkRounded } from '@mui/icons-material';
 
 // redux
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
+import { selectVideoId } from '~/components/customizedDialog/dialogSlice'
 
+const hashtag = "#toptopapp #toptopappcusc #cusc #ctu #mangxahoicantho";
 
 function ShareSocialNetwork() {
     const dispatch = useDispatch();
+    const videoId = useSelector(selectVideoId);
+    const hostName = "localhost:3000";
+    const [shareUrl, setShareUrl] = useState();
 
     const handleShare = () => {
         if (navigator.share) {
             navigator.share({
-
                 // Title that occurs over
                 // web share dialog
                 title: 'GeeksForGeeks',
-
                 // URL to share
-                url: 'https://geeksforgeeks.org'
+                url: `${hostName}/${videoId}`
             }).then(() => {
-                console.log('Thanks for sharing!');
+                // console.log('Thanks for sharing!');
             }).catch(err => {
 
                 // Handle errors, if occured
@@ -63,11 +66,14 @@ function ShareSocialNetwork() {
         }
     }
 
-    const [shareUrl, setShareUrl] = useState("www.kabistore.com.vn");
-    const [hashtag, setHashtag] = useState("#toptopapp #toptopappcusc #cusc #ctu #mangxahoicantho");
+    useEffect(() => {
+        setShareUrl(`${hostName}/${videoId}`);
+    }, [videoId])
 
     const handleCopy = () => {
         navigator.clipboard.writeText(shareUrl);
+        const payload = { enable: true, type: 'success', message: "Bạn đã sao chép video thành công!", duration: 8000 }
+        dispatch(openSnackbar(payload));
     }
 
     return (<>

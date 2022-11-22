@@ -4,17 +4,22 @@ import { createSlice } from '@reduxjs/toolkit';
 export const currentPageSlice = createSlice({
     name: 'currentPage',
     initialState: {
-        direction: "/"
+        direction: "/",
+        videoIdParam: null
     },
     reducers: {
         setDirection: (state, action) => {
             state.direction = action.payload.direction;
         },
+        setVideoIdParam: (state, action) => {
+            state.videoIdParam = action.payload.videoIdParam;
+        }
     }
 });
 
-export const { setDirection } = currentPageSlice.actions;
+export const { setDirection, setVideoIdParam } = currentPageSlice.actions;
 
 export const selectDirection = (state) => state.currentPage.direction;
+export const selectVideoIdParam = (state) => state.currentPage.videoIdParam;
 
 export default currentPageSlice.reducer;

@@ -18,6 +18,8 @@
     -webkit-box-pack: justify;
     justify-content: space-between;
     position: relative;
+    margin-top: 1rem;
+
 }
 
 .reply__ActionText {
@@ -28,11 +30,17 @@
     font-size: 14px;
     line-height: 20px;
     cursor: pointer;
+
+    .chevronDownFill {
+        margin-left: 0.4rem;
+    }
+
+    .chevronUpFill {
+        margin-left: 0.4rem;
+        transform: rotate(180deg);
+    }
 }
 
-.reply__ActionText .chevronDownFill {
-    margin-left: 0.4rem;
-}
 
 .children__comment {
     padding-left: 3rem;
@@ -49,6 +57,7 @@
     justify-content: center;
     background-color: #fff;
 }
+
 .inputComment {
     width: 70%;
     margin-right: 1rem;
@@ -71,4 +80,31 @@
     top: 0px;
     left: 0;
     z-index: 99;
+}
+
+.textField__mui {
+    font: inherit;
+    letter-spacing: inherit;
+    color: currentColor;
+    padding: 4px 0 5px;
+    border: 0;
+    box-sizing: content-box;
+    background: none;
+    height: 1.4375em;
+    margin: 0;
+    -webkit-tap-highlight-color: transparent;
+    display: block;
+    min-width: 0;
+    width: 100%;
+    -webkit-animation-name: mui-auto-fill-cancel;
+    animation-name: mui-auto-fill-cancel;
+    -webkit-animation-duration: 10ms;
+    animation-duration: 10ms;
+    padding: 16.5px 14px;
+}
+
+.authorLabel {
+    font-weight: 600;
+    display: inline-block;
+    color: var(--primary-btn-color);
 }

@@ -8,6 +8,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide, Typography } from '@mui/material';
 import { closeDialog, selectDialogStatus, selectDialogName } from './dialogSlice'
+import { selectTotalComment } from '../comment/commentSlice';
+
 import Comment from '../comment';
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -20,6 +22,13 @@ const theme = createTheme({
             styleOverrides: {
                 root: {
                     backgroundColor: "rgb(0 0 0 / 15%)"
+                },
+            },
+        },
+        MuiDialogContent: {
+            styleOverrides: {
+                root: {
+                    padding: '20px 0px !important'
                 },
             },
         },
@@ -57,6 +66,7 @@ function CustomizedDialog() {
     const dispatch = useDispatch();
     const dialogStatus = useSelector(selectDialogStatus);
     const dialogName = useSelector(selectDialogName);
+    const totalComment = useSelector(selectTotalComment);
 
     const handleCloseDialog = () => {
         dispatch(closeDialog());
@@ -77,7 +87,7 @@ function CustomizedDialog() {
                         maxWidth={false}
                         scroll='body'
                     >
-                        <DialogTitle>4309 bình luận</DialogTitle>
+                        <DialogTitle>{totalComment === 0 ? ("Chưa có bình luận. Bạn hãy là người đầu tiên bình luận video này!") : (`${totalComment} bình luận`)}</DialogTitle>
                         <DialogContent>
                             <Comment />
                         </DialogContent>

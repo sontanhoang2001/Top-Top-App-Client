@@ -10,11 +10,11 @@ import video8 from '~/static/video/video8.mp4';
 
 // api
 import videoApi from '~/api/video';
+import { useLocation, useParams } from 'react-router-dom';
 
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import Header from './Header';
-import { useLocation } from 'react-router-dom';
 
 import { urlFromDriveUrl } from '~/shared/helper';
 import Loading from '~/components/Layout/Loading';
@@ -26,6 +26,7 @@ import CustomizedDialog from '~/components/customizedDialog';
 // redux
 import { useSelector } from 'react-redux';
 import { selectTotalVideoPlayed } from '~/components/Layout/Video/videoSlice';
+import { selectVideoIdParam } from "~/router/routerPathSlice";
 
 // notification
 import notification from '~/api/notification'
@@ -38,6 +39,33 @@ import urlAudioNotification from '~/assets/audio/iphone_notification_ringtone_ip
 
 const cx = classNames.bind(styles);
 
+const emptyVideo = {
+    "id": 10,
+    "title": "Thật sự là ko thể smooth như dancer đcc 💔 nên mng cứ xem cho vui thôi nhé ạ!!",
+    "url": "https://drive.google.com/uc?export=view&id=1DHS_fQpGcO9ZYloGIijAdUbAX-7epx_7",
+    "enableComment": true,
+    "status": true,
+    "view": 415,
+    "heart": 7,
+    "share": null,
+    "professed": true,
+    "comment": 32,
+    "user": {
+        "id": "b3ab6a54-c520-44ac-9619-1789712f7a2a",
+        "email": "toptopappvideo@gmail.com",
+        "alias": "toptopappvideoa40e1",
+        "avatar": "https://lh3.googleusercontent.com/a/ALm5wu2qkQL1_bfIOFALC20xX90KwPMof-zGGmr9zNgR=s96-c",
+        "fullName": "TopTop App Video",
+        "history": null,
+        "createdDate": "18-11-2022",
+        "role": {
+            "id": 5,
+            "name": "ROLE_USER",
+            "alias": "Customer",
+            "description": "Customer Of Website"
+        },
+    }
+}
 
 const initialPageSize = 4;
 
@@ -47,7 +75,7 @@ function Home() {
     const pathName = location.pathname;
 
     const [enable, setEnable] = useState(false);
-    const [videos, setVideo] = useState({});
+    const [videos, setVideo] = useState();
     const [muted, setMuted] = useState(true);
 
     const [pageNo, setPageNo] = useState(1);
@@ -55,46 +83,71 @@ function Home() {
     // const [hasMore, setHasMore] = useState(true);
     const [totalElements, setTotalElements] = useState();
     const totalVideoPlayed = useSelector(selectTotalVideoPlayed);
+    const videoIdParam = useSelector(selectVideoIdParam);
 
     const [audioNotification] = useState(new Audio(urlAudioNotification));
-    // thông báo
-    // useEffect(() => {
-    //     if (user) {
-    //         try {
-    //             notification.getNotification(user.id).addEventListener("user-list-event", (event) => {
-    //                 const data = JSON.parse(event.data);
+    // Lắng nghe thông báo
+    useEffect(() => {
+        if (user) {
+            try {
+                notification.getNotification(user.id).addEventListener("user-list-event", (event) => {
+                    const data = JSON.parse(event.data);
 
-    //                 if (data.length > 0) {
-    //                     audioNotification.play();
-    //                     // console.log("thông báo nè: ", data);
-    //                 } else {
-    //                     // console.log("Chưa có thông báo...");
-    //                 }
-    //             })
-    //         } catch (error) {
-    //         }
-    //     }
-    // }, [user])
+                    if (data.length > 0) {
+                        audioNotification.play();
+                    }
+
+                    // else {
+                    //     // console.log("thông báo nè: ", data);
+                    //     // console.log("Chưa có thông báo...");
+                    // }
+                })
+            } catch (error) {
+            }
+        }
+    }, [user])
 
     const onEnableAudio = () => {
         setMuted(false);
     };
 
     useEffect(() => {
-        if (pathName === '/' || pathName === '/home') {
+        if (pathName === '/' || pathName === '/home' || pathName === `/${videoIdParam}`) {
             setEnable(true)
         } else {
             setEnable(false)
         }
-    }, [pathName])
+    }, [pathName, videoIdParam])
 
     const [isLoaded, setIsLoaded] = useState(false);
-    // fetch first page video
+    const [isVideoParam, setIsVideoParam] = useState(false);
     useEffect(() => {
+        console.log("parameter: ", videoIdParam)
+        if (videoIdParam) {
+            videoApi.findVideoById(videoIdParam)
+                .then(res => {
+                    // emptyVideo video quảng cáo xin back-end
+                    setVideo([res.data, emptyVideo]);
+                    setIsLoaded(true);
+                    setIsVideoParam(true);
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        } else {
+            // fetch first page video
+            fetchFirstPageVideo();
+        }
+    }, [videoIdParam])
+
+    const fetchFirstPageVideo = () => {
         videoApi.loadVideoNewsFeed(pageNo, pageSize)
             .then(res => {
-                // console.log("res video ne: ", res.data.data);
-                setVideo(res.data.data);
+                if (videos) {
+                    setVideo([...videos, ...res.data.data]);
+                } else {
+                    setVideo(res.data.data);
+                }
                 setPageNo(res.data.pageNo);
                 setTotalElements(res.data.totalElements)
                 setIsLoaded(true);
@@ -103,7 +156,31 @@ function Home() {
                 console.log(error);
                 setIsLoaded(false);
             })
-    }, [])
+    }
+
+    useEffect(() => {
+        if (totalVideoPlayed >= 1) {
+            fetchFirstPageVideo();
+        }
+    }, [totalVideoPlayed])
+
+    // fetch first page video
+    // useEffect(() => {
+    //     videoApi.loadVideoNewsFeed(pageNo, pageSize)
+    //         .then(res => {
+    //             setVideo(res.data.data);
+
+    //             setPageNo(res.data.pageNo);
+    //             setTotalElements(res.data.totalElements)
+    //             setIsLoaded(true);
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //             setIsLoaded(false);
+    //         })
+
+    // }, [])
+
 
     // fetch more video
     useEffect(() => {
@@ -142,6 +219,7 @@ function Home() {
                                 url={urlFromDriveUrl(video.url)}
                                 muted={muted}
                                 onEnableAudio={onEnableAudio}
+                                userVideo={video.user}
                             />
                         </div>
                     ))}

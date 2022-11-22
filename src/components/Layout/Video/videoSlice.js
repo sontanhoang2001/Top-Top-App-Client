@@ -4,7 +4,8 @@ export const videoSlice = createSlice({
     name: 'video',
     initialState: {
         videoId: null,
-        totalVideoPlayed: 0
+        totalVideoPlayed: 0,
+        userVideo: null
     },
     reducers: {
         setVideo: (state, action) => {
@@ -13,6 +14,7 @@ export const videoSlice = createSlice({
             if (totalVideoPlayed >  state.totalVideoPlayed) {
                 state.totalVideoPlayed = state.totalVideoPlayed + 1;
             }
+            state.userVideo = action.payload.userVideo;
         },
     },
 });
@@ -21,5 +23,6 @@ export const { setVideo } = videoSlice.actions;
 
 export const selectVideoId = (state) => state.video.videoId;
 export const selectTotalVideoPlayed = (state) => state.video.totalVideoPlayed;
+export const selectUserVideo= (state) => state.video.userVideo;
 
 export default videoSlice.reducer;

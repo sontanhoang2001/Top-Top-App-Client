@@ -58,3 +58,11 @@ body {
     overflow-y: scroll;
     position: relative;
 }
+
+.link {
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+    }
+}

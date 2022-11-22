@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
 import styles from './Footer.module.scss';
 
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { useState, useEffect } from 'react';
 import BottomNavigation from '@mui/material/BottomNavigation';
@@ -16,8 +16,12 @@ import PersonIcon from '@mui/icons-material/Person';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { Button, useMediaQuery } from '@mui/material';
 
+// redux
+import { setVideoIdParam } from "~/router/routerPathSlice";
+
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
+import { useDispatch } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
@@ -47,15 +51,26 @@ const theme = createTheme({
 });
 
 function Footer() {
+    const { videoIdParam } = useParams();
     const { loginStatus, user } = UserAuth();
     const pathProfile = `/@${user.alias}`;
+    const pathVideoId = `/${videoIdParam}`;
+    const dispatch = useDispatch();
+
     const location = useLocation();
     const pathName = location.pathname;
+
+    useEffect(() => {
+        dispatch(setVideoIdParam({ videoIdParam: videoIdParam }));
+    }, [videoIdParam])
 
     // START HEADER
     const [page, setPage] = useState('');
     useEffect(() => {
         switch (pathName) {
+            case pathVideoId:
+                setPage('home');
+                break;
             case '/':
                 setPage('home');
                 break;

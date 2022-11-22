@@ -16,9 +16,12 @@ import { Slide } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setVideo } from '~/components/Layout/Video/videoSlice';
 
+// api
+import videoApi from '~/api/video';
+
 const cx = classNames.bind(styles);
 
-function Video({ index, id, url, avatarUser, song, title, channel, likes, comments, shares, muted, onEnableAudio }) {
+function Video({ index, id, url, avatarUser, song, title, channel, likes, comments, shares, muted, onEnableAudio, userVideo }) {
     const dispatch = useDispatch();
     const [playing, setPlaying] = useState(false);
 
@@ -51,15 +54,26 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
     //     }
     // };
 
+    const attemptPlay = () => {
+        if (index == 0) {
+            videoRef &&
+                videoRef.current &&
+                buffViewVideo();
+
+        }
+    };
+
     useEffect(() => {
-        // attemptPlay();
+        attemptPlay();
 
         if (isVisibile) {
             if (!playing) {
                 videoRef.current.play();
                 setPlaying(true);
 
-                const payload = { videoId: id, totalVideoPlayed: index };
+                buffViewVideo();
+
+                const payload = { videoId: id, totalVideoPlayed: index, userVideo: userVideo };
                 dispatch(setVideo(payload));
 
                 // console.log(`video playing total:  ${index}`);
@@ -73,6 +87,16 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
         }
     }, [isVisibile]);
 
+    // thuận toán buff view
+    const buffViewVideo = () => {
+        videoApi.buffViewVideo(id)
+            .then(res => {
+                // console.log("buff view: ", res.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
     return (
         <div className={cx('video')}>
             <video
@@ -106,7 +130,7 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
                     </div>
                 </div>
             )}
-            <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes}/>
+            <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} userVideo={userVideo} />
             <VideoFooter playing={playing} channel={channel} title={title} song={song} />
         </div>
     );

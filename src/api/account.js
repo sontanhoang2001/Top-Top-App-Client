@@ -26,7 +26,7 @@ const Account = {
     resetPassword: (data) => {
         const url = `${pathname}/password/reset`;
         return axiosClientLogin.put(url, data)
-    },
+    }
 };
 
 export default Account;

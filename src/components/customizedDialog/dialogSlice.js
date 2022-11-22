@@ -5,7 +5,7 @@ export const dialogSlice = createSlice({
     initialState: {
         dialogStatus: false,
         dialogName: "",
-        videoId: ""
+        videoId: "",
     },
     reducers: {
         dialogShare: (state, action) => {

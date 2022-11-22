@@ -11,6 +11,10 @@ const video = {
     const url = `${pathname}/watch?pageNo=${pageNo}&pageSize=${pageSize}`;
     return axiosClient.get(url);
   },
+  findVideoById: (videoId) => {
+    const url = `${pathname}/watch/${videoId}`;
+    return axiosClient.get(url);
+  },
   likeVideo: (data) => {
     const url = `${pathname}/heart`;
     return axiosClient.put(url, data);
@@ -22,7 +26,15 @@ const video = {
   isYouHeartThisVideo: (videoId, userId) => {
     const url = `${pathname}/heart/${videoId}/user/${userId}`;
     return axiosClient.get(url);
-  }
+  },
+  buffViewVideo: (videoId) => {
+    const url = `${pathname}/watch/${videoId}`;
+    return axiosClient.put(url);
+  },
+  folllow: (data) => {
+    const url = '/friendship';
+    return axiosClient.post(url, data);
+  },
 };
 
 export default video;

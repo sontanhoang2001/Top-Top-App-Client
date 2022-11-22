@@ -21,6 +21,7 @@ import StartProfile from '~/page/startProfile';
 const publicRoutes = [
     { path: '*', component: NotFoundPage },
     { path: '/', component: Fragment },
+    { path: '/:videoIdParam', component: Fragment },
     { path: '/home', component: Fragment },
     { path: '/search', component: Search },
     { path: '/following', component: Following },

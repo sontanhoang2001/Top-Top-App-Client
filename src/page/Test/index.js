@@ -4,7 +4,6 @@ import { Mention, MentionsInput } from "react-mentions";
 
 function Test() {
     const [value, setValue] = useState("");
-
     const users = [
         {
             id: "isaac",
