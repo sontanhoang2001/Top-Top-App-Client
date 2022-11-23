@@ -1,35 +1,36 @@
-import { useState } from "react";
-import { Mention, MentionsInput } from "react-mentions";
-
+import HoverVideoPlayer from 'react-hover-video-player';
+import VideoThumbnail from 'react-video-thumbnail'; // use npm published version
 
 function Test() {
-    const [value, setValue] = useState("");
-    const users = [
-        {
-            id: "isaac",
-            display: "Trả lời Isaac Newton :",
-        },
-        {
-            id: "sam",
-            display: "Trả lời Sam Victor :",
-        },
-        {
-            id: "emma",
-            display: "Trả lời emmanuel@nobody.com :",
-        },
-    ];
-
     return (
-        <div>
-            <h2>Let's get started</h2>
-            <MentionsInput
-                value={value}
-                onChange={(e) => setValue(e.target.value)}>
-
-                <Mention
-                    data={users} />
-            </MentionsInput>
-        </div>
+        <HoverVideoPlayer
+            videoSrc="https://drive.google.com/uc?export=view&id=1vAkgnmr5locjRgM53ItyxuWfiH041jyv"
+            pausedOverlay={
+                <VideoThumbnail
+                    videoUrl="https://drive.google.com/uc?export=view&id=1vAkgnmr5locjRgM53ItyxuWfiH041jyv"
+                    thumbnailHandler={(thumbnail) => console.log(thumbnail)}
+                    width={120}
+                    height={80}
+                />
+            }
+            loadingOverlay={
+                <div className="loading-overlay">
+                    <div className="loading-spinner" />
+                </div>
+            }
+        />
     );
 }
+
 export default Test;
+
+{/* <img
+src="https://drive.google.com/uc?export=view&id=1vAkgnmr5locjRgM53ItyxuWfiH041jyv"
+alt=""
+style={{
+    // Make the image expand to cover the video's dimensions
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+}}
+/> */}

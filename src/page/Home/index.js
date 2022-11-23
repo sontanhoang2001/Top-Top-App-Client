@@ -120,16 +120,13 @@ function Home() {
     }, [pathName, videoIdParam])
 
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isVideoParam, setIsVideoParam] = useState(false);
     useEffect(() => {
-        console.log("parameter: ", videoIdParam)
         if (videoIdParam) {
             videoApi.findVideoById(videoIdParam)
                 .then(res => {
-                    // emptyVideo video quảng cáo xin back-end
+                    // empty Video video quảng cáo xin back-end
                     setVideo([res.data, emptyVideo]);
                     setIsLoaded(true);
-                    setIsVideoParam(true);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -159,8 +156,11 @@ function Home() {
     }
 
     useEffect(() => {
-        if (totalVideoPlayed >= 1) {
-            fetchFirstPageVideo();
+        if (videoIdParam) {
+            if (totalVideoPlayed >= 1) {
+                
+                fetchFirstPageVideo();
+            }
         }
     }, [totalVideoPlayed])
 

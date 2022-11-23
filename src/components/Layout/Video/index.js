@@ -14,16 +14,21 @@ import { Slide } from '@mui/material';
 
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { setVideo } from '~/components/Layout/Video/videoSlice';
+import { setVideo } from './videoSlice';
 
 // api
 import videoApi from '~/api/video';
+import profileApi from '~/api/profile';
+
+import { UserAuth } from '~/context/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Video({ index, id, url, avatarUser, song, title, channel, likes, comments, shares, muted, onEnableAudio, userVideo }) {
     const dispatch = useDispatch();
+    const { user } = UserAuth();
     const [playing, setPlaying] = useState(false);
+    const [follow, setFollow] = useState(false);
 
     const videoRef = useRef(null);
 
@@ -59,7 +64,6 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
             videoRef &&
                 videoRef.current &&
                 buffViewVideo();
-
         }
     };
 
@@ -72,6 +76,7 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
                 setPlaying(true);
 
                 buffViewVideo();
+                isYouFollowUser();
 
                 const payload = { videoId: id, totalVideoPlayed: index, userVideo: userVideo };
                 dispatch(setVideo(payload));
@@ -87,7 +92,20 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
         }
     }, [isVisibile]);
 
-    // thuận toán buff view
+    const isYouFollowUser = () => {
+        if (user)
+            if (userVideo) {
+                profileApi.isYouFollowUser(user.id, userVideo.id)
+                    .then(res => {
+                        setFollow(res.data.result);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+            }
+    }
+
+    // thuật toán buff view
     const buffViewVideo = () => {
         videoApi.buffViewVideo(id)
             .then(res => {
@@ -130,7 +148,7 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
                     </div>
                 </div>
             )}
-            <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} userVideo={userVideo} />
+            <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} userVideo={userVideo} isFollow={follow} />
             <VideoFooter playing={playing} channel={channel} title={title} song={song} />
         </div>
     );

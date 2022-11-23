@@ -1,4 +1,5 @@
 import axiosClient from './axiosClient'
+import axiosClientLogin from './axiosClientLogin'
 
 const pathname = 'video';
 
@@ -31,10 +32,10 @@ const video = {
     const url = `${pathname}/watch/${videoId}`;
     return axiosClient.put(url);
   },
-  folllow: (data) => {
-    const url = '/friendship';
-    return axiosClient.post(url, data);
-  },
+  searchVideo: (pageNo, pageSize, keyword) => {
+    const url = `${pathname}/watch?pageNo=${pageNo}&pageSize=${pageSize}&keyword=${keyword}`;
+    return axiosClientLogin.get(url);
+  }
 };
 
 export default video;

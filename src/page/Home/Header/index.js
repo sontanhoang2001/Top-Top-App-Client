@@ -27,12 +27,22 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import InputBase from '@mui/material/InputBase';
 import Button from '@mui/material/Button';
 
+import TabPanel from '~/components/TabPanel';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import PersonIcon from '@mui/icons-material/Person';
 import { useEffect, useState } from 'react';
+import { Avatar, Badge, CardHeader, Tab, Tabs } from '@mui/material';
+import propTypes from 'prop-types';
+
+import HoverVideoPlayer from 'react-hover-video-player';
+import VideoThumbnail from 'react-video-thumbnail'; // use npm published version
+
+// api
+import videoApi from '~/api/video';
+import { Link, useLocation } from 'react-router-dom';
 
 const StyledSearch = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -74,62 +84,37 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
+
 //search as JSX
-const search = (
-    <StyledSearch>
-        <SearchIconWrapper>
-            <SearchIcon />
-        </SearchIconWrapper>
-        <StyledInputBase placeholder="Suchen…" inputProps={{ 'aria-label': 'search' }} />
-    </StyledSearch>
-);
+// const search = (
+//     <StyledSearch>
+//         <SearchIconWrapper>
+//             <SearchIcon />
+//         </SearchIconWrapper>
+//         <StyledInputBase placeholder="Tìm kiếm..." inputProps={{ 'aria-label': 'search' }} />
+//     </StyledSearch>
+// );
 
 
-const appBarStyles = styled({
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-    border: 0,
-    borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: 'white',
-    height: 48,
-    padding: '0 30px',
-});
+TabPanel.propTypes = {
+    children: propTypes.node,
+    index: propTypes.number.isRequired,
+    value: propTypes.number.isRequired,
+};
+
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
 
 function Header() {
-    // START HEADER
-    const [value, setValue] = useState('');
-    useEffect(() => {
-        const pathName = window.location.pathname.split('/')[1];
-        // console.log('current Pathname 👉️', pathName);
-        switch (pathName) {
-            case '':
-                setValue('Trang Chủ');
-                break;
-            case 'home':
-                setValue('home');
-                break;
-            case 'search':
-                setValue('search');
-                break;
-            case 'upload':
-                setValue('upload');
-                break;
-            case 'chat':
-                setValue('chat');
-                break;
-            case '@':
-                setValue('profile');
-                break;
-            default:
-                setValue(window.location.pathname.split('/')[1]);
-        }
-    });
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-    // END HEADER
-
+    const location = useLocation();
+    const pathName = location.pathname;    
+    
     // START HAMBURGER MENU NAVIGATION
     //react useState hook to save the current open/close state of the drawer, normally variables dissapear afte the function was executed
     const [open, setState] = useState(false);
@@ -143,6 +128,30 @@ function Header() {
         setState(open);
     };
     // END HAMBURGER MENU NAVIGATION
+
+    const [videoResult, setVideoResult] = useState();
+    const [userResult, setUserResult] = useState();
+    const [search, setSearch] = useState("");
+    const [tabMenu, setTabMenu] = useState(0);
+
+    const handleChange = (event, newValue) => {
+        setTabMenu(newValue);
+    };
+
+    useEffect(() => {
+        videoApi.searchVideo(1, 10, search)
+            .then(res => {
+                setVideoResult(res.data.data);
+            })
+            .catch(error => console.log(error));
+    }, [search])
+
+    // auto close search bar
+    // khi thấy sự thay đổi của 
+    useEffect(() => {
+        setState(false);
+    }, [pathName])
+
 
     return (<>
         <AppBar position="fixed" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
@@ -169,15 +178,15 @@ function Header() {
                         open={open}
                         //function that is called when the drawer should close
                         onClose={toggleDrawer(false)}
-                        //function that is called when the drawer should open
-                        onOpen={toggleDrawer(true)}
+
                     >
                         {/* The inside of the drawer */}
                         <Box
                             sx={{
+                                width: '340px',
                                 p: 2,
-                                height: 1,
-                                backgroundColor: '#dbc8ff',
+                                // height: 1,
+                                // backgroundColor: '#dbc8ff',
                             }}
                         >
                             {/* when clicking the icon it calls the function toggleDrawer and closes the drawer by setting the variable open to false */}
@@ -187,30 +196,83 @@ function Header() {
 
                             <Divider sx={{ mb: 2 }} />
 
-                            <Box sx={{ mb: 2 }}>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <ImageIcon sx={{ color: 'primary.main' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Pictures" />
-                                </ListItemButton>
+                            <StyledSearch>
+                                <SearchIconWrapper>
+                                    <SearchIcon />
+                                </SearchIconWrapper>
+                                <StyledInputBase placeholder="Tìm kiếm..." inputProps={{ 'aria-label': 'search' }} value={search} onChange={(e) => setSearch(e.target.value)} />
+                            </StyledSearch>
 
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <DescriptionIcon sx={{ color: 'primary.main' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Documents" />
-                                </ListItemButton>
+                            <Box sx={{ marginTop: '8px' }}>
+                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                    <Tabs value={tabMenu} onChange={handleChange} aria-label="basic tabs example">
+                                        <Tab label="Video" {...a11yProps(0)} />
+                                        <Tab label="Tài khoản" {...a11yProps(1)} />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value={tabMenu} index={0}>
+                                    <Box sx={{ marginRight: 0.5, mb: 2, cursor: 'pointer' }} >
+                                        {videoResult && videoResult.map(({ id, title, url, avatar, view, user }) => (
+                                            <Box key={id} mb={3}>
+                                                <Link to={`/${id}`}>
+                                                    <HoverVideoPlayer
+                                                        videoSrc={url}
+                                                        pausedOverlay={
+                                                            <VideoThumbnail
+                                                                videoUrl={url}
+                                                                thumbnailHandler={(thumbnail) => console.log(thumbnail)}
+                                                                height={80}
+                                                            />
+                                                        }
+                                                        loadingOverlay={
+                                                            <div className="loading-overlay">
+                                                                <div className="loading-spinner" />
+                                                            </div>
+                                                        }
+                                                    />
+                                                </Link>
 
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <FolderIcon sx={{ color: 'primary.main' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Other" />
-                                </ListItemButton>
+                                                <Box sx={{ pr: 2, mt: 1 }}>
+                                                    <Link className='link' to={`/${id}`}>
+                                                        <Typography gutterBottom variant="body2">{title}</Typography>
+                                                    </Link>
+
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                            <Link className='link' to={`/@${user.alias}`}>
+                                                                <Avatar sx={{ width: 20, height: 20 }} aria-label="recipe" src={user.avatar} >
+                                                                    {user.fullName[0]}
+                                                                </Avatar>
+                                                            </Link>
+                                                            <Link className='link' to={`/@${user.alias}`}>
+                                                                <Typography variant="caption" color="text.secondary" ml={1}>
+                                                                    {user.fullName}
+                                                                </Typography>
+                                                            </Link>
+                                                        </Box>
+                                                        <Typography variant="caption" color="text.secondary" sx={{cursor: 'default'}} >
+                                                            {`${view} lượt xem`}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                                <Divider sx={{ my: 2 }} />
+                                            </Box>
+
+                                        ))}
+                                    </Box>
+                                </TabPanel>
+                                <TabPanel value={tabMenu} index={1}>
+                                    <CardHeader sx={{ cursor: 'pointer' }}
+                                        avatar={
+                                            <Avatar sx={{ width: 50, height: 50 }} aria-label="recipe" src='https://drive.google.com/uc?export=view&id=18uPRCycXB0_ubgFjb7EMALC32cz0EYI_' >
+                                                H
+                                            </Avatar>
+                                        }
+                                        title='Tấn Hoàng'
+                                        subheader={'@hoangson'}
+                                    />
+                                </TabPanel>
                             </Box>
-
-                            {search}
 
                             <Box
                                 sx={{

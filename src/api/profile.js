@@ -18,7 +18,15 @@ const profile = {
   updateProfile: (data) => {
     const url = `${pathname}/`;
     return axiosClient.put(url, data)
-  }
+  },
+  folllow: (data) => {
+    const url = '/friendship';
+    return axiosClient.post(url, data);
+  },
+  isYouFollowUser: (requestId, acceptId) => {
+    const url = `account/follow?requestId=${requestId}&acceptId=${acceptId}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default profile;
