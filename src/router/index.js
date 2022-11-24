@@ -17,6 +17,7 @@ import Chat from '~/page/Chat/index';
 import Test from '~/page/Test';
 import StartProfile from '~/page/startProfile';
 
+
 // Public routes
 const publicRoutes = [
     { path: '*', component: NotFoundPage },
@@ -29,6 +30,7 @@ const publicRoutes = [
     { path: '/register', component: Register, layout: FooterOnly },
     { path: '/counter', component: Counter },
     { path: '/test', component: Test },
+    { path: '/404', component: NotFoundPage },
 ];
 
 const privateRoutes = [
@@ -43,7 +45,7 @@ const privateRoutes = [
 const loginRoutes = [
     { path: '/upload', component: Upload },
     { path: '/notification', component: Notification },
-    { path: '/chat', component: Chat },
+    { path: '/chat/:friendId', component: Chat },
 ];
 
 

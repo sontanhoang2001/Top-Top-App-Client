@@ -4,17 +4,17 @@ import { UserAuth } from '~/context/AuthContext';
 
 function ProtectedLogin({ children }) {
     const { loginStatus, user } = UserAuth();
-    const [isLoaded, setIsLoaded] = useState();
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        if (user) {
+        if (loginStatus) {
             setIsLoaded(true);
         }
-    }, [user])
+    }, [loginStatus])
 
     if (isLoaded)
-        if (!loginStatus) {
-            return <Navigate to="/404" />;
+        if (!user) {
+            return <Navigate to="/login" />;
         } else {
             return children;
         }

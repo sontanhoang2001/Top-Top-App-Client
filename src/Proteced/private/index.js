@@ -4,12 +4,20 @@ import { UserAuth } from '~/context/AuthContext';
 
 function ProtectedPrivate({ children }) {
     const { loginStatus, user } = UserAuth();
+    const [isLoaded, setIsLoaded] = useState(false);
 
-    if (loginStatus === true) {
-        return <Navigate to="/404" />;
-    } else {
-        return children;
-    }
+    useEffect(() => {
+        if (loginStatus) {
+            setIsLoaded(true);
+        }
+    }, [loginStatus])
+
+    if (isLoaded)
+        if (user) {
+            return <Navigate to="/404" />;
+        } else {
+            return children;
+        }
 }
 
 

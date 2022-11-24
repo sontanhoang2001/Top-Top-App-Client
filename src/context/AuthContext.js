@@ -28,7 +28,6 @@ export const AuthContextProvider = ({ children }) => {
     // const [userInfo, setUserInfo] = useState(false);
     const [loginStatus, setLoginStatus] = useState(false);
 
-
     // đóng vai trò tạm khi đăng ký
     const [userTempId, setUserTempId] = useState(false);
 
@@ -82,7 +81,6 @@ export const AuthContextProvider = ({ children }) => {
         }
     };
 
-
     // <======= END LOGIN  =======>
 
     // Khi thay đổi user thì get thông tin profile
@@ -118,7 +116,7 @@ export const AuthContextProvider = ({ children }) => {
                         // setUserInfo(payload);
                     })
                     .catch(error => {
-                        console.log(error)
+                        console.log(error);
                     })
             } catch (error) {
                 console.log(error);

@@ -23,6 +23,10 @@ const profile = {
     const url = '/friendship';
     return axiosClient.post(url, data);
   },
+  unFolllow: (data) => {
+    const url = 'friendship';
+    return axiosClient.delete(url, data);
+  },
   isYouFollowUser: (requestId, acceptId) => {
     const url = `account/follow?requestId=${requestId}&acceptId=${acceptId}`;
     return axiosClient.get(url);

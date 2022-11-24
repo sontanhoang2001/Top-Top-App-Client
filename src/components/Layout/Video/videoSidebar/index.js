@@ -59,19 +59,23 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
     }, [])
 
     const handleFollow = () => {
-        const data = {
-            requestId: user.id,
-            accetpId: userVideo.id,
-        };
-        profileApi.folllow(data)
-            .then(() => {
-                setFollow(true);
-                const snackBarPayload = { type: 'success', message: `Bạn đã follow @${channel}` };
-                dispatch(openSnackbar(snackBarPayload))
-            })
-            .catch(error => {
-                console.log(error);
-            })
+        if (user) {
+            const data = {
+                requestId: user.id,
+                accetpId: userVideo.id,
+            };
+            profileApi.folllow(data)
+                .then(() => {
+                    setFollow(true);
+                    const snackBarPayload = { type: 'success', message: `Bạn đã follow @${channel}` };
+                    dispatch(openSnackbar(snackBarPayload))
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        } else {
+            navigate("/login");
+        }
     }
 
     const handleClickOpenDialogShare = () => {
@@ -80,8 +84,12 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
     };
 
     const handleClickOpenDialogComment = () => {
-        const payload = { dialogStatus: true, videoId: videoId };
-        dispatch(dialogComment(payload));
+        if (user) {
+            const payload = { dialogStatus: true, videoId: videoId };
+            dispatch(dialogComment(payload));
+        } else {
+            navigate("/login");
+        }
     };
 
     useEffect(() => {

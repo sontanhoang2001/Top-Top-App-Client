@@ -102,10 +102,9 @@ export default function Profile() {
 
     const [userProfile, setUserProfile] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
+    const [follow, setFollow] = useState(false);
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [btnSubmitLoading, setBtnSubmitLoading] = useState(false);
-    const [profileMe, setProfileMe] = useState(true);
 
 
     const profileSchema = Yup.object().shape({
@@ -115,7 +114,7 @@ export default function Profile() {
         alias: Yup.string()
             .max(15, 'TopTop ID tối đa 15 ký tự!')
             .required('Bạn chưa nhập TopTop ID!'),
-        alias: Yup.string()
+        history: Yup.string()
             .max(80, 'Tiểu sử tối đa 80 ký tự')
     });
 
@@ -155,6 +154,20 @@ export default function Profile() {
 
     }, [userAlias])
 
+    useEffect(() => {
+        // userId của người dùng đang xem
+        const userId = methods.getValues("id");
+        if (user)
+            if (userId) {
+                profileApi.isYouFollowUser(user.id, userId)
+                    .then(res => {
+                        setFollow(res.data.result);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+            }
+    }, [methods.getValues("id")])
 
     const handleSignOut = async () => {
         try {
@@ -219,7 +232,10 @@ export default function Profile() {
 
     const onSubmit = async (data) => {
         // check nếu thay đổi thì cho update
-        const history = methods.getValues("history") === "" ? null : methods.getValues("history");
+        const history = methods.getValues("history").trim() === "" ? null : methods.getValues("history");
+        console.log("userProfile.avatar: ", userProfile.history)
+        console.log("methods.getValue", history)
+
         if (userProfile.avatar !== methods.getValues("avatar") || userProfile.fullName !== methods.getValues("fullName") || (userProfile.alias !== methods.getValues("alias")) || userProfile.history !== history) {
 
             if (userProfile.alias !== methods.getValues("alias")) {
@@ -250,13 +266,13 @@ export default function Profile() {
     }
 
 
-    const updateProfile = async (data) => {
+    const updateProfile = async () => {
         // Put update profile
         const resqestData = {
             "id": user.id,
             "fullName": methods.getValues("fullName"),
             "avatar": methods.getValues("avatar"),
-            "history": methods.getValues("history"),
+            "history": methods.getValues("history").trim() === "" ? null : methods.getValues("history").trim(),
             "alias": methods.getValues("alias"),
         };
         profileApi.updateProfile(resqestData)
@@ -280,6 +296,51 @@ export default function Profile() {
             });
     }
 
+    const handleFollow = () => {
+        const userId = methods.getValues("id");
+        if (user)
+            if (userId) {
+                const data = {
+                    "requestId": user.id,
+                    "accetpId": userId,
+                };
+                profileApi.folllow(data)
+                    .then(res => {
+                        setFollow(true);
+                        const snackBarPayload = { type: 'success', message: `Bạn đã follow @${methods.getValues("alias")}` };
+                        dispatch(openSnackbar(snackBarPayload))
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+            }
+    }
+
+    const handleUnFollow = () => {
+        const userId = methods.getValues("id");
+        if (user)
+            if (userId) {
+                const data = {
+                    "requestId": user.id,
+                    "accetpId": userId,
+                };
+                profileApi.unFolllow(data)
+                    .then(res => {
+                        setFollow(false);
+                        const snackBarPayload = { type: 'success', message: `Bạn đã hủy follow @${methods.getValues("alias")}` };
+                        dispatch(openSnackbar(snackBarPayload))
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+            }
+    }
+
+    const handleChat = () => {
+        const userId = methods.getValues("id");
+
+        navigate(`/chat/${userId}`);
+    }
 
     if (isLoad) {
         return (
@@ -310,8 +371,16 @@ export default function Profile() {
 
                                         ) : (
                                             <>
-                                                <Button variant="contained" sx={{ margin: '5px' }}>Theo dõi</Button>
-                                                <Button variant="outlined" sx={{ margin: '5px' }}>Nhắn tin</Button>
+                                                {follow === true ? (
+                                                    <>
+                                                        <Button variant="contained" sx={{ margin: '5px' }} onClick={handleUnFollow}>Hủy theo dõi</Button>
+                                                        <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleChat}>Nhắn tin</Button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Button variant="contained" sx={{ width: '15em', margin: '5px' }} onClick={handleFollow}>Theo dõi</Button>
+                                                    </>
+                                                )}
                                             </>
                                         )}
                                     </Box>
@@ -375,7 +444,8 @@ export default function Profile() {
                             </TabPanel>
                         </Box>
                     </>
-                )}
+                )
+                }
 
                 <Dialog open={openDialogUpdate} fullWidth>
                     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
