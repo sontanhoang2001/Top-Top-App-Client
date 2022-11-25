@@ -16,6 +16,8 @@ import ResetPassword from '~/page/ResetPassword';
 import Chat from '~/page/Chat/index';
 import Test from '~/page/Test';
 import StartProfile from '~/page/startProfile';
+import VideoProfile from '~/page/VideoProfile';
+
 
 
 // Public routes
@@ -28,6 +30,7 @@ const publicRoutes = [
     { path: '/following', component: Following },
     { path: `/@:userAlias`, component: Profile },
     { path: '/register', component: Register, layout: FooterOnly },
+    { path: '/@:userAlias/video/:videoId', component: VideoProfile },
     { path: '/counter', component: Counter },
     { path: '/test', component: Test },
     { path: '/404', component: NotFoundPage },

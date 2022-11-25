@@ -35,7 +35,19 @@ const video = {
   searchVideo: (pageNo, pageSize, keyword) => {
     const url = `${pathname}/watch?pageNo=${pageNo}&pageSize=${pageSize}&keyword=${keyword}`;
     return axiosClientLogin.get(url);
-  }
+  },
+  findPublicVideoProfile: (userId, pageNo, pageSize) => {
+    const url = `${pathname}/watch/user/${userId}?pageNo=${pageNo}&pageSize=${pageSize}&professed=true`;
+    return axiosClient.get(url);
+  },
+  findPrivateVideoProfile: (userId, pageNo, pageSize) => {
+    const url = `${pathname}/watch/user/${userId}?pageNo=${pageNo}&pageSize=${pageSize}&professed=false`;
+    return axiosClient.get(url);
+  },
+  findFavouriteVideo: (userId, pageNo, pageSize) => {
+    const url = `${pathname}/favourite?userId=${userId}&pageNo=${pageNo}&pageSize=${pageSize}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default video;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,12 +10,13 @@ import Container from '@mui/material/Container';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function Header({ back, namePage }) {
+    const naviagate = useNavigate();
 
     return (<>
-        <AppBar position="fixed" sx={{ backgroundColor: 'white' }}>
-            <Container maxWidth="xl">
-                <Toolbar>
-                    {back && (
+        {back && (
+            <AppBar position="fixed" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }} >
+                <Container maxWidth="xl">
+                    <Toolbar>
                         <IconButton
                             edge="start"
                             size="large"
@@ -22,16 +24,29 @@ function Header({ back, namePage }) {
                                 mr: 2,
                                 color: 'black'
                             }}
+                            onClick={() => naviagate(-1)}
                         >
-                            <ArrowBackIcon />
+                            <ArrowBackIcon sx={{ color: '#fff' }} />
                         </IconButton>
-                    )}
-                    <Typography variant="h5" sx={{ color: 'black' }} component="div">
-                        {namePage}
-                    </Typography>
-                </Toolbar>
-            </Container>
-        </AppBar>
+                        <Typography variant="h5" sx={{ color: 'black' }} component="div">
+                            {namePage}
+                        </Typography>
+                    </Toolbar>
+                </Container>
+            </AppBar>
+        )}
+
+        {back || (
+            <AppBar position="fixed" sx={{ backgroundColor: 'white' }} >
+                <Container maxWidth="xl">
+                    <Toolbar>
+                        <Typography variant="h5" sx={{ color: 'black' }} component="div">
+                            {namePage}
+                        </Typography>
+                    </Toolbar>
+                </Container>
+            </AppBar >
+        )}
     </>);
 }
 

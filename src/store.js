@@ -16,6 +16,6 @@ export default configureStore({
     dialog: dialogReducer,
     video: videoReducer,
     chat: chatReducer,
-    comment: commentReducer
+    comment: commentReducer,
   },
 });

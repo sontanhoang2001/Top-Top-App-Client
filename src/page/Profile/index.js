@@ -44,7 +44,6 @@ import { EmailOutlined, ArticleOutlined, Edit, Save, CameraAltRounded, Logout } 
 
 import { red } from '@mui/material/colors';
 
-
 // component
 import NavBar from '~/components/Layout/NavBarHeader'
 import { FormProvider, RHFTextField } from '~/components/hook-form';
@@ -54,7 +53,7 @@ import profileApi from '~/api/profile'
 
 
 // redux
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from '~/components/customizedSnackbars/snackbarSlice';
 
 // auth provider
@@ -349,103 +348,105 @@ export default function Profile() {
 
                 {userProfile && (
                     <>
-                        <Card sx={{ margin: '5rem 1rem 1rem 1rem', display: 'flex', justifyContent: 'center' }} >
-                            <CardContent>
-                                <CardHeader
-                                    avatar={
-                                        <Avatar sx={{ bgcolor: red[500], width: 66, height: 66 }} aria-label="recipe" src={userProfile.avatar} >
-                                            {userProfile.fullName[0]}
-                                        </Avatar>
-                                    }
-                                    title={userProfile.fullName}
-                                    subheader={'@' + userProfile.alias}
-                                />
+                        <NavBar namePage='Thông tin cá nhân' />
 
-                                <Box sx={{ m: 3 }}>
-                                    <Box mb={2}>
-                                        {user.alias === userProfile.alias ? (
-                                            <>
-                                                <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleClickOpen}><Edit /> Chỉnh sửa hồ sơ</Button>
-                                                <Button variant="contained" sx={{ margin: '5px' }} onClick={handleSignOut}><Logout /> Đăng xuất</Button>
-                                            </>
+                        <div className='container__center'>
+                            <Card sx={{ margin: '5rem 1rem 1rem 1rem', display: 'flex', justifyContent: 'center' }} >
+                                <CardContent>
+                                    <CardHeader
+                                        avatar={
+                                            <Avatar sx={{ bgcolor: red[500], width: 66, height: 66 }} aria-label="recipe" src={userProfile.avatar} >
+                                                {userProfile.fullName[0]}
+                                            </Avatar>
+                                        }
+                                        title={userProfile.fullName}
+                                        subheader={'@' + userProfile.alias}
+                                    />
 
-                                        ) : (
-                                            <>
-                                                {follow === true ? (
-                                                    <>
-                                                        <Button variant="contained" sx={{ margin: '5px' }} onClick={handleUnFollow}>Hủy theo dõi</Button>
-                                                        <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleChat}>Nhắn tin</Button>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Button variant="contained" sx={{ width: '15em', margin: '5px' }} onClick={handleFollow}>Theo dõi</Button>
-                                                    </>
-                                                )}
-                                            </>
-                                        )}
+                                    <Box sx={{ m: 3 }}>
+                                        <Box mb={2}>
+                                            {user.alias === userProfile.alias ? (
+                                                <>
+                                                    <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleClickOpen}><Edit /> Chỉnh sửa hồ sơ</Button>
+                                                    <Button variant="contained" sx={{ margin: '5px' }} onClick={handleSignOut}><Logout /> Đăng xuất</Button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {follow === true ? (
+                                                        <>
+                                                            <Button variant="contained" sx={{ margin: '5px' }} onClick={handleUnFollow}>Hủy theo dõi</Button>
+                                                            <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleChat}>Nhắn tin</Button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Button variant="contained" sx={{ width: '15em', margin: '5px' }} onClick={handleFollow}>Theo dõi</Button>
+                                                        </>
+                                                    )}
+                                                </>
+                                            )}
+                                        </Box>
+
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            flexWrap: 'wrap',
+                                            marginBottom: '0.6rem',
+                                            marginRight: '1rem'
+                                        }}>
+                                            <EmailOutlined sx={{ mr: 1 }} /> <Typography>Email: </Typography>
+                                            <Typography sx={{ ml: 1 }} color="text.secondary">{userProfile.email}</Typography>
+                                        </div>
+
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            flexWrap: 'wrap',
+                                            marginBottom: '0.6rem',
+                                            marginRight: '1rem'
+                                        }}>
+                                            <Typography color="text.secondary">Đang follow: </Typography>
+                                            <Typography sx={{ mr: 3, m: 1 }}>{userProfile.following}</Typography>
+                                            <Typography color="text.secondary">follower: </Typography>
+                                            <Typography sx={{ mr: 3, m: 1 }}>{userProfile.followers}</Typography>
+                                            <Typography color="text.secondary">Thích: </Typography>
+                                            <Typography sx={{ mr: 3, m: 1 }} >{userProfile.heart}</Typography>
+                                        </div>
+
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            flexWrap: 'wrap',
+                                            marginBottom: '0.6rem',
+                                            marginRight: '1rem'
+                                        }}>
+                                            <ArticleOutlined sx={{ mr: 1 }} /> <Typography>Tiểu sử: </Typography>
+                                            <Typography sx={{ ml: 1 }} color="text.secondary">{userProfile.history === null ? 'Chưa có tiểu sử' : userProfile.history}</Typography>
+                                        </div>
                                     </Box>
+                                </CardContent>
+                            </Card>
 
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        flexWrap: 'wrap',
-                                        marginBottom: '0.6rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        <EmailOutlined sx={{ mr: 1 }} /> <Typography>Email: </Typography>
-                                        <Typography sx={{ ml: 1 }} color="text.secondary">{userProfile.email}</Typography>
-                                    </div>
-
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        flexWrap: 'wrap',
-                                        marginBottom: '0.6rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        <Typography color="text.secondary">Đang follow: </Typography>
-                                        <Typography sx={{ mr: 3, m: 1 }}>{userProfile.following}</Typography>
-                                        <Typography color="text.secondary">follower: </Typography>
-                                        <Typography sx={{ mr: 3, m: 1 }}>{userProfile.followers}</Typography>
-                                        <Typography color="text.secondary">Thích: </Typography>
-                                        <Typography sx={{ mr: 3, m: 1 }} >{userProfile.heart}</Typography>
-                                    </div>
-
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        flexWrap: 'wrap',
-                                        marginBottom: '0.6rem',
-                                        marginRight: '1rem'
-                                    }}>
-                                        <ArticleOutlined sx={{ mr: 1 }} /> <Typography>Tiểu sử: </Typography>
-                                        <Typography sx={{ ml: 1 }} color="text.secondary">{userProfile.history === null ? 'Chưa có tiểu sử' : userProfile.history}</Typography>
-                                    </div>
+                            <Box sx={{ margin: '1rem 1rem 1rem 1rem' }}>
+                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                    <Tabs value={tabMenu} onChange={handleChange} aria-label="basic tabs example">
+                                        <Tab label="Video của bạn" {...a11yProps(0)} />
+                                        <Tab label="Riêng tư" {...a11yProps(1)} />
+                                        <Tab label="Yêu thích" {...a11yProps(2)} />
+                                    </Tabs>
                                 </Box>
-                            </CardContent>
-                        </Card>
-
-                        <Box sx={{ margin: '1rem 1rem 1rem 1rem' }}>
-                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={tabMenu} onChange={handleChange} aria-label="basic tabs example">
-                                    <Tab label="Video của bạn" {...a11yProps(0)} />
-                                    <Tab label="Riêng tư" {...a11yProps(1)} />
-                                    <Tab label="Yêu thích" {...a11yProps(2)} />
-                                </Tabs>
+                                <TabPanel value={tabMenu} index={0}>
+                                    <ListVideo index={0} userAlias={userAlias} userId={methods.getValues("id")} />
+                                </TabPanel>
+                                <TabPanel value={tabMenu} index={1}>
+                                    <ListVideo index={1} userAlias={userAlias} userId={methods.getValues("id")} />
+                                </TabPanel>
+                                <TabPanel value={tabMenu} index={2}>
+                                    <ListVideo index={2} userAlias={userAlias} userId={methods.getValues("id")} />
+                                </TabPanel>
                             </Box>
-                            <TabPanel value={tabMenu} index={0}>
-                                <ListVideo index={0} />
-                            </TabPanel>
-                            <TabPanel value={tabMenu} index={1}>
-                                <ListVideo index={1} />
-                            </TabPanel>
-                            <TabPanel value={tabMenu} index={2}>
-                                <ListVideo index={2} />
-                            </TabPanel>
-                        </Box>
+                        </div>
                     </>
-                )
-                }
+                )}
 
                 <Dialog open={openDialogUpdate} fullWidth>
                     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -508,198 +509,4 @@ export default function Profile() {
     } else {
         <Loading />
     }
-
-
-
-    // if (isLoad) {
-    //     return (
-    //         <>
-    //             <NavBar namePage='Thông tin cá nhân' />
-
-    //             {userProfile && (
-    //                 <>
-    //                     <Card sx={{ margin: '5rem 1rem 1rem 1rem', display: 'flex', justifyContent: 'center' }} >
-    //                         <CardContent>
-    //                             <CardHeader
-    //                                 avatar={
-    //                                     <Avatar sx={{ bgcolor: red[500], width: 66, height: 66 }} aria-label="recipe" src={userProfile.avatar} >
-    //                                         {userProfile.fullName[0]}
-    //                                     </Avatar>
-    //                                 }
-    //                                 title={userProfile.fullName}
-    //                                 subheader={'@' + userProfile.alias}
-    //                             />
-
-    //                             <Box sx={{ m: 3 }}>
-    //                                 <Box mb={2}>
-    //                                     {user.alias === userProfile.alias ? (
-    //                                         <>
-    //                                             <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleClickOpen}><Edit /> Chỉnh sửa hồ sơ</Button>
-    //                                             <Button variant="contained" sx={{ margin: '5px' }} onClick={handleSignOut}><Logout /> Đăng xuất</Button>
-    //                                         </>
-
-    //                                     ) : (
-    //                                         <>
-    //                                             <Button variant="contained" sx={{ margin: '5px' }}>Theo dõi</Button>
-    //                                             <Button variant="outlined" sx={{ margin: '5px' }}>Nhắn tin</Button>
-    //                                         </>
-    //                                     )}
-    //                                 </Box>
-
-    //                                 <div style={{
-    //                                     display: 'flex',
-    //                                     alignItems: 'center',
-    //                                     flexWrap: 'wrap',
-    //                                     marginBottom: '0.6rem',
-    //                                     marginRight: '1rem'
-    //                                 }}>
-    //                                     <EmailOutlined sx={{ mr: 1 }} /> <Typography>Email: </Typography>
-    //                                     <Typography sx={{ ml: 1 }} color="text.secondary">{userProfile.email}</Typography>
-    //                                 </div>
-
-    //                                 <div style={{
-    //                                     display: 'flex',
-    //                                     alignItems: 'center',
-    //                                     flexWrap: 'wrap',
-    //                                     marginBottom: '0.6rem',
-    //                                     marginRight: '1rem'
-    //                                 }}>
-    //                                     <Typography color="text.secondary">Đang follow: </Typography>
-    //                                     <Typography sx={{ mr: 3, m: 1 }}>{userProfile.following}</Typography>
-    //                                     <Typography color="text.secondary">follower: </Typography>
-    //                                     <Typography sx={{ mr: 3, m: 1 }}>{userProfile.followers}</Typography>
-    //                                     <Typography color="text.secondary">Thích: </Typography>
-    //                                     <Typography sx={{ mr: 3, m: 1 }} >{userProfile.heart}</Typography>
-    //                                 </div>
-
-    //                                 <div style={{
-    //                                     display: 'flex',
-    //                                     alignItems: 'center',
-    //                                     flexWrap: 'wrap',
-    //                                     marginBottom: '0.6rem',
-    //                                     marginRight: '1rem'
-    //                                 }}>
-    //                                     <ArticleOutlined sx={{ mr: 1 }} /> <Typography>Tiểu sử: </Typography>
-    //                                     <Typography sx={{ ml: 1 }} color="text.secondary">{userProfile.history === null ? 'Chưa có tiểu sử' : userProfile.history}</Typography>
-    //                                 </div>
-    //                             </Box>
-    //                         </CardContent>
-    //                     </Card>
-
-    //                     <Box sx={{ margin: '1rem 1rem 1rem 1rem' }}>
-    //                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-    //                             <Tabs value={tabMenu} onChange={handleChange} aria-label="basic tabs example">
-    //                                 <Tab label="Video của bạn" {...a11yProps(0)} />
-    //                                 <Tab label="Riêng tư" {...a11yProps(1)} />
-    //                                 <Tab label="Yêu thích" {...a11yProps(2)} />
-    //                             </Tabs>
-    //                         </Box>
-    //                         <TabPanel value={tabMenu} index={0}>
-    //                             <ListVideo index={0} />
-    //                         </TabPanel>
-    //                         {/* <TabPanel value={tabMenu} index={1}>
-    //                             <ListVideo index={1} />
-    //                         </TabPanel>
-    //                         <TabPanel value={tabMenu} index={2}>
-    //                             <ListVideo index={2} />
-    //                         </TabPanel> */}
-    //                     </Box>
-    //                 </>
-    //             )}
-
-    //             {userProfile || (
-    //                 <Card sx={{ margin: '5rem 1rem 1rem 1rem', display: 'flex', justifyContent: 'center' }} >
-    //                     <CardContent>
-    //                         <CardHeader
-    //                             avatar={
-    //                                 <Avatar sx={{ bgcolor: red[500], width: 66, height: 66 }} aria-label="recipe" src={userDefaultImg} ></Avatar>
-    //                             }
-    //                             title='Không tìm thấy người dùng!'
-    //                         />
-    //                     </CardContent>
-    //                 </Card>
-    //             )}
-
-    //             {profileMe || (
-    //                 <>
-    //                     {loginStatus || (
-    //                         <Card sx={{ margin: '5rem 1rem 1rem 1rem', display: 'flex', justifyContent: 'center' }} >
-    //                             <CardContent>
-    //                                 <CardHeader
-    //                                     avatar={
-    //                                         <Avatar sx={{ bgcolor: red[500], width: 66, height: 66 }} aria-label="recipe" src={userDefaultImg} ></Avatar>
-    //                                     }
-    //                                     title='Bạn chưa đăng nhập'
-    //                                 />
-    //                                 <Box sx={{ mt: 2 }}>
-    //                                     <Button component={Link} to="/login" variant="contained" size='large' sx={{ width: '100%' }}>Đăng ký</Button>
-    //                                 </Box>
-    //                             </CardContent>
-    //                         </Card>
-    //                     )}
-    //                 </>
-    //             )}
-    //             <Dialog open={openDialogUpdate} fullWidth>
-    //                 <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-    //                     <DialogTitle>Cập nhật thông tin cá nhân</DialogTitle>
-    //                     <DialogContent>
-    //                         <Stack spacing={3} sx={{ marginTop: '1rem' }}>
-    //                             <CardHeader sx={{ mb: 3 }}
-    //                                 avatar={
-    //                                     <Badge
-    //                                         overlap="circular"
-    //                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-    //                                         badgeContent={
-    //                                             <IconButton aria-label="upload picture" component="label">
-    //                                                 <input hidden accept="image/*" type="file" onChange={onChangeFile} />
-    //                                                 <CameraAltRounded />
-    //                                             </IconButton>
-    //                                         }
-    //                                     >
-    //                                         <Avatar sx={{ bgcolor: red[500], width: 66, height: 66 }} aria-label="recipe" src={methods.getValues("avatar")} >
-    //                                             {methods.getValues("avatar") === "" ? methods.getValues("fullName")[0] : methods.getValues("avatar")}
-    //                                         </Avatar>
-    //                                     </Badge>
-    //                                 }
-    //                             // title={methods.getValues("fullName")}
-    //                             // subheader={methods.getValues("alias")}
-    //                             />
-
-    //                             <RHFTextField name="fullName" label="Tên của bạn" />
-    //                             <RHFTextField
-    //                                 name='alias'
-    //                                 label="TopTop ID"
-    //                                 sx={{ m: 1 }}
-    //                                 InputProps={{
-    //                                     startAdornment: <InputAdornment position="start">@</InputAdornment>,
-    //                                 }}
-    //                             />
-    //                             <RHFTextField
-    //                                 name='history'
-    //                                 label="Tiểu sử"
-    //                                 sx={{ m: 1 }}
-
-    //                             />
-    //                         </Stack>
-
-    //                     </DialogContent>
-    //                     <DialogActions>
-    //                         <Button onClick={handleClose} disabled={btnSubmitLoading}>Hủy bỏ</Button>
-    //                         <Button type='submit' disabled={btnSubmitLoading}>Cập nhật</Button>
-    //                     </DialogActions>
-    //                 </FormProvider>
-    //                 {btnSubmitLoading && (
-    //                     <Box sx={{ width: '100%' }}>
-    //                         <LinearProgress />
-    //                     </Box>
-    //                 )}
-    //             </Dialog>
-    //         </ >
-    //     );
-
-    // } else {
-    //     <Loading />
-    // }
-
-
 }
