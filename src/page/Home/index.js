@@ -158,34 +158,20 @@ function Home() {
     useEffect(() => {
         if (videoIdParam) {
             if (totalVideoPlayed >= 1) {
-                
+
                 fetchFirstPageVideo();
             }
         }
     }, [totalVideoPlayed])
 
-    // fetch first page video
-    // useEffect(() => {
-    //     videoApi.loadVideoNewsFeed(pageNo, pageSize)
-    //         .then(res => {
-    //             setVideo(res.data.data);
-
-    //             setPageNo(res.data.pageNo);
-    //             setTotalElements(res.data.totalElements)
-    //             setIsLoaded(true);
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //             setIsLoaded(false);
-    //         })
-
-    // }, [])
-
-
     // fetch more video
     useEffect(() => {
         // check limit 
-        if (totalVideoPlayed >= pageSize - 1) {
+        if (videos) {
+            if (videos.length >= totalElements) {
+                return;
+            }
+
             videoApi.loadVideoNewsFeed(pageNo + 1, pageSize)
                 .then(res => {
                     setVideo([...videos, ...res.data.data]);

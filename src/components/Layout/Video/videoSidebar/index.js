@@ -22,6 +22,7 @@ import profileApi from '~/api/profile';
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
+// import { set } from 'immer/dist/internal';
 // import useId from '@mui/material/utils/useId';
 
 const cx = classNames.bind(styles);
@@ -33,6 +34,7 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
 
     const [follow, setFollow] = useState(false);
     const [liked, setLiked] = useState(null);
+    const [totalLiked, setTotalLiked] = useState(likes);
 
     const favoriteIconRef = useRef()
 
@@ -43,20 +45,22 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
         }
     }, [isFollow])
 
+    // tìm có Tim hay chưa ?
     useEffect(() => {
         if (videoId)
             if (user) {
                 videoApi.isYouHeartThisVideo(videoId, user.id)
                     .then(res => {
-                        if (res.data === true) {
-                            favoriteIconRef.current.style.color = 'var(--primary-btn-color)';
-                        }
+                        // if (res.data === true) {
+                        //     favoriteIconRef.current.style.color = 'var(--primary-btn-color)';
+                        // }
+                        setLiked(res.data);
                     })
                     .catch(error => {
                         console.log(error);
                     })
             }
-    }, [])
+    }, [user])
 
     const handleFollow = () => {
         if (user) {
@@ -92,51 +96,40 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
         }
     };
 
-    useEffect(() => {
-        if (liked !== null)
-            if (user) {
-                if (liked) {
-                    const request = {
-                        "videoId": videoId,
-                        "userId": user.id,
-                        "status": true
-                    };
-                    videoApi.likeVideo(request)
-                        .then(res => {
-                            console.log("res : ", res);
-                        })
-                        .catch((error) => {
-                            console.log("error : ", error);
-                        })
-                } else {
-                    const request = {
-                        "videoId": videoId,
-                        "userId": user.id,
-                        "status": false
-                    };
-                    videoApi.likeVideo(request)
-                        .then(res => {
-                            console.log("res : ", res);
-                        })
-                        .catch((error) => {
-                            console.log("error : ", error);
-                        })
-                }
-            } else {
-                console.log("/login")
-            }
-    }, [liked])
-
     const handleLike = () => {
         if (user) {
-            setLiked(true);
+            const request = {
+                "videoId": videoId,
+                "userId": user.id,
+                "status": true
+            };
+            videoApi.likeVideo(request)
+                .then(res => {
+                    setLiked(true);
+                    setTotalLiked(totalLiked + 1)
+                })
+                .catch((error) => {
+                    console.log("error : ", error);
+                })
         } else {
             navigate("/login");
         }
     }
 
     const handleUnLike = () => {
-        setLiked(false);
+        const request = {
+            "videoId": videoId,
+            "userId": user.id,
+            "status": false
+        };
+        videoApi.likeVideo(request)
+            .then(res => {
+                setLiked(false);
+                setTotalLiked(totalLiked - 1)
+            })
+            .catch((error) => {
+                console.log("error : ", error);
+            })
     }
 
     return (
@@ -163,7 +156,7 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
                     ) : (
                         <FavoriteIcon fontSize="large" onClick={handleLike} ref={favoriteIconRef} />
                     )}
-                    <p className={cx('videoSideBar__text')}>{liked ? likes + 1 : likes}</p>
+                    <p className={cx('videoSideBar__text')}>{totalLiked}</p>
                 </div>
                 <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogComment}>
                     <MessageIcon fontSize="large" />

@@ -48,6 +48,9 @@ const privateRoutes = [
 const loginRoutes = [
     { path: '/upload', component: Upload },
     { path: '/notification', component: Notification },
+    { path: '/notification/:notificationType', component: Notification },
+
+    { path: '/chat', component: Chat },
     { path: '/chat/:friendId', component: Chat },
 ];
 

@@ -22,6 +22,10 @@ import { Chip } from '@mui/material';
 
 // Auth provider
 import { UserAuth } from '~/context/AuthContext';
+import { Link, useParams } from 'react-router-dom';
+
+// 
+import notificationApi from '~/api/notification';
 
 const messages = [
     {
@@ -82,27 +86,71 @@ const StyledFab = styled(Fab)({
 });
 
 var resoureUrl;
+const initialPageSize = 8;
+const enumNotificationType = [
+    "Đã thích video của bạn",
+    "Đã bình luận video của bạn",
+    "Đã trả lời video của bạn",
+    "Đã theo dõi bạn",
+    "Đã gửi tin nhắn đến bạn",
+];
+
 export default function BottomAppBar() {
-    // const { user } = UserAuth();
+    const { user } = UserAuth();
+    const { notificationType } = useParams();
+
+    const [notifition, setNotifition] = useState();
+    const [pageNo, setPageNo] = useState(1);
+    const [pageSize, setPageSize] = useState(initialPageSize);
+    const [hasMore, setHasMore] = useState(true);
+    const [totalElements, setTotalElements] = useState();
+
+    const getEnumNotificationType = (notificationType, content) => {
+        if (notificationType === 1 || notificationType === 4) {
+            return `${enumNotificationType[notificationType]}: ${content}`;
+        }
+
+        return `${enumNotificationType[notificationType]}`
+    }
+
+    useEffect(() => {
+        console.log("notificationType: ", notificationType)
+
+        if (notificationType == 0 || notificationType == undefined) {
+            notificationApi.getNotificationByUserId(user.id, pageNo, pageSize)
+                .then(res => {
+                    console.log("res.data.dat: ", res.data.data)
+                    setNotifition(res.data.data);
+                })
+                .catch(error => console.log(error))
+        } else if (notificationType == 1) {
+            notificationApi.getNotificationByUserIdAndUnread(user.id, pageNo, pageSize)
+                .then(res => {
+                    setNotifition(res.data.data);
+                })
+                .catch(error => console.log(error))
+        }
+    }, [notificationType])
 
     return (
-        <Fragment>
-            <CssBaseline />
+        <div className='container__center'>
+            {/* <CssBaseline /> */}
             <Paper square sx={{ pb: '50px' }}>
                 <Typography variant="h5" gutterBottom component="div" sx={{ p: 2, pb: 0 }}>
                     Thông báo mới
                 </Typography>
 
                 <Box sx={{ ml: 2 }}>
-                    <Chip label="Tất cả hoạt động" component="a" href="#all" color="primary" clickable sx={{ marginRight: '0.4rem' }} />
-                    <Chip label="Đã yêu thích" component="a" href="#heart" variant="outlined" clickable sx={{ marginRight: '0.4rem' }} />
-                    <Chip label="Follow" component="a" href="#follow" variant="outlined" clickable sx={{ marginRight: '0.4rem' }} />
-                    <Chip label="Lượt nhắc đến và lượt gắn thẻ" component="a" href="#tag" variant="outlined" clickable sx={{ marginRight: '0.4rem' }} />
-                    <Chip label="Follower" component="a" href="#follower" variant="outlined" clickable sx={{ marginRight: '0.4rem' }} />
+                    <Link to='/notification/0' className='link'>
+                        <Chip label="Mới nhất" component="a" clickable sx={{ marginRight: '0.4rem' }} color={(notificationType == 0 || notificationType == undefined) ? 'primary' : 'default'} />
+                    </Link>
+                    <Link to='/notification/1' className='link'>
+                        <Chip label="Chưa đọc" component="a" clickable sx={{ marginRight: '0.4rem' }} color={notificationType == 1 ? 'primary' : 'default'} />
+                    </Link>
                 </Box>
 
                 <List sx={{ mb: 2 }}>
-                    {messages.map(({ id, primary, secondary, person }) => (
+                    {notifition && notifition.map(({ id, userFrom, notificationType, content, readed, pastTime }) => (
                         <Fragment key={id}>
                             {id === 1 && (
                                 <ListSubheader sx={{ bgcolor: 'background.paper' }}>
@@ -116,16 +164,17 @@ export default function BottomAppBar() {
                                 </ListSubheader>
                             )}
 
-                            <ListItem button>
+
+                            <ListItem button sx={{ background: readed == false ? 'rgb(145 158 171 / 11%)' : '' }}>
                                 <ListItemAvatar>
-                                    <Avatar alt="Profile Picture" src={person} />
+                                    <Avatar alt={userFrom.fullName} src={userFrom.avatar} />
                                 </ListItemAvatar>
-                                <ListItemText primary={primary} secondary={secondary} />
+                                <ListItemText primary={userFrom.fullName} secondary={getEnumNotificationType(notificationType, content)} />
                             </ListItem>
                         </Fragment>
                     ))}
                 </List>
             </Paper>
-        </Fragment>
+        </div>
     );
 }
