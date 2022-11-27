@@ -262,7 +262,6 @@ export default function Profile() {
         }
     }
 
-
     const updateProfile = async () => {
         // Put update profile
         const resqestData = {

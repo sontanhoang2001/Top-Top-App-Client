@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 
 // api
 import commentApi from '~/api/comment';
+import videoApi from '~/api/video';
+
 import { async } from '@firebase/util';
 
 // redux
@@ -11,7 +13,7 @@ import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 import { setReply, selectParentId, selectReplyUser, selectIsChildren, setTotalComment } from './commentSlice';
 import { selectVideoId } from '~/components/customizedDialog/dialogSlice';
 import { selectUserVideo } from '~/components/Layout/Video/videoSlice';
-import { dialogComment } from '~/components/customizedDialog/dialogSlice';
+import { closeDialog } from '~/components/customizedDialog/dialogSlice';
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
@@ -88,6 +90,17 @@ function Comment() {
     const isChildren = useSelector(selectIsChildren);
     const userVideo = useSelector(selectUserVideo);
 
+    const commentsRef = useRef([]);
+    commentsRef.current = [];
+    const [replyIndexCurrent, setReplyIndexCurrent] = useState();
+
+    const addToCommentRefs = (el) => {
+        if (el && !commentsRef.current.includes(el)) {
+            commentsRef.current.push(el);
+        }
+        // console.log(commentsRef.current);
+    };
+
     const commentBox = useRef(null);
     const inputCommentRef = useRef();
 
@@ -97,7 +110,8 @@ function Comment() {
             .then(res => {
                 setTotalElements(res.data.totalElements)
                 setComments(res.data.data);
-                dispatch(setTotalComment({ totalComment: res.data.totalElements }))
+                // đếm tổng số comment
+                getTotalComment();
             })
             .catch(error => console.log(error))
     }, [videoId])
@@ -108,7 +122,8 @@ function Comment() {
             .then(res => {
                 setTotalElements(res.data.totalElements)
                 setComments(res.data.data);
-                dispatch(setTotalComment({ totalComment: res.data.totalElements }))
+                // đếm tổng số comment
+                getTotalComment();
             })
             .catch(error => console.log(error))
     }
@@ -123,11 +138,30 @@ function Comment() {
                 setTotalElements(res.data.totalElements)
                 setComments([...comments, ...res.data.data]);
                 setPageNo(pageNo + 1);
-                dispatch(setTotalComment({ totalComment: res.data.totalElements }))
+                // đếm tổng số comment
+                getTotalComment();
             })
             .catch(error => console.log(error))
     };
 
+    const getTotalComment = async () => {
+        await videoApi.findVideoById(videoId)
+            .then(res => {
+                dispatch(setTotalComment({ totalComment: res.data.comment }))
+            })
+            .catch(error => console.log(error))
+    }
+
+    // nếu là comment con thì click vào xem thêm để reload lại comment con
+    useEffect(() => {
+        if (replyIndexCurrent) {
+            try {
+                commentsRef.current[replyIndexCurrent].children[0].firstChild.click();
+            } catch (error) {
+
+            }
+        }
+    }, [comments])
 
     const handleCreateComment = async () => {
         handleCloseEmoji(false);
@@ -144,10 +178,10 @@ function Comment() {
             commentApi.creatComment(dataRequest)
                 .then(res => {
                     console.log("res createComment: ", res);
+                    reloadComment();
                     if (isChildren) {
 
                     } else {
-                        reloadComment();
                         commentBox.current.scrollTo({
                             top: 0,
                             behavior: 'smooth',
@@ -164,9 +198,11 @@ function Comment() {
         }
     }
 
-    const handleReply = (id, user) => {
-        console.log("handle Reply: ", id)
-        const payload = { parentId: id, replyUser: user, isChildren: false };
+    const handleReply = (index, id, user) => {
+        console.log("index reply: ", index);
+
+        setReplyIndexCurrent(index);
+        const payload = { parentId: id, replyUser: user, isChildren: true };
         dispatch(setReply(payload));
     }
 
@@ -207,8 +243,7 @@ function Comment() {
     }, [commentInput])
 
     const handleGoToProfile = (alias) => {
-        const payload = { dialogStatus: false, videoId: null };
-        dispatch(dialogComment(payload));
+        dispatch(closeDialog());
         navigate(`/@${alias}`);
     }
 
@@ -220,11 +255,11 @@ function Comment() {
                         <div key={id}>
                             <CardHeader
                                 avatar={
-                                    <Avatar className='link' aria-label="recipe" src={user.avatar} onClick={() => handleGoToProfile(user.alias)}></Avatar>
+                                    <Avatar aria-label="recipe" src={user.avatar} onClick={() => handleGoToProfile(user.alias)}></Avatar>
                                 }
                                 title={(
                                     <>
-                                        <Typography className='link' variant="subtitle1" sx={{ fontWeight: 600 }} onClick={() => handleGoToProfile(user.alias)}>{user.fullName}
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }} onClick={() => handleGoToProfile(user.alias)}>{user.fullName}
                                             {" "}{userVideo.id === user.id ? (
                                                 <p className='authorLabel'>Tác Giả</p>
                                             ) : (<></>)}</Typography>
@@ -233,14 +268,16 @@ function Comment() {
                                 subheader={(
                                     <Box sx={{ display: "flex", marginTop: '0.4rem' }}>
                                         <Typography variant="subtitle2" align='left' marginRight='1.5rem'>{createdDate}</Typography>
-                                        <Typography variant="subtitle2" align='justify' marginRight='1.5rem' sx={{ cursor: "pointer" }} onClick={() => handleReply(id, user)}>Trả lời</Typography>
+                                        <Typography variant="subtitle2" align='justify' marginRight='1.5rem' sx={{ cursor: "pointer" }} onClick={() => handleReply(index, id, user)}>Trả lời</Typography>
                                     </Box>
                                 )}
                             />
 
-                            {childrenTotal > 0 ? (
-                                <ChildrenComment parentId={id} childrenTotal={childrenTotal} />
-                            ) : (<></>)}
+                            <div className='commentChildren' ref={addToCommentRefs}>
+                                {childrenTotal > 0 ? (
+                                    <ChildrenComment userVideo={userVideo} parentId={id} childrenTotal={childrenTotal} />
+                                ) : (<></>)}
+                            </div>
                         </div>
                     ))}
 
@@ -258,7 +295,6 @@ function Comment() {
                         <EmojiPicker onEmojiClick={(emojiData) => getEmpji(emojiData)} />
                     </Box>
                 )}
-
             </div>
             <Box className={cx('footerComment')}>
                 <IconButton onClick={() => { handleCloseEmoji(!emoji) }} sx={{ marginRight: '1rem' }}>

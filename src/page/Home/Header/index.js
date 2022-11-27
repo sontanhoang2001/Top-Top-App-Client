@@ -286,7 +286,7 @@ function Header() {
                                     <Box sx={{ cursor: 'pointer' }}>
                                         {userResult && userResult.map(({ fullName, alias, avatar }) => (
                                             <ThemeProvider theme={theme}>
-                                                <Link to={`@${alias}`} className='link' >
+                                                <Link to={`@${alias}`} className='link'>
                                                     <CardHeader
                                                         avatar={
                                                             <Avatar sx={{ width: 50, height: 50 }} aria-label="recipe" src={avatar} >

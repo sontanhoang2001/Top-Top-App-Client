@@ -99,7 +99,7 @@ function ListVideo({ index, userAlias, userId }) {
                     .then(res => {
                         setVideos([...videos, ...res.data.data]);
 
-                        setPageNo(res.data.pageNo + 1);
+                        setPageNo(res.data.pageNo);
                         setTotalElements(res.data.totalElements)
                         setIsLoaded(true);
                     })
@@ -110,11 +110,11 @@ function ListVideo({ index, userAlias, userId }) {
                 break;
             }
             case 1: {
-                videoApi.findPrivateVideoProfile(userId, pageNo, pageSize)
+                videoApi.findPrivateVideoProfile(userId, pageNo + 1, pageSize)
                     .then(res => {
                         setVideos([...videos, ...res.data.data]);
 
-                        setPageNo(res.data.pageNo + 1);
+                        setPageNo(res.data.pageNo);
                         setTotalElements(res.data.totalElements)
                         setIsLoaded(true);
                     })
@@ -124,11 +124,11 @@ function ListVideo({ index, userAlias, userId }) {
                 break;
             }
             case 2: {
-                videoApi.findFavouriteVideo(userId, pageNo, pageSize)
+                videoApi.findFavouriteVideo(userId, pageNo + 1, pageSize)
                     .then(res => {
                         setVideos([...videos, ...res.data.data]);
 
-                        setPageNo(res.data.pageNo + 1);
+                        setPageNo(res.data.pageNo);
                         setTotalElements(res.data.totalElements)
                         setIsLoaded(true);
                     })

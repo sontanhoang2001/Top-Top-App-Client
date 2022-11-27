@@ -24,7 +24,7 @@ import { Box, CircularProgress } from '@mui/material';
 import CustomizedDialog from '~/components/customizedDialog';
 
 // redux
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectTotalVideoPlayed } from '~/components/Layout/Video/videoSlice';
 import { selectVideoIdParam } from "~/router/routerPathSlice";
 
@@ -73,6 +73,7 @@ function Home() {
     const { user } = UserAuth();
     const location = useLocation();
     const pathName = location.pathname;
+    const dispath = useDispatch();
 
     const [enable, setEnable] = useState(false);
     const [videos, setVideo] = useState();
@@ -137,6 +138,7 @@ function Home() {
         }
     }, [videoIdParam])
 
+    // lần đầu load page video
     const fetchFirstPageVideo = () => {
         videoApi.loadVideoNewsFeed(pageNo, pageSize)
             .then(res => {
