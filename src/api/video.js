@@ -48,6 +48,10 @@ const video = {
     const url = `${pathname}/favourite?userId=${userId}&pageNo=${pageNo}&pageSize=${pageSize}`;
     return axiosClient.get(url);
   },
+  updateVideo: (videoId, data) => {
+    const url = `${pathname}/${videoId}`;
+    return axiosClient.put(url, data);
+  },
 };
 
 export default video;

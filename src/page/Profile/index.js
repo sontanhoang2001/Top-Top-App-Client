@@ -232,8 +232,6 @@ export default function Profile() {
     const onSubmit = async (data) => {
         // check nếu thay đổi thì cho update
         const history = methods.getValues("history").trim() === "" ? null : methods.getValues("history");
-        console.log("userProfile.avatar: ", userProfile.history)
-        console.log("methods.getValue", history)
 
         if (userProfile.avatar !== methods.getValues("avatar") || userProfile.fullName !== methods.getValues("fullName") || (userProfile.alias !== methods.getValues("alias")) || userProfile.history !== history) {
 

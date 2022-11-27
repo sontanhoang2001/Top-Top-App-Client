@@ -5,7 +5,7 @@ import classNames from 'classnames/bind';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 
-import { styled, alpha } from '@mui/material/styles';
+import { styled, alpha, createTheme, ThemeProvider } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -42,6 +42,8 @@ import VideoThumbnail from 'react-video-thumbnail'; // use npm published version
 
 // api
 import videoApi from '~/api/video';
+import accountApi from '~/api/account';
+
 import { Link, useLocation } from 'react-router-dom';
 
 const StyledSearch = styled('div')(({ theme }) => ({
@@ -110,11 +112,22 @@ function a11yProps(index) {
     };
 }
 
+const theme = createTheme({
+    components: {
+        MuiCardHeader: {
+            styleOverrides: {
+                root: {
+                    padding: '16px 16px 16px 0px'
+                }
+            }
+        }
+    }
+});
 
 function Header() {
     const location = useLocation();
-    const pathName = location.pathname;    
-    
+    const pathName = location.pathname;
+
     // START HAMBURGER MENU NAVIGATION
     //react useState hook to save the current open/close state of the drawer, normally variables dissapear afte the function was executed
     const [open, setState] = useState(false);
@@ -139,12 +152,20 @@ function Header() {
     };
 
     useEffect(() => {
-        videoApi.searchVideo(1, 10, search)
-            .then(res => {
-                setVideoResult(res.data.data);
-            })
-            .catch(error => console.log(error));
-    }, [search])
+        if (tabMenu == 0) {
+            videoApi.searchVideo(1, 10, search)
+                .then(res => {
+                    setVideoResult(res.data.data);
+                })
+                .catch(error => console.log(error));
+        } else {
+            accountApi.searchUser(search)
+                .then(res => {
+                    setUserResult(res.data.data);
+                })
+                .catch(error => console.log(error));
+        }
+    }, [search, tabMenu])
 
     // auto close search bar
     // khi thấy sự thay đổi của 
@@ -237,7 +258,7 @@ function Header() {
                                                         <Typography gutterBottom variant="body2">{title}</Typography>
                                                     </Link>
 
-                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                                             <Link className='link' to={`/@${user.alias}`}>
                                                                 <Avatar sx={{ width: 20, height: 20 }} aria-label="recipe" src={user.avatar} >
@@ -250,7 +271,7 @@ function Header() {
                                                                 </Typography>
                                                             </Link>
                                                         </Box>
-                                                        <Typography variant="caption" color="text.secondary" sx={{cursor: 'default'}} >
+                                                        <Typography variant="caption" color="text.secondary" sx={{ cursor: 'default' }} >
                                                             {`${view} lượt xem`}
                                                         </Typography>
                                                     </Box>
@@ -262,15 +283,23 @@ function Header() {
                                     </Box>
                                 </TabPanel>
                                 <TabPanel value={tabMenu} index={1}>
-                                    <CardHeader sx={{ cursor: 'pointer' }}
-                                        avatar={
-                                            <Avatar sx={{ width: 50, height: 50 }} aria-label="recipe" src='https://drive.google.com/uc?export=view&id=18uPRCycXB0_ubgFjb7EMALC32cz0EYI_' >
-                                                H
-                                            </Avatar>
-                                        }
-                                        title='Tấn Hoàng'
-                                        subheader={'@hoangson'}
-                                    />
+                                    <Box sx={{ cursor: 'pointer' }}>
+                                        {userResult && userResult.map(({ fullName, alias, avatar }) => (
+                                            <ThemeProvider theme={theme}>
+                                                <Link to={`@${alias}`} className='link' >
+                                                    <CardHeader
+                                                        avatar={
+                                                            <Avatar sx={{ width: 50, height: 50 }} aria-label="recipe" src={avatar} >
+                                                                {fullName[0]}
+                                                            </Avatar>
+                                                        }
+                                                        title={fullName}
+                                                        subheader={`@${alias}`}
+                                                    />
+                                                </Link>
+                                            </ThemeProvider>
+                                        ))}
+                                    </Box>
                                 </TabPanel>
                             </Box>
 

@@ -6,11 +6,12 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Typography } from '@mui/material';
 import { closeDialog, selectDialogStatus, selectDialogName } from './dialogSlice'
 import { selectTotalComment } from '../comment/commentSlice';
 
 import Comment from '../comment';
+import SettingFormVideo from '../Layout/settingFormVideo';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -62,6 +63,18 @@ const theme = createTheme({
     }
 })
 
+const themeSettingVideo = createTheme({
+    components: {
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    width: '40ch !important'
+                },
+            },
+        }
+    }
+})
+
 function CustomizedDialog() {
     const dispatch = useDispatch();
     const dialogStatus = useSelector(selectDialogStatus);
@@ -87,10 +100,36 @@ function CustomizedDialog() {
                         maxWidth={false}
                         scroll='body'
                     >
-                        <DialogTitle>{totalComment === 0 ? ("Chưa có bình luận. Bạn hãy là người đầu tiên bình luận video này!") : (`${totalComment} bình luận`)}</DialogTitle>
+                        <DialogTitle>{totalComment === 0 ? ("Chưa có bình luận nào cho video này") : (`${totalComment} bình luận`)}</DialogTitle>
                         <DialogContent>
                             <Comment />
                         </DialogContent>
+                    </Dialog>
+                </ThemeProvider>
+            );
+        }
+        case 'commentLock': {
+            return (
+                <ThemeProvider theme={theme}>
+                    <Dialog
+                        open={dialogStatus}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={handleCloseDialog}
+                        aria-labelledby="draggable-dialog-title"
+                        fullWidth={true}
+                        maxWidth={false}
+                        scroll='body'
+                    >
+                        <DialogTitle>Bình luận</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText sx={{ padding: '1rem', color: 'var(--primary-btn-color)', textAlign: 'center' }}>
+                                Người dùng đã tạm khóa tính năng bình luận video này!
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseDialog}>Đóng</Button>
+                        </DialogActions>
                     </Dialog>
                 </ThemeProvider>
             );
@@ -116,6 +155,25 @@ function CustomizedDialog() {
                             <DialogActions>
                                 <Button onClick={handleCloseDialog}>Hủy</Button>
                             </DialogActions>
+                        </Dialog>
+                    </ThemeProvider>
+                );
+            }
+        case 'settingVideo':
+            {
+                return (
+                    <ThemeProvider theme={themeSettingVideo}>
+                        <Dialog
+                            open={dialogStatus}
+                            TransitionComponent={Transition}
+                            keepMounted
+                            onClose={handleCloseDialog}
+                            aria-labelledby="draggable-dialog-title"
+                            fullWidth={true}
+                            maxWidth={false}
+                            scroll='body'
+                        >
+                            <SettingFormVideo />
                         </Dialog>
                     </ThemeProvider>
                 );

@@ -150,35 +150,39 @@ function ListVideo({ index, userAlias, userId }) {
                     hasMore={hasMore}
                     scrollableTarget='scrollableDiv'
                 >
-                    <ImageList sx={{ width: '100%', minHeight: 350, height: '500px' }} cols={imageListCol} gap={10} component='span' id='scrollableDiv'>
+                    {videos.length == 0 ? (
+                        <Typography variant="subtitle2">Hiện tại chưa có video trong mục này</Typography>
+                    ) : (
+                        <ImageList sx={{ width: '100%', minHeight: 350, height: '500px' }} cols={imageListCol} gap={10} component='span' id='scrollableDiv'>
+                            {videos.map(({ id, url, view }, index) => (
+                                <ImageListItem key={id} sx={{ cursor: 'pointer' }} component='div'>
+                                    <Link to={`/@${userAlias}/video/${id}`}>
+                                        <HoverVideoPlayer
+                                            videoSrc={url}
+                                            pausedOverlay={
+                                                <VideoThumbnail
+                                                    videoUrl={url}
+                                                    height={80}
+                                                />
+                                            }
+                                            loadingOverlay={
+                                                <div className="loading-overlay">
+                                                    <div className="loading-spinner" />
+                                                </div>
+                                            }
+                                        />
+                                    </Link>
+                                    <div style={{ display: 'flex', position: 'absolute', bottom: '10px', left: '5px', color: '#fff' }}><PlayArrowOutlinedIcon /> {view}</div>
 
-                        {videos.map(({ id, url, view }, index) => (
-                            <ImageListItem key={id} sx={{ cursor: 'pointer' }} component='div'>
-                                <Link to={`/@${userAlias}/video/${id}`}>
-                                    <HoverVideoPlayer
-                                        videoSrc={url}
-                                        pausedOverlay={
-                                            <VideoThumbnail
-                                                videoUrl={url}
-                                                height={80}
-                                            />
-                                        }
-                                        loadingOverlay={
-                                            <div className="loading-overlay">
-                                                <div className="loading-spinner" />
-                                            </div>
-                                        }
-                                    />
-                                </Link>
-                                <div style={{ display: 'flex', position: 'absolute', bottom: '10px', left: '5px', color: '#fff' }}><PlayArrowOutlinedIcon /> {view}</div>
+                                </ImageListItem>
+                            ))}
 
-                            </ImageListItem>
-                        ))}
-
-                        {/* <Typography variant="h4" gutterBottom>
+                            {/* <Typography variant="h4" gutterBottom>
                 Chưa có video nào
                 </Typography> */}
-                    </ImageList>
+                        </ImageList>
+                    )}
+
                 </InfiniteScroll>
             )}
         </>);

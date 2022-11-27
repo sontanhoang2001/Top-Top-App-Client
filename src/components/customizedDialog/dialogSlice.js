@@ -14,8 +14,17 @@ export const dialogSlice = createSlice({
             state.videoId = action.payload.videoId;
         },
         dialogComment: (state, action) => {
-            state.dialogStatus = action.payload.dialogStatus;
+            state.dialogStatus = true;
             state.dialogName = "comment";
+            state.videoId = action.payload.videoId;
+        },
+        dialogCommentLock: (state) => {
+            state.dialogStatus = true;
+            state.dialogName = "commentLock";
+        },
+        dialogSettingVideo: (state, action) => {
+            state.dialogStatus = action.payload.dialogStatus;
+            state.dialogName = "settingVideo";
             state.videoId = action.payload.videoId;
         },
         closeDialog: (state) => {
@@ -24,7 +33,7 @@ export const dialogSlice = createSlice({
     },
 });
 
-export const { dialogComment, dialogShare, closeDialog } = dialogSlice.actions;
+export const { dialogComment, dialogShare, dialogCommentLock, dialogSettingVideo, closeDialog } = dialogSlice.actions;
 
 export const selectDialogStatus = (state) => state.dialog.dialogStatus;
 export const selectDialogName = (state) => state.dialog.dialogName;

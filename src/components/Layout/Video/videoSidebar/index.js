@@ -7,14 +7,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MessageIcon from '@mui/icons-material/Message';
 import ShareIcon from '@mui/icons-material/Share';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Avatar from '@mui/material/Avatar';
+import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 // import musicImg from '~/static/image/music/hoang.jpg'
 // import diskIcon from '~/static/image/core/disk.png';
 
 // redux
 import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
-import { dialogComment, dialogShare } from '~/components/customizedDialog/dialogSlice'
+import { dialogComment, dialogCommentLock, dialogShare, dialogSettingVideo } from '~/components/customizedDialog/dialogSlice'
 
 // api
 import videoApi from '~/api/video';
@@ -26,7 +28,7 @@ import { UserAuth } from '~/context/AuthContext';
 // import useId from '@mui/material/utils/useId';
 
 const cx = classNames.bind(styles);
-function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares, likes, userVideo, isFollow }) {
+function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares, likes, userVideo, isFollow, profileVideo, enableComment }) {
     const dispatch = useDispatch()
     const navigate = useNavigate();
     // const videoId = useSelector(selectVideoId);
@@ -87,10 +89,20 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
         dispatch(dialogShare(payload));
     };
 
+    const handleClickOpenDialogSettingVideo = () => {
+        const payload = { dialogStatus: true, videoId: videoId };
+        dispatch(dialogSettingVideo(payload));
+    };
+
+
     const handleClickOpenDialogComment = () => {
         if (user) {
-            const payload = { dialogStatus: true, videoId: videoId };
-            dispatch(dialogComment(payload));
+            if (enableComment == true || userVideo.id == user.id) {
+                const payload = { videoId: videoId };
+                dispatch(dialogComment(payload));
+            } else {
+                dispatch(dialogCommentLock());
+            }
         } else {
             navigate("/login");
         }
@@ -158,14 +170,28 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
                     )}
                     <p className={cx('videoSideBar__text')}>{totalLiked}</p>
                 </div>
-                <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogComment}>
-                    <MessageIcon fontSize="large" />
-                    <p className={cx('videoSideBar__text')}>{comments}</p>
-                </div>
+                {enableComment && (
+                    <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogComment}>
+                        <MessageIcon fontSize="large" />
+                        <p className={cx('videoSideBar__text')}>{comments}</p>
+                    </div>
+                )}
+                {enableComment || (
+                    <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogComment}>
+                        <CommentsDisabledIcon fontSize="large" />
+                        <p className={cx('videoSideBar__text')}>{comments}</p>
+                    </div>
+                )}
+
                 <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogShare}>
                     <ShareIcon fontSize="large" />
                     <p className={cx('videoSideBar__text')}>{shares}</p>
                 </div>
+                {profileVideo && (
+                    <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogSettingVideo}>
+                        <MoreVertIcon fontSize="large" />
+                    </div>
+                )}
                 {/* <div className={cx('videoSidebar__musicCover')}>
                     <div
                         className={cx('diskMusic')}

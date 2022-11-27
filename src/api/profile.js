@@ -11,10 +11,10 @@ const profile = {
     const url = `${pathname}/alias/${alias}`;
     return axiosClient.get(url)
   },
-  findByAlias: (alias) => {
-    const url = `account/alias?target=${alias}`;
-    return axiosClient.get(url)
-  },
+  // findByAlias: (alias) => {
+  //   const url = `account/alias?target=${alias}`;
+  //   return axiosClient.get(url)
+  // },
   updateProfile: (data) => {
     const url = `${pathname}/`;
     return axiosClient.put(url, data)
@@ -24,13 +24,13 @@ const profile = {
     return axiosClient.post(url, data);
   },
   unFolllow: (data) => {
-    const url = 'friendship';
-    return axiosClient.delete(url, data);
+    const url = '/friendship';
+    return axiosClient.delete(url, { data: data });
   },
   isYouFollowUser: (requestId, acceptId) => {
     const url = `account/follow?requestId=${requestId}&acceptId=${acceptId}`;
     return axiosClient.get(url);
-  },
+  }
 };
 
 export default profile;

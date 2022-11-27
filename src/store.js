@@ -6,7 +6,7 @@ import dialogReducer from '~/components/customizedDialog/dialogSlice';
 import videoReducer from '~/components/Layout/Video/videoSlice';
 import chatReducer from '~/page/Chat/chatSlice';
 import commentReducer from '~/components/comment/commentSlice';
-
+import videoProfileReducer from '~/page/VideoProfile/videoProfileSlice';
 
 export default configureStore({
   reducer: {
@@ -17,5 +17,6 @@ export default configureStore({
     video: videoReducer,
     chat: chatReducer,
     comment: commentReducer,
+    videoProfile: videoProfileReducer
   },
 });

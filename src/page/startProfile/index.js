@@ -34,7 +34,7 @@ export default function StartProfile() {
                         title='Bạn chưa đăng nhập'
                     />
                     <Box sx={{ mt: 2 }}>
-                        <Button component={Link} to="/login" variant="contained" size='large' sx={{ width: '100%' }}>Đăng ký</Button>
+                        <Button component={Link} to="/login" variant="contained" size='large' sx={{ width: '100%' }}>Đăng nhập</Button>
                     </Box>
                 </CardContent>
             </Box>

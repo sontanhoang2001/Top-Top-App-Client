@@ -24,7 +24,7 @@ import { UserAuth } from '~/context/AuthContext';
 
 const cx = classNames.bind(styles);
 
-function Video({ index, id, url, avatarUser, song, title, channel, likes, comments, shares, muted, onEnableAudio, userVideo }) {
+function Video({ index, id, url, avatarUser, song, title, channel, likes, comments, shares, muted, onEnableAudio, userVideo, profileVideo, enableComment }) {
     const dispatch = useDispatch();
     const { user } = UserAuth();
     const [playing, setPlaying] = useState(false);
@@ -148,7 +148,7 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
                     </div>
                 </div>
             )}
-            <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} userVideo={userVideo} isFollow={follow} />
+            <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} userVideo={userVideo} isFollow={follow} profileVideo={profileVideo} enableComment={enableComment} />
             <VideoFooter playing={playing} channel={channel} title={title} song={song} />
         </div>
     );

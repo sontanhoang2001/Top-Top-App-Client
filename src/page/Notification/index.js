@@ -87,7 +87,7 @@ const StyledFab = styled(Fab)({
 
 var resoureUrl;
 const initialPageSize = 8;
-const enumNotificationType = [
+const estringNotificationType = [
     "Đã thích video của bạn",
     "Đã bình luận video của bạn",
     "Đã trả lời video của bạn",
@@ -105,12 +105,17 @@ export default function BottomAppBar() {
     const [hasMore, setHasMore] = useState(true);
     const [totalElements, setTotalElements] = useState();
 
+    const translatePastTime = (pastTime) => {
+        // moments ago, 1 second ago, 1 minute ago, 1 hour ago, 1 week ago, 1 month ago, 1 year ago,
+        // console.log("pastTime: ",  pastTime)
+    }
+
     const getEnumNotificationType = (notificationType, content) => {
-        if (notificationType === 1 || notificationType === 4) {
-            return `${enumNotificationType[notificationType]}: ${content}`;
+        if (notificationType === 1 || notificationType === 2 || notificationType === 4) {
+            return `${estringNotificationType[notificationType]}: ${content}`;
         }
 
-        return `${enumNotificationType[notificationType]}`
+        return `${estringNotificationType[notificationType]}`
     }
 
     useEffect(() => {
@@ -169,7 +174,13 @@ export default function BottomAppBar() {
                                 <ListItemAvatar>
                                     <Avatar alt={userFrom.fullName} src={userFrom.avatar} />
                                 </ListItemAvatar>
-                                <ListItemText primary={userFrom.fullName} secondary={getEnumNotificationType(notificationType, content)} />
+                                <ListItemText
+                                    primary={(
+                                        <Box display='flex'>
+                                            <Typography variant='subtitle2' sx={{ marginRight: '5px' }}>{userFrom.fullName}</Typography>
+                                            <Typography variant='body2'>{getEnumNotificationType(notificationType, content)}</Typography>
+                                        </Box>
+                                    )} secondary='5 giờ trước' />
                             </ListItem>
                         </Fragment>
                     ))}

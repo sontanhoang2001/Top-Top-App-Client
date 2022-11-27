@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import Video from '~/components/Layout/Video';
 
+// redux
+import { setVideoSetting } from "./videoProfileSlice";
+
 // api
 import videoApi from '~/api/video';
 import { useParams } from 'react-router-dom';
@@ -11,10 +14,16 @@ import NavBar from '~/components/Layout/NavBarHeader'
 
 import { urlFromDriveUrl } from '~/shared/helper';
 import Loading from '~/components/Layout/Loading';
+import { useDispatch } from 'react-redux';
+
+// auth provider
+import { UserAuth } from '~/context/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function VideoProfile() {
+    const { user } = UserAuth();
+    const dispath = useDispatch();
     const { videoId } = useParams();
     const [videos, setVideo] = useState();
     const [muted, setMuted] = useState(true);
@@ -31,6 +40,12 @@ function VideoProfile() {
             videoApi.findVideoById(videoId)
                 .then(res => {
                     setVideo([res.data]);
+
+                    const payload = {
+                        enableComment: res.data.enableComment,
+                        professed: res.data.professed,
+                    };
+                    dispath(setVideoSetting(payload));
                     setIsLoaded(true);
                 })
                 .catch((error) => {
@@ -61,6 +76,7 @@ function VideoProfile() {
                                 muted={muted}
                                 onEnableAudio={onEnableAudio}
                                 userVideo={video.user}
+                                profileVideo={video.user.id == user.id ? true : false}
                             />
                         </div>
                     ))}

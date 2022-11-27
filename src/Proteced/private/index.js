@@ -7,9 +7,7 @@ function ProtectedPrivate({ children }) {
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        if (loginStatus) {
-            setIsLoaded(true);
-        }
+        setIsLoaded(true);
     }, [loginStatus])
 
     if (isLoaded)

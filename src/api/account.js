@@ -30,7 +30,11 @@ const Account = {
     searchUser: (data) => {
         const url = `${pathname}/password/reset`;
         return axiosClientLogin.put(url, data)
-    }
+    },
+    searchUser: (keyword) => {
+        const url = `${pathname}?pageSize=10&pageNo=1&sortBy=createdDate&sortDir=desc&keyword=${keyword}`;
+        return axiosClientLogin.get(url)
+    },
 };
 
 export default Account;

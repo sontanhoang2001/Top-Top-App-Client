@@ -206,6 +206,7 @@ function Home() {
                                 muted={muted}
                                 onEnableAudio={onEnableAudio}
                                 userVideo={video.user}
+                                enableComment={video.enableComment}
                             />
                         </div>
                     ))}
