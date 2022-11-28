@@ -13,6 +13,7 @@ import { selectTotalComment } from '../comment/commentSlice';
 import Comment from '../comment';
 import OptionVideo from './optionVideo';
 import DeleteVideo from './deleteVideo';
+import ReportVideo from './reportVideo';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -76,6 +77,17 @@ const themeOptionVideo = createTheme({
     }
 })
 
+const themeReportVideo = createTheme({
+    components: {
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    width: '45ch !important'
+                },
+            },
+        }
+    }
+})
 function CustomizedDialog() {
     const dispatch = useDispatch();
     const dialogStatus = useSelector(selectDialogStatus);
@@ -160,6 +172,25 @@ function CustomizedDialog() {
                     </ThemeProvider>
                 );
             }
+        case 'reportVideo':
+            {
+                return (
+                    <ThemeProvider theme={themeReportVideo}>
+                        <Dialog
+                            open={dialogStatus}
+                            TransitionComponent={Transition}
+                            keepMounted
+                            onClose={handleCloseDialog}
+                            aria-labelledby="draggable-dialog-title"
+                            fullWidth={true}
+                            maxWidth={false}
+                            scroll='body'
+                        >
+                            <ReportVideo />
+                        </Dialog>
+                    </ThemeProvider>
+                );
+            }
         case 'optionVideo':
             {
                 return (
@@ -179,7 +210,7 @@ function CustomizedDialog() {
                     </ThemeProvider>
                 );
             }
-            case 'deleteVideo':
+        case 'deleteVideo':
             {
                 return (
                     <ThemeProvider theme={themeOptionVideo}>

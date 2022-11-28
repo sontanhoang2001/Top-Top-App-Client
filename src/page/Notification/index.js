@@ -22,7 +22,7 @@ import { Chip } from '@mui/material';
 
 // Auth provider
 import { UserAuth } from '~/context/AuthContext';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -41,6 +41,7 @@ const estringNotificationType = [
 export default function BottomAppBar() {
     const { user } = UserAuth();
     const { notificationType } = useParams();
+    const navigate = useNavigate();
 
     const [notifition, setNotifition] = useState();
     const [pageNo, setPageNo] = useState(1);
@@ -48,7 +49,6 @@ export default function BottomAppBar() {
     const [hasMore, setHasMore] = useState(true);
     const [totalElements, setTotalElements] = useState();
     const [isLoaded, setIsLoaded] = useState(false);
-
 
     const translatePastTime = (pathTime) => {
         // moments ago, 1 second ago, 1 minute ago, 1 hour ago, 1 week ago, 1 month ago, 1 year ago,
@@ -59,28 +59,44 @@ export default function BottomAppBar() {
         var positionToDay1Day = pathTime.search("1 days ago");
         var positionToDay2Day = pathTime.search("2 days ago");
 
-        if (
-            positionToDayMoments > -1 ||
-            positionToDaySecond > -1 ||
-            positionToDayMinute > -1 ||
-            positionToDayHour > -1 ||
-            positionToDay1Day
-        ) {
-            return (
-                <ListSubheader sx={{ bgcolor: 'background.paper' }}>
-                    Hôm nay
-                </ListSubheader>
-            )
+        if (positionToDayMoments > -1) {
+            return <p>{`${pathTime.split(" ")[0]} vừa xong`}</p>;
+        }
+        if (positionToDaySecond > -1) {
+            return <p>{`${pathTime.split(" ")[0]} giây trước`}</p>;
+        }
+        if (positionToDayMinute > -1) {
+            return <p>{`${pathTime.split(" ")[0]} phút trước`}</p>;
+        }
+        if (positionToDayHour > -1) {
+            return <p>{`${pathTime.split(" ")[0]} giờ trước`}</p>;
+        }
+        if (positionToDay1Day > -1) {
+            return <p>{`${pathTime.split(" ")[0]} 1 ngày trước trước`}</p>;
         }
         if (positionToDay2Day > -1) {
-            return (
-                <ListSubheader sx={{ bgcolor: 'background.paper' }}>
-                    Hôm qua
-                </ListSubheader>
-            )
+            return <p>{`${pathTime.split(" ")[0]} 2 ngày trước`}</p>;
         }
     };
 
+    const handleGotoPage = (notificationType, videoId, userFrom) => {
+        //  "Đã thích video của bạn",
+        // "Đã bình luận video của bạn",
+        // "Đã trả lời video của bạn",
+        if (notificationType == 0 || notificationType == 1 || notificationType == 2) {
+            navigate(`/${videoId}`);
+        }
+
+        // "Đã theo dõi bạn",
+        if (notificationType == 3) {
+            navigate(`/@${userFrom.alias}`);
+        }
+
+        // "Đã gửi tin nhắn đến bạn",
+        if (notificationType == 4) {
+            navigate(`/chat/${userFrom.id}`);
+        }
+    }
 
     const getEnumNotificationType = (notificationType, content) => {
         if (notificationType === 1 || notificationType === 2 || notificationType === 4) {
@@ -139,10 +155,6 @@ export default function BottomAppBar() {
         }
     }
 
-    useEffect(() => {
-        console.log("notification: ", notifition)
-    })
-
     if (setIsLoaded) {
         return (
             <>
@@ -172,27 +184,14 @@ export default function BottomAppBar() {
                                 >
                                     {notifition.map(({ id, userFrom, notificationType, content, readed, pastTime }) => (
                                         <Fragment key={id}>
-                                            {translatePastTime(pastTime)}
-                                            {/* {id === 1 && (
-                                            <ListSubheader sx={{ bgcolor: 'background.paper' }}>
-                                                Hôm nay
-                                            </ListSubheader>
-                                        )}
-
-                                        {id === 3 && (
-                                            <ListSubheader sx={{ bgcolor: 'background.paper' }}>
-                                                Hôm qua
-                                            </ListSubheader>
-                                        )} */}
-
-                                            <ListItem button sx={{ background: readed == false ? 'rgb(145 158 171 / 11%)' : '' }}>
+                                            <ListItem button sx={{ background: readed == false ? 'rgb(145 158 171 / 11%)' : '' }} onClick={() => handleGotoPage(notificationType, id, userFrom)}>
                                                 <ListItemAvatar>
                                                     <Avatar alt={userFrom.fullName} src={userFrom.avatar} />
                                                 </ListItemAvatar>
                                                 <ListItemText
                                                     primary={(
                                                         <Box display='flex'>
-                                                            <Typography variant='subtitle2' sx={{ marginRight: '5px' }}>{id} - {userFrom.fullName}</Typography>
+                                                            <Typography variant='subtitle2' sx={{ marginRight: '5px' }}>{userFrom.fullName}</Typography>
                                                             <Typography variant='body2'>{getEnumNotificationType(notificationType, content)}</Typography>
                                                         </Box>
                                                     )} secondary={translatePastTime(pastTime)} />

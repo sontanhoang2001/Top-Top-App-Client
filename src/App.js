@@ -13,6 +13,7 @@ import { ProtectedPrivate, ProtectedLogin } from './Proteced';
 import Home from './page/Home';
 import { SocketContextProvider } from './context/SocketContext';
 
+
 function App() {
     return (
         <ThemeProvider>

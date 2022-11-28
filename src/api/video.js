@@ -56,6 +56,14 @@ const video = {
     const url = `${pathname}/${videoId}`;
     return axiosClient.delete(url);
   },
+  loadReportVideoType: () => {
+    const url = `/reportType`;
+    return axiosClient.get(url);
+  },
+  createReportVideo: (data) => {
+    const url = `/report`;
+    return axiosClient.post(url, data);
+  },
 };
 
 export default video;

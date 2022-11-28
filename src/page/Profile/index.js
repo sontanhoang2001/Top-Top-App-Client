@@ -425,19 +425,18 @@ export default function Profile() {
 
                             <Box sx={{ margin: '1rem 1rem 1rem 1rem' }}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                    <Tabs value={tabMenu} onChange={handleChange} aria-label="basic tabs example">
-                                        {user.id == methods.getValues("id") ? (
+                                    {user.id == methods.getValues("id") ? (
+                                        <Tabs value={tabMenu} onChange={handleChange} aria-label="basic tabs example">
                                             <Tab label="Video của bạn" {...a11yProps(0)} />
-                                        ) : (
+                                            <Tab label="Riêng tư" {...a11yProps(1)} />
+                                            <Tab label="Yêu thích" {...a11yProps(2)} />
+                                        </Tabs>
+                                    ) : (
+                                        <Tabs value={tabMenu} onChange={handleChange} aria-label="basic tabs example">
                                             <Tab label="Tất video được chia sẻ" {...a11yProps(0)} />
-                                        )}
-                                        {user.id == methods.getValues("id") && (
-                                            <>
-                                                <Tab label="Riêng tư" {...a11yProps(1)} />
-                                                <Tab label="Yêu thích" {...a11yProps(2)} />
-                                            </>
-                                        )}
-                                    </Tabs>
+                                        </Tabs>
+                                    )}
+
                                 </Box>
                                 <TabPanel value={tabMenu} index={0}>
                                     <ListVideo index={0} userAlias={userAlias} userId={methods.getValues("id")} />

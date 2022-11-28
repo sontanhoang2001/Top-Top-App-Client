@@ -194,7 +194,6 @@ export default function UploadVideoForm() {
         if (isValid) {
             setSearch(inputValue);
         }
-
     }
 
     return (
