@@ -1,6 +1,6 @@
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { closeDialog, selectVideoId, selectDialogStatus, selectDialogName } from '~/components/customizedDialog/dialogSlice'
+import { closeDialog, selectVideoId, dialogDeleteVideo } from '~/components/customizedDialog/dialogSlice'
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 import { selectEnableComment, selectProfessed } from "~/page/VideoProfile/videoProfileSlice";
 
@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 // api
 import videoApi from '~/api/video';
 
-function SettingFormVideo() {
+function OptionVideo() {
     const dispatch = useDispatch();
     const videoId = useSelector(selectVideoId);
     const enableCommentBefor = useSelector(selectEnableComment);
@@ -32,7 +32,7 @@ function SettingFormVideo() {
     };
 
     const handleUpdateVideo = () => {
-        if (enableComment !== enableCommentBefor || professed !== professedBefor) {
+        // if (enableComment !== enableCommentBefor || professed !== professedBefor) {
             const data = {
                 "enableComment": enableComment,
                 "professed": professed
@@ -49,8 +49,13 @@ function SettingFormVideo() {
                     dispatch(openSnackbar(snackBarPayload))
                     dispatch(closeDialog());
                 })
-        }
+        // }
     };
+
+    const handleOpenDialogDeleteVideo = () => {
+        const payload = { videoId: videoId };
+        dispatch(dialogDeleteVideo(payload));
+    }
 
     if (isloaded)
         return (<>
@@ -72,6 +77,9 @@ function SettingFormVideo() {
                         <MenuItem value={false}>Riêng Tư</MenuItem>
                     </Select>
                 </FormControl>
+                <Button variant="outlined" sx={{ marginTop: '1rem' }} onClick={handleOpenDialogDeleteVideo}>
+                    Xóa video
+                </Button>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCloseDialog}>Hủy</Button>
@@ -80,4 +88,4 @@ function SettingFormVideo() {
         </>);
 }
 
-export default SettingFormVideo;
+export default OptionVideo;

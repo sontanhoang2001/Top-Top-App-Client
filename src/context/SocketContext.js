@@ -16,17 +16,17 @@ export const SocketContextProvider = ({ children }) => {
     const [privateMessage, setPrivateMessage] = useState("");
     const [pendingMessage, setPendingMessage] = useState(false);
 
-    const connect = async () => {
+    const connect = () => {
         let Sock = new SockJS('http://localhost:8081/ws');
         stompClient = over(Sock);
-        await stompClient.connect({}, onConnected, onError);
+        stompClient.connect({}, onConnected, onError);
     }
 
-    const onConnected = async () => {
-        await stompClient.subscribe('/user/' + user.id + '/private', onPrivateMessage);
+    const onConnected = () => {
+        stompClient.subscribe('/user/' + user.id + '/private', onPrivateMessage);
 
         // đk khi click vào route /chat
-        await stompClient.subscribe('/user/' + user.id + '/pending', onPendingMessage);
+        stompClient.subscribe('/user/' + user.id + '/pending', onPendingMessage);
     }
 
     const onError = (err) => {
@@ -48,7 +48,7 @@ export const SocketContextProvider = ({ children }) => {
     useEffect(() => {
         user &&
             connect();
-    }, [user])
+    }, [])
 
     // useEffect(() => {
     //     // if (stompClient)

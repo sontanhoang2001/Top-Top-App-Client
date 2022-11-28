@@ -16,7 +16,7 @@ import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 // redux
 import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
-import { dialogComment, dialogCommentLock, dialogShare, dialogSettingVideo } from '~/components/customizedDialog/dialogSlice'
+import { dialogComment, dialogCommentLock, dialogShare, dialogOptionVideo, dialogUpdateVideo } from '~/components/customizedDialog/dialogSlice'
 
 // api
 import videoApi from '~/api/video';
@@ -89,9 +89,9 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
         dispatch(dialogShare(payload));
     };
 
-    const handleClickOpenDialogSettingVideo = () => {
+    const handleClickOpenDialogOptionVideo = () => {
         const payload = { dialogStatus: true, videoId: videoId };
-        dispatch(dialogSettingVideo(payload));
+        dispatch(dialogOptionVideo(payload));
     };
 
 
@@ -144,7 +144,7 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
             })
     }
 
-    
+
 
     return (
         <>
@@ -172,25 +172,22 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
                     )}
                     <p className={cx('videoSideBar__text')}>{totalLiked}</p>
                 </div>
-                {enableComment && (
-                    <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogComment}>
+
+                <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogComment}>
+                    {enableComment == true ? (
                         <MessageIcon fontSize="large" />
-                        <p className={cx('videoSideBar__text')}>{comments}</p>
-                    </div>
-                )}
-                {enableComment || (
-                    <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogComment}>
+                    ) : (
                         <CommentsDisabledIcon fontSize="large" />
-                        <p className={cx('videoSideBar__text')}>{comments}</p>
-                    </div>
-                )}
+                    )}
+                    <p className={cx('videoSideBar__text')}>{comments}</p>
+                </div>
 
                 <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogShare}>
                     <ShareIcon fontSize="large" />
                     <p className={cx('videoSideBar__text')}>{shares}</p>
                 </div>
                 {profileVideo && (
-                    <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogSettingVideo}>
+                    <div className={cx('videoSidebar__button')} onClick={handleClickOpenDialogOptionVideo}>
                         <MoreVertIcon fontSize="large" />
                     </div>
                 )}

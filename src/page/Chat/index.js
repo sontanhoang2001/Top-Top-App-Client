@@ -31,9 +31,10 @@ import chatApi from '~/api/chat';
 
 // provider
 import { UserAuth } from '~/context/AuthContext';
-import { Socket } from '~/context/SocketContext';
 
-
+import { over } from 'stompjs';
+import SockJS from 'sockjs-client';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -86,44 +87,119 @@ const StyledFab = styled(Fab)({
     margin: '0 auto',
 });
 
+var stompClient = null;
 
 function Chat() {
     const { user } = UserAuth();
-    const { stompClient, privateMessage, pendingMessage} = Socket();
+    const { chatFriendId } = useParams();
+    const navigate = useNavigate();
 
+    const [friendSearch, setFriendSearch] = useState("");
     const [friend, setFriend] = useState();
+    const [friendRoot, setFriendRoot] = useState();
+
     const [friendId, setFriendId] = useState();
     const [friendInfo, setFriendInfo] = useState();
+    const [isLoaded, setIsLoaded] = useState(false)
 
+    // connect socket
+    const [privateMessage, setPrivateMessage] = useState("");
+    const [pendingMessage, setPendingMessage] = useState(false);
+
+    const connect = () => {
+        let Sock = new SockJS('http://localhost:8081/ws');
+        stompClient = over(Sock);
+        stompClient.connect({}, onConnected, onError);
+    }
+
+    const onConnected = () => {
+        stompClient.subscribe('/user/' + user.id + '/private', onPrivateMessage);
+
+        // đk khi click vào route /chat
+        stompClient.subscribe('/user/' + user.id + '/pending', onPendingMessage);
+    }
+
+    const onError = (err) => {
+        console.log(err);
+    }
+
+    // nhận tin nhắn receive messages
+    const onPrivateMessage = (payload) => {
+        const payloadData = JSON.parse(payload.body);
+        setPrivateMessage(payloadData);
+    }
+
+    // nhận tin nhắn trạng thái đang soạn tin nhắn
+    const onPendingMessage = (payload) => {
+        const payloadData = JSON.parse(payload.body);
+        setPendingMessage(payloadData);
+    }
+
+    useEffect(() => {
+        user &&
+            connect();
+    }, [user])
+    // =====================
+
+    // nếu có chatFriendId parameter trên url
+    useEffect(() => {
+        if (friend)
+            if (chatFriendId) {
+                setFriendSearch(chatFriendId);
+                handleSearchFriend(chatFriendId);
+                // load message cho user
+                handleLoadMessage(chatFriendId, 0)
+            }
+    }, [chatFriendId, friend])
+
+    // load danh sách bạn bè
     useEffect(() => {
         if (user) {
             chatApi.getAllFriends(user.id)
                 .then(res => {
+                    setIsLoaded(true);
                     setFriend(res.data);
-
+                    setFriendRoot(res.data);
                     setFriendId(res.data[0].id);
                     setFriendInfo(res.data[0]);
                 })
                 .catch(error => {
                     console.log("error: ", error)
                 })
-
         }
     }, [user])
+
+    const handleOnChangeInputSearch = (e) => {
+        const keyWord = e.target.value;
+        setFriendSearch(keyWord);
+
+        // pháp hiện khi xóa id trên url
+        if (chatFriendId) {
+            if (keyWord == "")
+                navigate("/chat");
+        }
+        handleSearchFriend(keyWord);
+    }
+
+    const handleSearchFriend = (keyWord) => {
+        if (keyWord == "") {
+            setFriend(friendRoot);
+        } else {
+            if (!chatFriendId) {
+                setFriend(friend.filter(({ fullName }) => fullName.match(new RegExp(keyWord, "i"))));
+            } else {
+                setFriend(friend.filter(({ id }) => id.match(new RegExp(keyWord, "i"))));
+            }
+        }
+    }
 
     const handleLoadMessage = (id, index) => {
         setFriendId(id);
         setFriendInfo(friend[index]);
     }
 
-    // useEffect(() => {
-    //     console.log("stompClient: ", stompClient)
-
-    // })
-
     return (
         <Fragment>
-
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={2} md={3}>
                     <List sx={{ mb: 2 }} className='listFriend'>
@@ -137,31 +213,22 @@ function Chat() {
                             <StyledInputBase
                                 placeholder="Tìm bạn bè..."
                                 inputProps={{ 'aria-label': 'search' }}
+                                value={friendSearch}
+                                onChange={(e) => handleOnChangeInputSearch(e)}
                             />
                         </Search>
-                        {friend && friend.map(({ id, fullName, avatar }, index) => (
-                            <Fragment key={id}>
-                                {/* {id === 1 && (
-                                    <ListSubheader sx={{ bgcolor: 'background.paper' }}>
-                                        Hôm nay
-                                    </ListSubheader>
-                                )}
-
-                                {id === 3 && (
-                                    <ListSubheader sx={{ bgcolor: 'background.paper' }}>
-                                        Hôm qua
-                                    </ListSubheader>
-                                )} */}
-
-
-                                <ListItem button onClick={() => handleLoadMessage(id, index)}>
-                                    <ListItemAvatar>
-                                        <Avatar alt="Profile Picture" src={avatar} />
-                                    </ListItemAvatar>
-                                    <ListItemText primary={fullName} />
-                                </ListItem>
-                            </Fragment>
-                        ))}
+                        {friend && friend.map(({ id, fullName, avatar }, index) => {
+                            return (
+                                <Fragment key={id}>
+                                    <ListItem button onClick={() => handleLoadMessage(id, index)}>
+                                        <ListItemAvatar>
+                                            <Avatar alt="Profile Picture" src={avatar} />
+                                        </ListItemAvatar>
+                                        <ListItemText primary={fullName} />
+                                    </ListItem>
+                                </Fragment>
+                            )
+                        })}
                     </List>
                 </Grid>
 

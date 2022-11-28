@@ -77,6 +77,7 @@ function VideoProfile() {
                                 onEnableAudio={onEnableAudio}
                                 userVideo={video.user}
                                 profileVideo={video.user.id == user.id ? true : false}
+                                enableComment={video.enableComment}
                             />
                         </div>
                     ))}

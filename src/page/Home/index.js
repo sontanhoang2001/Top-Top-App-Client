@@ -36,14 +36,15 @@ import { UserAuth } from '~/context/AuthContext';
 
 import urlAudioNotification from '~/assets/audio/iphone_notification_ringtone_iphone_sms_ringtones.mp3';
 
+import videoAds from '~/assets/video/How Do Small Businesses Win On TikTok-.mp4'
 
 const cx = classNames.bind(styles);
 
 const emptyVideo = {
-    "id": 10,
-    "title": "Thật sự là ko thể smooth như dancer đcc 💔 nên mng cứ xem cho vui thôi nhé ạ!!",
-    "url": "https://drive.google.com/uc?export=view&id=1DHS_fQpGcO9ZYloGIijAdUbAX-7epx_7",
-    "enableComment": true,
+    "id": 0,
+    "title": "",
+    "url": videoAds,
+    "enableComment": false,
     "status": true,
     "view": 415,
     "heart": 7,
@@ -121,6 +122,8 @@ function Home() {
     }, [pathName, videoIdParam])
 
     const [isLoaded, setIsLoaded] = useState(false);
+    const [loadFirst, setLoadFirst] = useState(false);
+
     useEffect(() => {
         if (videoIdParam) {
             videoApi.findVideoById(videoIdParam)
@@ -136,7 +139,8 @@ function Home() {
             // fetch first page video
             fetchFirstPageVideo();
         }
-    }, [videoIdParam])
+        setLoadFirst(true);
+    }, [loadFirst])
 
     // lần đầu load page video
     const fetchFirstPageVideo = () => {

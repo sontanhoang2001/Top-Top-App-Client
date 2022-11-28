@@ -51,7 +51,7 @@ const loginRoutes = [
     { path: '/notification/:notificationType', component: Notification },
 
     { path: '/chat', component: Chat },
-    { path: '/chat/:friendId', component: Chat },
+    { path: '/chat/:chatFriendId', component: Chat },
 ];
 
 

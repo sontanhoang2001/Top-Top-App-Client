@@ -52,6 +52,10 @@ const video = {
     const url = `${pathname}/${videoId}`;
     return axiosClient.put(url, data);
   },
+  deleteVideo: (videoId) => {
+    const url = `${pathname}/${videoId}`;
+    return axiosClient.delete(url);
+  },
 };
 
 export default video;

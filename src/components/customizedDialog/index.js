@@ -11,7 +11,8 @@ import { closeDialog, selectDialogStatus, selectDialogName } from './dialogSlice
 import { selectTotalComment } from '../comment/commentSlice';
 
 import Comment from '../comment';
-import SettingFormVideo from '../Layout/settingFormVideo';
+import OptionVideo from './optionVideo';
+import DeleteVideo from './deleteVideo';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -63,7 +64,7 @@ const theme = createTheme({
     }
 })
 
-const themeSettingVideo = createTheme({
+const themeOptionVideo = createTheme({
     components: {
         MuiPaper: {
             styleOverrides: {
@@ -159,10 +160,10 @@ function CustomizedDialog() {
                     </ThemeProvider>
                 );
             }
-        case 'settingVideo':
+        case 'optionVideo':
             {
                 return (
-                    <ThemeProvider theme={themeSettingVideo}>
+                    <ThemeProvider theme={themeOptionVideo}>
                         <Dialog
                             open={dialogStatus}
                             TransitionComponent={Transition}
@@ -173,7 +174,26 @@ function CustomizedDialog() {
                             maxWidth={false}
                             scroll='body'
                         >
-                            <SettingFormVideo />
+                            <OptionVideo />
+                        </Dialog>
+                    </ThemeProvider>
+                );
+            }
+            case 'deleteVideo':
+            {
+                return (
+                    <ThemeProvider theme={themeOptionVideo}>
+                        <Dialog
+                            open={dialogStatus}
+                            TransitionComponent={Transition}
+                            keepMounted
+                            onClose={handleCloseDialog}
+                            aria-labelledby="draggable-dialog-title"
+                            fullWidth={true}
+                            maxWidth={false}
+                            scroll='body'
+                        >
+                            <DeleteVideo />
                         </Dialog>
                     </ThemeProvider>
                 );

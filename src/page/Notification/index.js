@@ -50,10 +50,37 @@ export default function BottomAppBar() {
     const [isLoaded, setIsLoaded] = useState(false);
 
 
-    const translatePastTime = (pastTime) => {
+    const translatePastTime = (pathTime) => {
         // moments ago, 1 second ago, 1 minute ago, 1 hour ago, 1 week ago, 1 month ago, 1 year ago,
-        // console.log("pastTime: ",  pastTime)
-    }
+        var positionToDayMoments = pathTime.search("moments");
+        var positionToDaySecond = pathTime.search("second");
+        var positionToDayMinute = pathTime.search("minute");
+        var positionToDayHour = pathTime.search("hour");
+        var positionToDay1Day = pathTime.search("1 days ago");
+        var positionToDay2Day = pathTime.search("2 days ago");
+
+        if (
+            positionToDayMoments > -1 ||
+            positionToDaySecond > -1 ||
+            positionToDayMinute > -1 ||
+            positionToDayHour > -1 ||
+            positionToDay1Day
+        ) {
+            return (
+                <ListSubheader sx={{ bgcolor: 'background.paper' }}>
+                    Hôm nay
+                </ListSubheader>
+            )
+        }
+        if (positionToDay2Day > -1) {
+            return (
+                <ListSubheader sx={{ bgcolor: 'background.paper' }}>
+                    Hôm qua
+                </ListSubheader>
+            )
+        }
+    };
+
 
     const getEnumNotificationType = (notificationType, content) => {
         if (notificationType === 1 || notificationType === 2 || notificationType === 4) {
@@ -112,6 +139,10 @@ export default function BottomAppBar() {
         }
     }
 
+    useEffect(() => {
+        console.log("notification: ", notifition)
+    })
+
     if (setIsLoaded) {
         return (
             <>
@@ -141,17 +172,18 @@ export default function BottomAppBar() {
                                 >
                                     {notifition.map(({ id, userFrom, notificationType, content, readed, pastTime }) => (
                                         <Fragment key={id}>
-                                            {id === 1 && (
-                                                <ListSubheader sx={{ bgcolor: 'background.paper' }}>
-                                                    Hôm nay
-                                                </ListSubheader>
-                                            )}
+                                            {translatePastTime(pastTime)}
+                                            {/* {id === 1 && (
+                                            <ListSubheader sx={{ bgcolor: 'background.paper' }}>
+                                                Hôm nay
+                                            </ListSubheader>
+                                        )}
 
-                                            {id === 3 && (
-                                                <ListSubheader sx={{ bgcolor: 'background.paper' }}>
-                                                    Hôm qua
-                                                </ListSubheader>
-                                            )}
+                                        {id === 3 && (
+                                            <ListSubheader sx={{ bgcolor: 'background.paper' }}>
+                                                Hôm qua
+                                            </ListSubheader>
+                                        )} */}
 
                                             <ListItem button sx={{ background: readed == false ? 'rgb(145 158 171 / 11%)' : '' }}>
                                                 <ListItemAvatar>
@@ -160,10 +192,10 @@ export default function BottomAppBar() {
                                                 <ListItemText
                                                     primary={(
                                                         <Box display='flex'>
-                                                            <Typography variant='subtitle2' sx={{ marginRight: '5px' }}>{userFrom.fullName}</Typography>
+                                                            <Typography variant='subtitle2' sx={{ marginRight: '5px' }}>{id} - {userFrom.fullName}</Typography>
                                                             <Typography variant='body2'>{getEnumNotificationType(notificationType, content)}</Typography>
                                                         </Box>
-                                                    )} secondary='5 giờ trước' />
+                                                    )} secondary={translatePastTime(pastTime)} />
                                             </ListItem>
                                         </Fragment>
                                     ))}

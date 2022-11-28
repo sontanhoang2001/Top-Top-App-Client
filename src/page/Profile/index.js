@@ -426,9 +426,17 @@ export default function Profile() {
                             <Box sx={{ margin: '1rem 1rem 1rem 1rem' }}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                     <Tabs value={tabMenu} onChange={handleChange} aria-label="basic tabs example">
-                                        <Tab label="Video của bạn" {...a11yProps(0)} />
-                                        <Tab label="Riêng tư" {...a11yProps(1)} />
-                                        <Tab label="Yêu thích" {...a11yProps(2)} />
+                                        {user.id == methods.getValues("id") ? (
+                                            <Tab label="Video của bạn" {...a11yProps(0)} />
+                                        ) : (
+                                            <Tab label="Tất video được chia sẻ" {...a11yProps(0)} />
+                                        )}
+                                        {user.id == methods.getValues("id") && (
+                                            <>
+                                                <Tab label="Riêng tư" {...a11yProps(1)} />
+                                                <Tab label="Yêu thích" {...a11yProps(2)} />
+                                            </>
+                                        )}
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={tabMenu} index={0}>
