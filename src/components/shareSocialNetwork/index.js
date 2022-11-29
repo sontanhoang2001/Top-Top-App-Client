@@ -35,6 +35,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 import { selectVideoId, closeDialog, dialogReportVideo } from '~/components/customizedDialog/dialogSlice'
 
+// api
+import videoApi from '~/api/video';
+
 const hashtag = "#toptopapp #toptopappcusc #cusc #ctu #mangxahoicantho";
 
 function ShareSocialNetwork() {
@@ -71,9 +74,13 @@ function ShareSocialNetwork() {
     }, [videoId])
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(shareUrl);
-        const payload = { enable: true, type: 'success', message: "Bạn đã sao chép video thành công!", duration: 8000 }
-        dispatch(openSnackbar(payload));
+        videoApi.buffShareVideo(videoId)
+            .then(() => {
+                navigator.clipboard.writeText(shareUrl);
+                const payload = { enable: true, type: 'success', message: "Bạn đã sao chép video thành công!", duration: 8000 }
+                dispatch(openSnackbar(payload));
+            })
+            .catch(error => console.log(error))
     }
 
     const handleOpenDialogReportVideo = () => {

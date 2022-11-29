@@ -17,6 +17,7 @@ import AuthSocial from '../sections/auth/AuthSocial';
 import { UserAuth } from '~/context/AuthContext';
 // video
 import VideoLogin from '~/components/Layout/videoLogin';
+import Title from '~/components/title';
 
 const cx = classNames.bind(styles);
 
@@ -64,35 +65,38 @@ export default function Register() {
   const mdUp = useResponsive('up', 'md');
 
   return (
-    <RootStyle>
-      <HeaderStyle>
-        {smUp && (
-          <Typography variant="body2" sx={{ mt: { md: -2 } }} className={cx('register')}>
-            Bạn đã có tài khoản? {''}
-            <Link variant="subtitle2" component={RouterLink} to="/login">
-              Đăng nhập
-            </Link>
-          </Typography>
+    <>
+      <Title titleString="Cá nhân" />
+
+      <RootStyle>
+        <HeaderStyle>
+          {smUp && (
+            <Typography variant="body2" sx={{ mt: { md: -2 } }} className={cx('register')}>
+              Bạn đã có tài khoản? {''}
+              <Link variant="subtitle2" component={RouterLink} to="/login">
+                Đăng nhập
+              </Link>
+            </Typography>
+          )}
+        </HeaderStyle>
+
+        {mdUp && (
+          <VideoLogin />
         )}
-      </HeaderStyle>
 
-      {mdUp && (
-        <VideoLogin />
-      )}
+        <Container>
+          <ContentStyle>
+            <Typography variant="h4" gutterBottom>
+              Bắt đầu hoàn toàn miễn phí.
+            </Typography>
 
-      <Container>
-        <ContentStyle>
-          <Typography variant="h4" gutterBottom>
-            Bắt đầu hoàn toàn miễn phí.
-          </Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Đăng nhập nhanh với các mạng xã hội.</Typography>
 
-          <Typography sx={{ color: 'text.secondary', mb: 5 }}>Đăng nhập nhanh với các mạng xã hội.</Typography>
+            <AuthSocial />
 
-          <AuthSocial />
+            <RegisterForm setUserTempId={setUserTempId} />
 
-          <RegisterForm setUserTempId={setUserTempId} />
-
-          {/* <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
+            {/* <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
             Bằng cách đăng ký, tôi đồng ý với&nbsp;
             <Link underline="always" color="text.primary" href="#">
               Điều khoản dịch vụ
@@ -104,16 +108,17 @@ export default function Register() {
             .
           </Typography> */}
 
-          {!smUp && (
-            <Typography variant="body2" align="center" sx={{ mt: '1rem' }}>
-              Bạn đã có tài khoản? {''}
-              <Link variant="subtitle2" component={RouterLink} to="/login">
-                Đăng nhập
-              </Link>
-            </Typography>
-          )}
-        </ContentStyle>
-      </Container>
-    </RootStyle >
+            {!smUp && (
+              <Typography variant="body2" align="center" sx={{ mt: '1rem' }}>
+                Bạn đã có tài khoản? {''}
+                <Link variant="subtitle2" component={RouterLink} to="/login">
+                  Đăng nhập
+                </Link>
+              </Typography>
+            )}
+          </ContentStyle>
+        </Container>
+      </RootStyle >
+    </>
   );
 }

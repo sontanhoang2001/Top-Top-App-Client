@@ -6,7 +6,6 @@ import Upload from '~/page/Upload';
 import FooterOnly from '~/components/Layout/FooterOnly';
 import NotFoundPage from '~/page/404';
 import { Counter } from '~/page/Counter';
-import Search from '~/page/Search';
 import Login from '~/page/Login';
 import Register from '~/page/Register';
 import Notification from '~/page/Notification';
@@ -14,7 +13,7 @@ import Otp from '~/page/Otp';
 import ForgotPassword from '~/page/ForgotPassword';
 import ResetPassword from '~/page/ResetPassword';
 import Chat from '~/page/Chat/index';
-import Test from '~/page/Test';
+// import Test from '~/page/Test';
 import StartProfile from '~/page/startProfile';
 import VideoProfile from '~/page/VideoProfile';
 
@@ -25,14 +24,14 @@ const publicRoutes = [
     { path: '*', component: NotFoundPage },
     { path: '/', component: Fragment },
     { path: '/:videoIdParam', component: Fragment },
+    { path: '/:videoIdParam/comment/:commentIdParam', component: Fragment },
     { path: '/home', component: Fragment },
-    { path: '/search', component: Search },
     { path: '/following', component: Following },
     { path: `/@:userAlias`, component: Profile },
     { path: '/register', component: Register, layout: FooterOnly },
     { path: '/@:userAlias/video/:videoId', component: VideoProfile },
     { path: '/counter', component: Counter },
-    { path: '/test', component: Test },
+    // { path: '/test', component: Test },
     { path: '/404', component: NotFoundPage },
 ];
 

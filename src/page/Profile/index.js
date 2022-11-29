@@ -61,6 +61,7 @@ import { UserAuth } from '~/context/AuthContext';
 
 // api
 import mediaApi from '~/api/media';
+import accountApi from '~/api/account';
 
 
 // helper
@@ -71,6 +72,7 @@ import userDefaultImg from '~/assets/image/user-profile-default.png'
 import { Link, useParams } from 'react-router-dom';
 import Loading from '~/components/Layout/Loading';
 import ListVideo from './listVideo';
+import Title from '~/components/title';
 // ----------------------------------------------------------------------
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode !== 'dark' ? '#1A2027' : '#fff',
@@ -102,8 +104,11 @@ export default function Profile() {
     const [userProfile, setUserProfile] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [follow, setFollow] = useState(false);
+    const [isBothAreFriend, setIsBothAreFriend] = useState(false);
 
     const [btnSubmitLoading, setBtnSubmitLoading] = useState(false);
+
+
 
 
     const profileSchema = Yup.object().shape({
@@ -150,8 +155,20 @@ export default function Profile() {
                 console.log(error)
                 setIsLoad(false);
             })
-
     }, [userAlias])
+
+    useEffect(() => {
+        let requestId = user.id;
+        let acceptId = userProfile.id;
+
+        // check xem có kết bạn hay chưa
+        accountApi.isBothAreFriend(requestId, acceptId)
+            .then(res => {
+                console.log("check friend ship: ", res.data)
+                setIsBothAreFriend(res.data.result)
+            })
+            .catch(error => console.log(error))
+    }, [userProfile, follow])
 
     useEffect(() => {
         // userId của người dùng đang xem
@@ -341,6 +358,8 @@ export default function Profile() {
     if (isLoad) {
         return (
             <>
+                <Title titleString="Cá nhân" />
+
                 <NavBar namePage='Thông tin cá nhân' />
 
                 {userProfile && (
@@ -372,7 +391,9 @@ export default function Profile() {
                                                     {follow === true ? (
                                                         <>
                                                             <Button variant="contained" sx={{ margin: '5px' }} onClick={handleUnFollow}>Hủy theo dõi</Button>
-                                                            <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleChat}>Nhắn tin</Button>
+                                                            {isBothAreFriend && (
+                                                                <Button variant="outlined" sx={{ margin: '5px' }} onClick={handleChat}>Nhắn tin</Button>
+                                                            )}
                                                         </>
                                                     ) : (
                                                         <>

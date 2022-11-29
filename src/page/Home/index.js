@@ -3,7 +3,7 @@ import Video from '~/components/Layout/Video';
 
 // api
 import videoApi from '~/api/video';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
@@ -15,9 +15,10 @@ import Loading from '~/components/Layout/Loading';
 import CustomizedDialog from '~/components/customizedDialog';
 
 // redux
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectTotalVideoPlayed } from '~/components/Layout/Video/videoSlice';
-import { selectVideoIdParam } from "~/router/routerPathSlice";
+import { selectVideoIdParam, selectCommentIdParam } from "~/router/routerPathSlice";
+import { dialogComment } from '~/components/customizedDialog/dialogSlice'
 
 // Auth provider
 import { UserAuth } from '~/context/AuthContext';
@@ -32,11 +33,11 @@ const emptyVideo = {
     "url": videoAds,
     "enableComment": false,
     "status": true,
-    "view": 415,
-    "heart": 7,
+    "view": 0,
+    "heart": 0,
     "share": null,
     "professed": true,
-    "comment": 32,
+    "comment": 0,
     "user": {
         "id": "b3ab6a54-c520-44ac-9619-1789712f7a2a",
         "email": "toptopappvideo@gmail.com",
@@ -45,21 +46,17 @@ const emptyVideo = {
         "fullName": "TopTop App Video",
         "history": null,
         "createdDate": "18-11-2022",
-        "role": {
-            "id": 5,
-            "name": "ROLE_USER",
-            "alias": "Customer",
-            "description": "Customer Of Website"
-        },
     }
 }
 
 const initialPageSize = 4;
 
 function Home() {
-    const { user } = UserAuth();
+    // const { user } = UserAuth();
+    const dispath = useDispatch();
     const location = useLocation();
     const pathName = location.pathname;
+    const navigate = useNavigate();
 
     const [enable, setEnable] = useState(false);
     const [videos, setVideo] = useState();
@@ -70,16 +67,22 @@ function Home() {
     const [totalElements, setTotalElements] = useState();
     const totalVideoPlayed = useSelector(selectTotalVideoPlayed);
     const videoIdParam = useSelector(selectVideoIdParam);
+    const commentIdParam = useSelector(selectCommentIdParam);
 
     const onEnableAudio = () => {
         setMuted(false);
     };
 
     useEffect(() => {
-        if (pathName === '/' || pathName === '/home' || pathName === `/${videoIdParam}`) {
+        if (pathName === '/' || pathName === '/home' || pathName === `/${videoIdParam}` || pathName === `/${videoIdParam}/comment/${commentIdParam}`) {
             setEnable(true)
         } else {
             setEnable(false)
+        }
+
+        if (pathName === `/${videoIdParam}/comment/${commentIdParam}`) {
+            const payload = { commentIdParam: videoIdParam };
+            dispath(dialogComment(payload))
         }
     }, [pathName, videoIdParam])
 
@@ -102,7 +105,7 @@ function Home() {
             fetchFirstPageVideo();
         }
         setLoadFirst(true);
-    }, [loadFirst])
+    }, [loadFirst, videoIdParam])
 
     // lần đầu load page video
     const fetchFirstPageVideo = () => {
@@ -139,6 +142,9 @@ function Home() {
             if (videos.length >= totalElements) {
                 return;
             }
+            // console.log("videos.length: ", videos.length)
+            // console.log("totalElements: ", totalElements)
+            // console.log("totalElements: ", totalElements)
 
             videoApi.loadVideoNewsFeed(pageNo + 1, pageSize)
                 .then(res => {

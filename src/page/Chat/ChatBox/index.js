@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import EmojiPicker from 'emoji-picker-react';
 
 import { SentimentVerySatisfied, Send, Image as ImageIcon, ConstructionOutlined } from '@mui/icons-material';
-import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, IconButton, CircularProgress, LinearProgress } from '@mui/material';
+import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, IconButton, CircularProgress, LinearProgress, Typography } from '@mui/material';
 import Message from '../Message';
 
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -23,6 +23,8 @@ import { async } from '@firebase/util';
 import urlAudioTyping from '~/assets/audio/mixkit-smartphone-typing-1393.wav';
 import urlAudioReceiveMessage from '~/assets/audio/mixkit-alert-quick-chime-766.wav'
 
+// avatar
+import avatarDefault from '~/assets/image/user-profile-default.png';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -53,6 +55,13 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     },
 }));
 
+const defaultInforUser = [
+    {
+        id: "0",
+        avatar: avatarDefault,
+        fullName: "Người dùng TopTop"
+    }];
+
 const initialPageSize = 15;
 
 function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, userId, friendId }) {
@@ -69,6 +78,9 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
     const messageEl = useRef(null)
     const [audioTyping] = useState(new Audio(urlAudioTyping));
     const [audioReceiveMessage] = useState(new Audio(urlAudioReceiveMessage));
+    const [isBothAreFriend, setIsBothAreFriend] = useState(false);
+    const [friendInfor, setFriendInfor] = useState();
+
 
     const initialState = () => {
         setPageNo(1);
@@ -76,9 +88,20 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
         setHasMore(true);
     }
 
+    // Lần đầu load tin nhắn
     useEffect(() => {
         initialState();
-        console.log("friendInfo: ", friendInfo)
+        console.log("check friendInfo: ", friendInfo)
+
+        // check xem có phải bạn bè ko
+        if (friendInfo == undefined) {
+            setIsBothAreFriend(false);
+            setFriendInfor(defaultInforUser);
+        } else {
+            setFriendInfor(friendInfo);
+            setIsBothAreFriend(true);
+        }
+
         chatApi.getFriendMessage(userId, friendId, 1, initialPageSize)
             .then(res => {
                 setMessages(res.data.data);
@@ -254,7 +277,7 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
             mediaApi.uploadMessageImage(dataSend)
                 .then(res => res.json())
                 .then((res) => {
-                    console.log("upload image: ", res);
+                    // console.log("upload image: ", res);
                     // send message image
                     sendMessageSoket(res.url);
                 }).catch(e => console.log(e))
@@ -293,20 +316,20 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
 
     return (<>
         <Card sx={{ marginTop: '8px' }}>
-            {friendInfo && (
+            {friendInfor && (
                 <CardHeader
                     sx={{ padding: '10px 10px 10px' }}
                     avatar={
                         <StyledBadge
                             overlap="circular"
                             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                            variant="dot"
+                        // variant="dot"
                         >
-                            <Avatar aria-label="recipe" src={friendInfo.avatar}></Avatar>
+                            <Avatar aria-label="recipe" src={friendInfor.avatar}></Avatar>
                         </StyledBadge>
                     }
-                    title={friendInfo.fullName}
-                    subheader="Đang hoạt động"
+                    title={friendInfor.fullName}
+                // subheader="Đang hoạt động"
                 />
             )}
             <div
@@ -335,7 +358,7 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
                 >
                     {messagePending && (
                         <Box sx={{ margin: '1rem' }}>
-                            <Message avatarUrl={friendInfo.avatar} message="Đang soạn tin nhắn..." direction="left" createdDate="" />
+                            <Message avatarUrl={friendInfor.avatar} message="Đang soạn tin nhắn..." direction="left" createdDate="" />
                         </Box>
                     )}
                     {messages && messages.map(({ content, senderUser, createdDate }, index) =>
@@ -350,7 +373,7 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
                             ) : (
                                 <>
                                     <Box sx={{ margin: '1rem' }}>
-                                        <Message index={index} avatarUrl={friendInfo.avatar} message={content} direction="left" createdDate={createdDate} />
+                                        <Message index={index} avatarUrl={friendInfor.avatar} message={content} direction="left" createdDate={createdDate} />
                                     </Box>
                                 </>
                             )}
@@ -364,24 +387,30 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
                     <EmojiPicker onEmojiClick={(emojiData) => getEmpji(emojiData)} lazyLoadEmojis={true} />
                 </Box>
             )}
-            <Box className="footerChat">
-                <IconButton onClick={() => { handleCloseEmoji(!emoji) }}>
-                    <SentimentVerySatisfied />
-                </IconButton>
+            {isBothAreFriend == true ? (
+                <Box className="footerChat">
+                    <IconButton onClick={() => { handleCloseEmoji(!emoji) }}>
+                        <SentimentVerySatisfied />
+                    </IconButton>
 
-                <IconButton sx={{ color: '#637381' }} component="label">
-                    <input hidden type="file" accept="application/video, image/*" onChange={(e) => handleUploadMessageImage(e)} />
-                    <ImageIcon />
-                </IconButton>
+                    <IconButton sx={{ color: '#637381' }} component="label">
+                        <input hidden type="file" accept="application/video, image/*" onChange={(e) => handleUploadMessageImage(e)} />
+                        <ImageIcon />
+                    </IconButton>
 
-                <TextField hiddenLabel id="outlined-basic" variant="outlined"
-                    sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => handleMessageInput(e)} onClick={() => { handleCloseEmoji(false) }}
-                    onKeyPress={(e) => enterPressed(e)}
-                />
-                <Button variant="contained" endIcon={<Send />} size="large" onClick={handleSendMessage}>
-                    Gửi
-                </Button>
-            </Box>
+                    <TextField hiddenLabel id="outlined-basic" variant="outlined"
+                        sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => handleMessageInput(e)} onClick={() => { handleCloseEmoji(false) }}
+                        onKeyPress={(e) => enterPressed(e)}
+                    />
+                    <Button variant="contained" endIcon={<Send />} size="large" onClick={handleSendMessage}>
+                        Gửi
+                    </Button>
+                </Box>
+            ) : (
+                <Box className="footerChat">
+                    <Typography variant="h6" component="h6" sx={{color: 'red'}} >Hãy kết bạn để tiếp tục đoạn chat!</Typography>
+                </Box>
+            )}
         </Card>
 
         {isViewerOpen && (

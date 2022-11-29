@@ -17,7 +17,7 @@ import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { Button, useMediaQuery } from '@mui/material';
 
 // redux
-import { setVideoIdParam } from "~/router/routerPathSlice";
+import { setVideoIdParam, setCommentIdParam } from "~/router/routerPathSlice";
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
@@ -51,7 +51,7 @@ const theme = createTheme({
 });
 
 function Footer() {
-    const { videoIdParam } = useParams();
+    const { videoIdParam, commentIdParam } = useParams();
     const { loginStatus, user } = UserAuth();
     const pathProfile = `/@${user.alias}`;
     const pathVideoId = `/${videoIdParam}`;
@@ -62,7 +62,8 @@ function Footer() {
 
     useEffect(() => {
         dispatch(setVideoIdParam({ videoIdParam: videoIdParam }));
-    }, [videoIdParam])
+        dispatch(setCommentIdParam({ commentId: commentIdParam }));
+    }, [videoIdParam, commentIdParam])
 
     // START HEADER
     const [page, setPage] = useState('');
@@ -75,6 +76,9 @@ function Footer() {
                 setPage('home');
                 break;
             case '/home':
+                setPage('home');
+                break;
+            case `${videoIdParam}/comment/${commentIdParam}`:
                 setPage('home');
                 break;
             case '/chat':

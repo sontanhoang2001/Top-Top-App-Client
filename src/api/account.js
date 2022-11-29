@@ -35,6 +35,10 @@ const Account = {
         const url = `${pathname}?pageSize=10&pageNo=1&sortBy=createdDate&sortDir=desc&keyword=${keyword}`;
         return axiosClientLogin.get(url)
     },
+    isBothAreFriend: (requestId, acceptId) => {
+        const url = `${pathname}/friend?requestId=${requestId}&acceptId=${acceptId}`;
+        return axiosClientLogin.get(url)
+    },
 };
 
 export default Account;

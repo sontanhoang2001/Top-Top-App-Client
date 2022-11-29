@@ -28,6 +28,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 // api
 import notificationApi from '~/api/notification';
+import Title from '~/components/title';
 
 const initialPageSize = 10;
 const estringNotificationType = [
@@ -91,8 +92,12 @@ export default function BottomAppBar() {
         //  "Đã thích video của bạn",
         // "Đã bình luận video của bạn",
         // "Đã trả lời video của bạn",
-        if (notificationType == 0 || notificationType == 1 || notificationType == 2) {
+        if (notificationType == 0) {
             navigate(`/${videoId}`);
+        }
+
+        if (notificationType == 1 || notificationType == 2) {
+            navigate(`/${videoId}/comment/${commentId}`);
         }
 
         // "Đã theo dõi bạn",
@@ -166,6 +171,8 @@ export default function BottomAppBar() {
     if (setIsLoaded) {
         return (
             <>
+                <Title titleString="Thông báo" />
+
                 <Typography variant="h5" gutterBottom component="div" sx={{ p: 2, pb: 0 }}>
                     Thông báo của bạn
                 </Typography>

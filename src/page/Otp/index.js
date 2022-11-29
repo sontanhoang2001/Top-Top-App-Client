@@ -24,6 +24,7 @@ import apiAccount from '~/api/account'
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
+import Title from '~/components/title';
 
 // ----------------------------------------------------------------------
 
@@ -114,68 +115,74 @@ export default function Otp() {
     navigate("/404")
   } else {
     return (
-      <RootStyle>
-        <HeaderStyle>
+      <>
+        <Title titleString="Xác thực OTP" />
 
-          {smUp && (
-            <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-              Bạn chưa có tài khoản? {''}
-              <Link variant="subtitle2" component={RouterLink} to="/register">
-                Đăng ký
-              </Link>
-            </Typography>
-          )}
-        </HeaderStyle>
 
-        {mdUp && (
-          <SectionStyle>
-            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Chào mừng đến với mạng xã hội TopTop
-            </Typography>
-            <img src="/static/illustrations/illustration_login.png" alt="login" />
-          </SectionStyle>
-        )}
+        <RootStyle>
+          <HeaderStyle>
 
-        <Container maxWidth="sm">
-          <ContentStyle>
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: '700' }}>
-              Xác nhận mã OTP
-            </Typography>
-
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Chúng tôi đã gửi cho bạn mã OTP qua hộp thư điện tử mail của bạn, vui lòng kiểm tra và hoàn thành xác thực.</Typography>
-
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Controller
-                name="otp"
-                control={control}
-                rules={{ validate: (value) => value.length === 6 }}
-                render={({ field, fieldState }) => (
-                  <Box>
-                    <MuiOtpInput sx={{ gap: 1 }} {...field} length={6} />
-                    {fieldState.invalid ? (
-                      <FormHelperText sx={{ mt: 1 }} error>OTP vừa nhập không hợp lệ!</FormHelperText>
-                    ) : null}
-                  </Box>
-                )}
-              />
-              <div>
-                <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} sx={{ mt: 2 }}>
-                  Xác nhận
-                </LoadingButton>
-              </div>
-            </form>
-
-            {!smUp && (
-              <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-                Bạn chưa có tài khoản? {' '}
+            {smUp && (
+              <Typography variant="body2" sx={{ mt: { md: -2 } }}>
+                Bạn chưa có tài khoản? {''}
                 <Link variant="subtitle2" component={RouterLink} to="/register">
                   Đăng ký
                 </Link>
               </Typography>
             )}
-          </ContentStyle>
-        </Container>
-      </RootStyle>
+          </HeaderStyle>
+
+          {mdUp && (
+            <SectionStyle>
+              <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
+                Chào mừng đến với mạng xã hội TopTop
+              </Typography>
+              <img src="/static/illustrations/illustration_login.png" alt="login" />
+            </SectionStyle>
+          )}
+
+          <Container maxWidth="sm">
+            <ContentStyle>
+              <Typography variant="h5" gutterBottom sx={{ fontWeight: '700' }}>
+                Xác nhận mã OTP
+              </Typography>
+
+              <Typography sx={{ color: 'text.secondary', mb: 5 }}>Chúng tôi đã gửi cho bạn mã OTP qua hộp thư điện tử mail của bạn, vui lòng kiểm tra và hoàn thành xác thực.</Typography>
+
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Controller
+                  name="otp"
+                  control={control}
+                  rules={{ validate: (value) => value.length === 6 }}
+                  render={({ field, fieldState }) => (
+                    <Box>
+                      <MuiOtpInput sx={{ gap: 1 }} {...field} length={6} />
+                      {fieldState.invalid ? (
+                        <FormHelperText sx={{ mt: 1 }} error>OTP vừa nhập không hợp lệ!</FormHelperText>
+                      ) : null}
+                    </Box>
+                  )}
+                />
+                <div>
+                  <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} sx={{ mt: 2 }}>
+                    Xác nhận
+                  </LoadingButton>
+                </div>
+              </form>
+
+              {!smUp && (
+                <Typography variant="body2" align="center" sx={{ mt: 3 }}>
+                  Bạn chưa có tài khoản? {' '}
+                  <Link variant="subtitle2" component={RouterLink} to="/register">
+                    Đăng ký
+                  </Link>
+                </Typography>
+              )}
+            </ContentStyle>
+          </Container>
+        </RootStyle>
+      </>
     );
+
   }
 }

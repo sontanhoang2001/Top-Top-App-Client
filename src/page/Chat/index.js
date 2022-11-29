@@ -36,6 +36,7 @@ import { UserAuth } from '~/context/AuthContext';
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
 import { useNavigate, useParams } from 'react-router-dom';
+import Title from '~/components/title';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -145,14 +146,19 @@ function Chat() {
 
     // nếu có chatFriendId parameter trên url
     useEffect(() => {
-        if (friend)
-            if (chatFriendId) {
-                setFriendSearch(chatFriendId);
-                handleSearchFriend(chatFriendId);
+        if (friend) {
+            if (friend.length <= 1) {
                 // load message cho user
                 handleLoadMessage(chatFriendId, 0)
             }
+
+            if (chatFriendId) {
+                setFriendSearch(chatFriendId);
+                handleSearchFriend(chatFriendId);
+            }
+        }
     }, [chatFriendId, friend])
+
 
     // load danh sách bạn bè
     useEffect(() => {
@@ -202,6 +208,8 @@ function Chat() {
 
     return (
         <Fragment>
+            <Title titleString="Tin nhắn" />
+
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={2} md={3}>
                     <List sx={{ mb: 2 }} className='listFriend'>

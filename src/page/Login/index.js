@@ -14,6 +14,7 @@ import AuthSocial from '~/page/sections/auth/AuthSocial';
 
 // video
 import VideoLogin from '~/components/Layout/videoLogin';
+import Title from '~/components/title';
 
 const cx = classNames.bind(styles);
 // ----------------------------------------------------------------------
@@ -59,46 +60,50 @@ export default function Login() {
   const mdUp = useResponsive('up', 'md');
 
   return (
-    <RootStyle>
-      <HeaderStyle>
+    <>
+      <Title titleString="Đăng nhập" />
 
-        {smUp && (
-          <Typography variant="body2" sx={{ mt: { md: -2 } }} className={cx('register')}>
-            Bạn chưa có tài khoản? {''}
-            <Link variant="subtitle2" component={RouterLink} to="/register">
-              Đăng ký
-            </Link>
-          </Typography>
-        )}
-      </HeaderStyle>
+      <RootStyle>
+        <HeaderStyle>
 
-      {mdUp && (
-        <VideoLogin />
-      )}
-
-      <Container maxWidth="sm">
-        <ContentStyle>
-          <Typography variant="h5" gutterBottom sx={{ fontWeight: '700' }}>
-            Đăng nhập vào TopTop
-          </Typography>
-
-          <Typography sx={{ color: 'text.secondary', mb: 5 }}>Nhập thông tin dưới đâu.</Typography>
-
-          <AuthSocial />
-
-          <LoginForm />
-
-
-          {!smUp && (
-            <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-              Bạn chưa có tài khoản? {' '}
+          {smUp && (
+            <Typography variant="body2" sx={{ mt: { md: -2 } }} className={cx('register')}>
+              Bạn chưa có tài khoản? {''}
               <Link variant="subtitle2" component={RouterLink} to="/register">
                 Đăng ký
               </Link>
             </Typography>
           )}
-        </ContentStyle>
-      </Container>
-    </RootStyle>
+        </HeaderStyle>
+
+        {mdUp && (
+          <VideoLogin />
+        )}
+
+        <Container maxWidth="sm">
+          <ContentStyle>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: '700' }}>
+              Đăng nhập vào TopTop
+            </Typography>
+
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Nhập thông tin dưới đâu.</Typography>
+
+            <AuthSocial />
+
+            <LoginForm />
+
+
+            {!smUp && (
+              <Typography variant="body2" align="center" sx={{ mt: 3 }}>
+                Bạn chưa có tài khoản? {' '}
+                <Link variant="subtitle2" component={RouterLink} to="/register">
+                  Đăng ký
+                </Link>
+              </Typography>
+            )}
+          </ContentStyle>
+        </Container>
+      </RootStyle>
+    </>
   );
 }

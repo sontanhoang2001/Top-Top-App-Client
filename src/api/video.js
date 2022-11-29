@@ -64,6 +64,10 @@ const video = {
     const url = `/report`;
     return axiosClient.post(url, data);
   },
+  buffShareVideo: (videoId) => {
+    const url = `${pathname}/share/${videoId}`;
+    return axiosClient.put(url);
+  },
 };
 
 export default video;

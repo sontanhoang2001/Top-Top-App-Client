@@ -17,12 +17,15 @@ import NavBar from '~/components/Layout/NavBarHeader'
 // image
 import userDefaultImg from '~/assets/image/user-profile-default.png'
 import { Link } from 'react-router-dom';
+import Title from '~/components/title';
 
 // ----------------------------------------------------------------------
 
 export default function StartProfile() {
     return (
         <>
+            <Title titleString="Cá nhân" />
+
             <NavBar namePage='Thông tin cá nhân' />
 
             <Box className='container__center' sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} >

@@ -148,8 +148,13 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
                     </div>
                 </div>
             )}
-            <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} userVideo={userVideo} isFollow={follow} profileVideo={profileVideo} enableComment={enableComment} />
-            <VideoFooter playing={playing} channel={channel} title={title} song={song} />
+
+            {id !== 0 ? (
+                <>
+                    <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} userVideo={userVideo} isFollow={follow} profileVideo={profileVideo} enableComment={enableComment} />
+                    <VideoFooter playing={playing} channel={channel} title={title} song={song} />
+                </>
+            ) : (<></>)}
         </div>
     );
 }

@@ -11,9 +11,10 @@ import { async } from '@firebase/util';
 import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
 import { setReply, selectParentId, selectReplyUser, selectIsChildren, setTotalComment } from './commentSlice';
-import { selectVideoId } from '~/components/customizedDialog/dialogSlice';
+import { selectVideoId } from '~/components/Layout/Video/videoSlice';
 import { selectUserVideo } from '~/components/Layout/Video/videoSlice';
 import { closeDialog } from '~/components/customizedDialog/dialogSlice';
+import { selectVideoIdParam, selectCommentIdParam } from "~/router/routerPathSlice";
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
@@ -30,7 +31,7 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
-import { Send, FavoriteIcon as Favorite, SentimentVerySatisfied, FavoriteBorder as FavoriteBorderIcon, ExpandMore as ExpandMoreIcon, MapsUgc as MapsUgcIcon } from '@mui/icons-material';
+import { ChevronLeft, Send, FavoriteIcon as Favorite, SentimentVerySatisfied, FavoriteBorder as FavoriteBorderIcon, ExpandMore as ExpandMoreIcon, MapsUgc as MapsUgcIcon } from '@mui/icons-material';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -38,7 +39,7 @@ import ChildrenComment from './childrenComment';
 import EmojiPicker from 'emoji-picker-react';
 import classNames from 'classnames/bind';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 const cx = classNames.bind(styles);
 
 const theme = createTheme({
@@ -77,6 +78,11 @@ function Comment() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { user } = UserAuth();
+    const location = useLocation();
+    const pathName = location.pathname;
+    const commentIdParam = useSelector(selectCommentIdParam);
+    const videoIdParam = useSelector(selectVideoIdParam);
+
     const [emoji, setEmoji] = useState(false);
     const [commentInput, setCommentInput] = useState("");
     const [commentInputSubmit, setCommentInputSubmit] = useState("");
@@ -89,6 +95,7 @@ function Comment() {
     const replyUser = useSelector(selectReplyUser);
     const isChildren = useSelector(selectIsChildren);
     const userVideo = useSelector(selectUserVideo);
+    const [commentType, setCommentType] = useState(1);
 
     const commentsRef = useRef([]);
     commentsRef.current = [];
@@ -106,14 +113,30 @@ function Comment() {
 
     // lần đầu load comments
     useEffect(() => {
-        commentApi.getCommentParent(videoId, pageNo, pageSize)
-            .then(res => {
-                setTotalElements(res.data.totalElements)
-                setComments(res.data.data);
-                // đếm tổng số comment
-                getTotalComment();
-            })
-            .catch(error => console.log(error))
+        // Nếu có đường dẫn /videoIdParam/comment/commentIdParam
+        // Thì thực thi load view comment notification
+        if (pathName === `/${videoIdParam}/comment/${commentIdParam}`) {
+            commentApi.getACommentParent(commentIdParam)
+                .then(res => {
+                    setTotalElements(res.data.totalElements)
+                    setComments(res.data.data);
+                    // đếm tổng số comment
+                    getTotalComment();
+                    setCommentType(1);
+                    console.log("res ", res.data.data);
+                })
+                .catch(error => console.log(error))
+        } else {
+            commentApi.getCommentParent(videoId, pageNo, pageSize)
+                .then(res => {
+                    setTotalElements(res.data.totalElements)
+                    setComments(res.data.data);
+                    // đếm tổng số comment
+                    getTotalComment();
+                    setCommentType(0);
+                })
+                .catch(error => console.log(error))
+        }
     }, [videoId])
 
     // load lại comment ở page 1
@@ -168,6 +191,7 @@ function Comment() {
         if (commentInput.trim() === "") {
 
         } else {
+
             const dataRequest = {
                 "content": commentInputSubmit,
                 "parentId": parentId,
@@ -211,6 +235,11 @@ function Comment() {
         dispatch(setReply(payload));
     }
 
+    const handleReloadComment = () => {
+        setCommentType(0)
+        reloadComment();
+    }
+
     const handleCloseEmoji = (value) => {
         setEmoji(value);
     }
@@ -247,65 +276,74 @@ function Comment() {
         navigate(`/@${alias}`);
     }
 
-    return (<>
-        <ThemeProvider theme={theme}>
-            <div className='commentBox' ref={commentBox}>
-                <Box onClick={() => setEmoji(false)}>
-                    {comments && comments.map(({ id, content, createdDate, user, childrenTotal }, index) => (
-                        <div key={id}>
-                            <CardHeader
-                                avatar={
-                                    <Avatar aria-label="recipe" src={user.avatar} onClick={() => handleGoToProfile(user.alias)}></Avatar>
-                                }
-                                title={(
-                                    <>
-                                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }} onClick={() => handleGoToProfile(user.alias)}>{user.fullName}
-                                            {" "}{userVideo.id === user.id ? (
-                                                <p className='authorLabel'>Tác Giả</p>
-                                            ) : (<></>)}</Typography>
-                                        <Typography variant="subtitle1">{content}</Typography>
-                                    </>)}
-                                subheader={(
-                                    <Box sx={{ display: "flex", marginTop: '0.4rem' }}>
-                                        <Typography variant="subtitle2" align='left' marginRight='1.5rem'>{createdDate}</Typography>
-                                        <Typography variant="subtitle2" align='justify' marginRight='1.5rem' sx={{ cursor: "pointer" }} onClick={() => handleReply(index, id, user)}>Trả lời</Typography>
-                                    </Box>
-                                )}
-                            />
+    if (user)
+        if (userVideo)
+            return (<>
+                <ThemeProvider theme={theme}>
+                    <div className='commentBox' ref={commentBox}>
+                        <Box onClick={() => setEmoji(false)}>
+                            {commentType == 1 ? (
+                                <Button variant="outlined" onClick={handleReloadComment}>
+                                    <ChevronLeft />
+                                </Button>
+                            ) : (<></>)}
+                            {comments && comments.map(({ id, content, createdDate, user, childrenTotal }, index) => (
+                                <div key={id}>
+                                    <CardHeader
+                                        avatar={
+                                            <Avatar aria-label="recipe" src={user.avatar} onClick={() => handleGoToProfile(user.alias)}></Avatar>
+                                        }
+                                        title={(
+                                            <>
+                                                <Typography variant="subtitle1" sx={{ fontWeight: 600 }} onClick={() => handleGoToProfile(user.alias)}>{user.fullName}
+                                                    {" "}{userVideo.id === user.id ? (
+                                                        <p className='authorLabel'>Tác Giả</p>
+                                                    ) : (<></>)}</Typography>
+                                                <Typography variant="subtitle1">{content}</Typography>
+                                            </>)}
+                                        subheader={(
+                                            <Box sx={{ display: "flex", marginTop: '0.4rem' }}>
+                                                <Typography variant="subtitle2" align='left' marginRight='1.5rem'>{createdDate}</Typography>
+                                                <Typography variant="subtitle2" align='justify' marginRight='1.5rem' sx={{ cursor: "pointer" }} onClick={() => handleReply(index, id, user)}>Trả lời</Typography>
+                                            </Box>
+                                        )}
+                                    />
 
-                            <div className='commentChildren' ref={addToCommentRefs}>
-                                {childrenTotal > 0 ? (
-                                    <ChildrenComment userVideo={userVideo} parentId={id} childrenTotal={childrenTotal} />
-                                ) : (<></>)}
-                            </div>
-                        </div>
-                    ))}
+                                    <div className='commentChildren' ref={addToCommentRefs}>
+                                        {childrenTotal > 0 ? (
+                                            <ChildrenComment userVideo={userVideo} parentId={id} childrenTotal={childrenTotal} />
+                                        ) : (<></>)}
+                                    </div>
+                                </div>
+                            ))}
 
-                    {comments && totalElements - comments.length > 0 && (
-                        <div className="reply__actionContainer">
-                            <p className="reply__ActionText" onClick={() => fetchMoreData()}>Xem thêm câu trả lời khác {totalElements - comments.length}
-                                <svg className="chevronDownFill" width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M21.8788 33.1213L7.58586 18.8284C7.19534 18.4379 7.19534 17.8047 7.58586 17.4142L10.4143 14.5858C10.8048 14.1953 11.438 14.1953 11.8285 14.5858L24.0001 26.7574L36.1716 14.5858C36.5622 14.1953 37.1953 14.1953 37.5859 14.5858L40.4143 17.4142C40.8048 17.8047 40.8048 18.4379 40.4143 18.8284L26.1214 33.1213C24.9498 34.2929 23.0503 34.2929 21.8788 33.1213Z"></path></svg>
-                            </p>
-                        </div>
-                    )}
-                </Box>
+                            {comments && totalElements - comments.length > 0 && (
+                                <div className="reply__actionContainer">
+                                    <p className="reply__ActionText" onClick={() => fetchMoreData()}>Xem thêm câu trả lời khác {totalElements - comments.length}
+                                        <svg className="chevronDownFill" width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M21.8788 33.1213L7.58586 18.8284C7.19534 18.4379 7.19534 17.8047 7.58586 17.4142L10.4143 14.5858C10.8048 14.1953 11.438 14.1953 11.8285 14.5858L24.0001 26.7574L36.1716 14.5858C36.5622 14.1953 37.1953 14.1953 37.5859 14.5858L40.4143 17.4142C40.8048 17.8047 40.8048 18.4379 40.4143 18.8284L26.1214 33.1213C24.9498 34.2929 23.0503 34.2929 21.8788 33.1213Z"></path></svg>
+                                    </p>
+                                </div>
+                            )}
 
-                {emoji && (
-                    <Box className={cx('EmojiPicker')}>
-                        <EmojiPicker onEmojiClick={(emojiData) => getEmpji(emojiData)} />
+
+                        </Box>
+
+                        {emoji && (
+                            <Box className={cx('EmojiPicker')}>
+                                <EmojiPicker onEmojiClick={(emojiData) => getEmpji(emojiData)} />
+                            </Box>
+                        )}
+                    </div>
+                    <Box className={cx('footerComment')}>
+                        <IconButton onClick={() => { handleCloseEmoji(!emoji) }} sx={{ marginRight: '1rem' }}>
+                            <SentimentVerySatisfied />
+                        </IconButton>
+                        <TextField ref={inputCommentRef} className={cx('inputComment')} hiddenLabel variant="outlined" placeholder="Thêm bình luận..." value={commentInput} onChange={(e) => { setCommentInput(e.target.value) }} onClick={() => { handleCloseEmoji(false) }} autoFocus />
+                        <Button className={cx('btnCommentMd')} variant="contained" endIcon={<MapsUgcIcon />} size="large" onClick={handleCreateComment}>Bình luận</Button>
+                        <Button className={cx('btnCommentSm')} variant="contained" size="large" onClick={handleCreateComment}><MapsUgcIcon /></Button>
                     </Box>
-                )}
-            </div>
-            <Box className={cx('footerComment')}>
-                <IconButton onClick={() => { handleCloseEmoji(!emoji) }} sx={{ marginRight: '1rem' }}>
-                    <SentimentVerySatisfied />
-                </IconButton>
-                <TextField ref={inputCommentRef} className={cx('inputComment')} hiddenLabel variant="outlined" placeholder="Thêm bình luận..." value={commentInput} onChange={(e) => { setCommentInput(e.target.value) }} onClick={() => { handleCloseEmoji(false) }} autoFocus />
-                <Button className={cx('btnCommentMd')} variant="contained" endIcon={<MapsUgcIcon />} size="large" onClick={handleCreateComment}>Bình luận</Button>
-                <Button className={cx('btnCommentSm')} variant="contained" size="large" onClick={handleCreateComment}><MapsUgcIcon /></Button>
-            </Box>
-        </ThemeProvider >
-    </>);
+                </ThemeProvider >
+            </>);
 }
 
 export default Comment;

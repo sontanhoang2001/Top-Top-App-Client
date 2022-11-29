@@ -11,6 +11,10 @@ const comment = {
     const url = `${pathname}/video/${videoId}?pageNo=${pageNo}&pageSize=${pageSize}&sortBy=createdDate&sortDir=desc`;
     return axiosClient.get(url);
   },
+  getACommentParent: (commentId) => {
+    const url = `${pathname}/search/${commentId}`;
+    return axiosClient.get(url);
+  },
   getChildrenComment: (children, pageNo, pageSize) => {
     const url = `${pathname}/children/${children}?pageNo=${pageNo}&pageSize=${pageSize}&sortBy=createdDate&sortDir=desc`;
     return axiosClient.get(url);

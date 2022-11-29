@@ -28,6 +28,7 @@ import { Container } from '@mui/system';
 
 // helper
 import { urlFromDriveUrl } from '~/shared/helper';
+import Title from '~/components/title';
 
 // ----------------------------------------------------------------------
 
@@ -198,6 +199,8 @@ export default function UploadVideoForm() {
 
     return (
         <>
+            <Title titleString="Tải video" />
+
             <NavBar namePage='Đăng Video mới' />
 
             <div className='container__center'>

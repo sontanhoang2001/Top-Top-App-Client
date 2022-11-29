@@ -144,8 +144,6 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
             })
     }
 
-
-
     return (
         <>
             <div className={cx('videoSidebar')}>

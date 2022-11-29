@@ -5,7 +5,8 @@ export const currentPageSlice = createSlice({
     name: 'currentPage',
     initialState: {
         direction: "/",
-        videoIdParam: null
+        videoIdParam: null,
+        commentId: null,
     },
     reducers: {
         setDirection: (state, action) => {
@@ -13,13 +14,17 @@ export const currentPageSlice = createSlice({
         },
         setVideoIdParam: (state, action) => {
             state.videoIdParam = action.payload.videoIdParam;
+        },
+        setCommentIdParam: (state, action) => {
+            state.commentId = action.payload.commentId;
         }
     }
 });
 
-export const { setDirection, setVideoIdParam } = currentPageSlice.actions;
+export const { setDirection, setVideoIdParam, setCommentIdParam } = currentPageSlice.actions;
 
 export const selectDirection = (state) => state.currentPage.direction;
 export const selectVideoIdParam = (state) => state.currentPage.videoIdParam;
+export const selectCommentIdParam = (state) => state.currentPage.commentId;
 
 export default currentPageSlice.reducer;
