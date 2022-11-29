@@ -1,8 +1,10 @@
 import axios from 'axios';
+import Env from './env';
+
 // Set up default config for http requests here
 
 const axiosClientLogin = axios.create({
-  baseURL: 'http://localhost:8081/api/v1/',
+  baseURL: Env.APP_PATH_API,
 });
 
 axiosClientLogin.interceptors.request.use(async (config) => {

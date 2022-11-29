@@ -13,10 +13,10 @@ import { selectDirection } from "~/router/routerPathSlice";
 
 // sections
 import { ResetPasswordForm } from '../sections/auth/resetPassword';
-import { useEffect } from 'react';
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
+import VideoLogin from '~/components/Layout/videoLogin';
 
 // ----------------------------------------------------------------------
 
@@ -88,12 +88,7 @@ export default function ChangePassword() {
         </HeaderStyle>
 
         {mdUp && (
-          <SectionStyle>
-            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Hãy bắt đầu một tài khoản với TopTop
-            </Typography>
-            <img alt="register" src="/static/illustrations/illustration_register.png" />
-          </SectionStyle>
+          <VideoLogin />
         )}
 
         <Container>
@@ -104,7 +99,7 @@ export default function ChangePassword() {
 
             <Typography sx={{ color: 'text.secondary', mb: 5 }}>Hãy ghi nhớ mật khẩu của bạn cho lần đăng nhập sau nhé.</Typography>
 
-            <ResetPasswordForm userTempId={userTempId}/>
+            <ResetPasswordForm userTempId={userTempId} />
 
             <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
               Bằng cách đăng ký, tôi đồng ý với&nbsp;

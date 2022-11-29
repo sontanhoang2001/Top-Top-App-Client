@@ -12,6 +12,7 @@ import { ProtectedPrivate, ProtectedLogin } from './Proteced';
 // import '@fontsource/roboto/300.css';
 import Home from './page/Home';
 import { SocketContextProvider } from './context/SocketContext';
+import ListenerNotification from './components/listenerNotification';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             <AuthContextProvider>
                 <SocketContextProvider>
                     <Home />
+                    <ListenerNotification />
                     <Routes>
                         {publicRoutes.map((route, index) => {
                             const Page = route.component;

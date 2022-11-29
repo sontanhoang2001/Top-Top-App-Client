@@ -3,7 +3,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import EmojiPicker from 'emoji-picker-react';
 
-import { SentimentVerySatisfied, MicNone, Send, Image as ImageIcon, ConstructionOutlined } from '@mui/icons-material';
+import { SentimentVerySatisfied, Send, Image as ImageIcon, ConstructionOutlined } from '@mui/icons-material';
 import { styled, Avatar, Box, Card, CardHeader, TextField, Badge, Button, Chip, IconButton, CircularProgress, LinearProgress } from '@mui/material';
 import Message from '../Message';
 
@@ -272,13 +272,19 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
         dispatch(imageViewer(payload))
     };
 
-
     // useEffect(() => {
     //     console.log("selectListImagesViewer: ", listImagesViewer)
     //     console.log("currentImage: ", currentImage)
     //     console.log("isViewerOpen: ", isViewerOpen)
 
     // })
+
+    const enterPressed = (e) => {
+        var keynum = e.keyCode || e.which;
+        if (keynum == 13) {
+            handleSendMessage();
+        }
+    }
 
     const handleMessageInput = (e) => {
         // console.log("check keyword: ", e.target.value)
@@ -368,8 +374,10 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
                     <ImageIcon />
                 </IconButton>
 
-                <TextField hiddenLabel id="outlined-basic" variant="outlined" sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => handleMessageInput(e)} onClick={() => { handleCloseEmoji(false) }} />
-                <MicNone />
+                <TextField hiddenLabel id="outlined-basic" variant="outlined"
+                    sx={{ width: '60%' }} placeholder="Aa" value={messageInput} onChange={(e) => handleMessageInput(e)} onClick={() => { handleCloseEmoji(false) }}
+                    onKeyPress={(e) => enterPressed(e)}
+                />
                 <Button variant="contained" endIcon={<Send />} size="large" onClick={handleSendMessage}>
                     Gửi
                 </Button>

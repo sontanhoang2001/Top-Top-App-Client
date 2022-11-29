@@ -9,7 +9,7 @@ const video = {
     return axiosClient.post(url, data);
   },
   loadVideoNewsFeed: (pageNo, pageSize) => {
-    const url = `${pathname}/watch?pageNo=${pageNo}&pageSize=${pageSize}`;
+    const url = `${pathname}/watch?pageNo=${pageNo}&pageSize=${pageSize}&sortBy=id&sortDir=desc`;
     return axiosClient.get(url);
   },
   findVideoById: (videoId) => {

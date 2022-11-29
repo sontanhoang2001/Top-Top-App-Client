@@ -1,4 +1,8 @@
+import styles from '../Login/login.css'
+import classNames from 'classnames/bind';
+
 import { Link as RouterLink } from 'react-router-dom';
+
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, Link, Container, Typography } from '@mui/material';
@@ -11,6 +15,10 @@ import AuthSocial from '../sections/auth/AuthSocial';
 
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
+// video
+import VideoLogin from '~/components/Layout/videoLogin';
+
+const cx = classNames.bind(styles);
 
 // ----------------------------------------------------------------------
 
@@ -36,14 +44,6 @@ const HeaderStyle = styled('header')(({ theme }) => ({
   },
 }));
 
-const SectionStyle = styled(Card)(({ theme }) => ({
-  width: '100%',
-  maxWidth: 464,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  margin: theme.spacing(2, 0, 2, 2),
-}));
 
 const ContentStyle = styled('div')(({ theme }) => ({
   maxWidth: 480,
@@ -67,7 +67,7 @@ export default function Register() {
     <RootStyle>
       <HeaderStyle>
         {smUp && (
-          <Typography variant="body2" sx={{ mt: { md: -2 } }}>
+          <Typography variant="body2" sx={{ mt: { md: -2 } }} className={cx('register')}>
             Bạn đã có tài khoản? {''}
             <Link variant="subtitle2" component={RouterLink} to="/login">
               Đăng nhập
@@ -77,12 +77,7 @@ export default function Register() {
       </HeaderStyle>
 
       {mdUp && (
-        <SectionStyle>
-          <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-            Hãy bắt đầu một tài khoản với TopTop
-          </Typography>
-          <img alt="register" src="/static/illustrations/illustration_register.png" />
-        </SectionStyle>
+        <VideoLogin />
       )}
 
       <Container>
@@ -97,7 +92,7 @@ export default function Register() {
 
           <RegisterForm setUserTempId={setUserTempId} />
 
-          <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
+          {/* <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
             Bằng cách đăng ký, tôi đồng ý với&nbsp;
             <Link underline="always" color="text.primary" href="#">
               Điều khoản dịch vụ
@@ -107,18 +102,18 @@ export default function Register() {
               Chính sách quyền riêng tư
             </Link>
             .
-          </Typography>
+          </Typography> */}
 
           {!smUp && (
-            <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
-              Already have an account?{' '}
-              <Link variant="subtitle2" to="/login" component={RouterLink}>
-                Login
+            <Typography variant="body2" align="center" sx={{ mt: '1rem' }}>
+              Bạn đã có tài khoản? {''}
+              <Link variant="subtitle2" component={RouterLink} to="/login">
+                Đăng nhập
               </Link>
             </Typography>
           )}
         </ContentStyle>
       </Container>
-    </RootStyle>
+    </RootStyle >
   );
 }

@@ -40,8 +40,8 @@ const privateRoutes = [
     { path: '/profile', component: StartProfile },
     { path: '/login', component: Login, layout: FooterOnly },
     { path: '/register', component: Register, layout: FooterOnly },
-    { path: '/otp', component: Otp, layout: FooterOnly },
     { path: '/forgotpassword', component: ForgotPassword, layout: FooterOnly },
+    { path: '/otp', component: Otp, layout: FooterOnly },
     { path: '/resetpassword', component: ResetPassword, layout: FooterOnly },
 ];
 
@@ -49,10 +49,8 @@ const loginRoutes = [
     { path: '/upload', component: Upload },
     { path: '/notification', component: Notification },
     { path: '/notification/:notificationType', component: Notification },
-
     { path: '/chat', component: Chat },
     { path: '/chat/:chatFriendId', component: Chat },
 ];
-
 
 export { publicRoutes, privateRoutes, loginRoutes };

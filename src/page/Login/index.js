@@ -13,7 +13,7 @@ import { LoginForm } from '../sections/auth/login';
 import AuthSocial from '~/page/sections/auth/AuthSocial';
 
 // video
-import urlVideoIntro from '~/assets/video/How Do Small Businesses Win On TikTok-.mp4'
+import VideoLogin from '~/components/Layout/videoLogin';
 
 const cx = classNames.bind(styles);
 // ----------------------------------------------------------------------
@@ -39,15 +39,6 @@ const HeaderStyle = styled('header')(({ theme }) => ({
     alignItems: 'flex-start',
     padding: theme.spacing(7, 5, 0, 7),
   },
-}));
-
-const SectionStyle = styled(Card)(({ theme }) => ({
-  width: '100%',
-  maxWidth: 464,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  margin: theme.spacing(2, 0, 2, 2),
 }));
 
 const ContentStyle = styled('div')(({ theme }) => ({
@@ -82,18 +73,7 @@ export default function Login() {
       </HeaderStyle>
 
       {mdUp && (
-        <SectionStyle>
-          <video
-            className={cx('bgvideo__login')}
-            src={urlVideoIntro}
-            autoPlay={true}
-            muted
-            loop
-          />
-          {/* <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-            Chào mừng đến với mạng xã hội TopTop
-          </Typography> */}
-        </SectionStyle>
+        <VideoLogin />
       )}
 
       <Container maxWidth="sm">
@@ -107,6 +87,7 @@ export default function Login() {
           <AuthSocial />
 
           <LoginForm />
+
 
           {!smUp && (
             <Typography variant="body2" align="center" sx={{ mt: 3 }}>

@@ -1,13 +1,12 @@
 import axios from 'axios';
+import Env from './env';
 // Set up default config for http requests here
 
 // Please have a look at here `https://github.com/axios/axios#request-
 //config for the full list of configs
 
-// http://localhost:8081/api/v1/
-
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:8081/api/v1/',
+  baseURL: Env.APP_PATH_API,
 });
 
 const accessToken = window.localStorage?.getItem("token");

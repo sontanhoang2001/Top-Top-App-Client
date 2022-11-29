@@ -60,7 +60,7 @@ export default function BottomAppBar() {
         var positionToDay2Day = pathTime.search("2 days ago");
 
         if (positionToDayMoments > -1) {
-            return <p>{`${pathTime.split(" ")[0]} vừa xong`}</p>;
+            return <p>vừa xong</p>;
         }
         if (positionToDaySecond > -1) {
             return <p>{`${pathTime.split(" ")[0]} giây trước`}</p>;
@@ -79,7 +79,15 @@ export default function BottomAppBar() {
         }
     };
 
-    const handleGotoPage = (notificationType, videoId, userFrom) => {
+    // click vào và goto page
+    const handleGotoPage = (notificationType, id, userFrom, videoId, commentId) => {
+        // Click is read notification
+        notificationApi.isRead(id)
+            .then(() => {
+
+            })
+            .catch(error => console.log(error))
+
         //  "Đã thích video của bạn",
         // "Đã bình luận video của bạn",
         // "Đã trả lời video của bạn",
@@ -182,9 +190,9 @@ export default function BottomAppBar() {
                                     next={fetchMoreNotification}
                                     hasMore={hasMore}
                                 >
-                                    {notifition.map(({ id, userFrom, notificationType, content, readed, pastTime }) => (
+                                    {notifition.map(({ id, userFrom, notificationType, content, readed, pastTime, videoId, commentId }) => (
                                         <Fragment key={id}>
-                                            <ListItem button sx={{ background: readed == false ? 'rgb(145 158 171 / 11%)' : '' }} onClick={() => handleGotoPage(notificationType, id, userFrom)}>
+                                            <ListItem button sx={{ background: readed == false ? 'rgb(145 158 171 / 11%)' : '' }} onClick={() => handleGotoPage(notificationType, id, userFrom, videoId, commentId)}>
                                                 <ListItemAvatar>
                                                     <Avatar alt={userFrom.fullName} src={userFrom.avatar} />
                                                 </ListItemAvatar>

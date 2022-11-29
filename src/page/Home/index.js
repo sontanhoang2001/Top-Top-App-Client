@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
 import Video from '~/components/Layout/Video';
-import video1 from '~/static/video/video1.mp4';
-import video3 from '~/static/video/video3.mp4';
-import video4 from '~/static/video/video4.mp4';
-import video5 from '~/static/video/video5.mp4';
-import video6 from '~/static/video/video6.mp4';
-import video7 from '~/static/video/video7.mp4';
-import video8 from '~/static/video/video8.mp4';
 
 // api
 import videoApi from '~/api/video';
@@ -19,22 +12,15 @@ import Header from './Header';
 import { urlFromDriveUrl } from '~/shared/helper';
 import Loading from '~/components/Layout/Loading';
 
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Box, CircularProgress } from '@mui/material';
 import CustomizedDialog from '~/components/customizedDialog';
 
 // redux
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectTotalVideoPlayed } from '~/components/Layout/Video/videoSlice';
 import { selectVideoIdParam } from "~/router/routerPathSlice";
 
-// notification
-import notification from '~/api/notification'
-
 // Auth provider
 import { UserAuth } from '~/context/AuthContext';
-
-import urlAudioNotification from '~/assets/audio/iphone_notification_ringtone_iphone_sms_ringtones.mp3';
 
 import videoAds from '~/assets/video/How Do Small Businesses Win On TikTok-.mp4'
 
@@ -74,7 +60,6 @@ function Home() {
     const { user } = UserAuth();
     const location = useLocation();
     const pathName = location.pathname;
-    const dispath = useDispatch();
 
     const [enable, setEnable] = useState(false);
     const [videos, setVideo] = useState();
@@ -82,32 +67,9 @@ function Home() {
 
     const [pageNo, setPageNo] = useState(1);
     const [pageSize, setPageSize] = useState(initialPageSize);
-    // const [hasMore, setHasMore] = useState(true);
     const [totalElements, setTotalElements] = useState();
     const totalVideoPlayed = useSelector(selectTotalVideoPlayed);
     const videoIdParam = useSelector(selectVideoIdParam);
-
-    const [audioNotification] = useState(new Audio(urlAudioNotification));
-    // Lắng nghe thông báo
-    useEffect(() => {
-        if (user) {
-            try {
-                notification.getNotification(user.id).addEventListener("user-list-event", (event) => {
-                    const data = JSON.parse(event.data);
-
-                    if (data.length > 0) {
-                        audioNotification.play();
-                    }
-
-                    // else {
-                    //     // console.log("thông báo nè: ", data);
-                    //     // console.log("Chưa có thông báo...");
-                    // }
-                })
-            } catch (error) {
-            }
-        }
-    }, [user])
 
     const onEnableAudio = () => {
         setMuted(false);

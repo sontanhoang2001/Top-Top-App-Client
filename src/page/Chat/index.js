@@ -1,4 +1,5 @@
 import './Chat.scss';
+import Env from '~/api/env';
 
 import { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { alpha, styled } from '@mui/material/styles';
@@ -107,7 +108,7 @@ function Chat() {
     const [pendingMessage, setPendingMessage] = useState(false);
 
     const connect = () => {
-        let Sock = new SockJS('http://localhost:8081/ws');
+        let Sock = new SockJS(Env.APP_PATH_SOCKET);
         stompClient = over(Sock);
         stompClient.connect({}, onConnected, onError);
     }
@@ -139,6 +140,7 @@ function Chat() {
         user &&
             connect();
     }, [user])
+
     // =====================
 
     // nếu có chatFriendId parameter trên url
