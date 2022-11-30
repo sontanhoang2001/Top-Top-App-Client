@@ -127,6 +127,7 @@ function Home() {
     }
 
     useEffect(() => {
+        console.log("totalVideoPlayed: ", totalVideoPlayed)
         if (videoIdParam) {
             if (totalVideoPlayed >= 1) {
 
@@ -139,17 +140,18 @@ function Home() {
     useEffect(() => {
         // check limit 
         if (videos) {
-            if (videos.length >= totalElements) {
+            // debug more video
+            // console.log("totalVideoPlayed ne: ", totalVideoPlayed)
+            // console.log("videos.lengt ", videos.length)
+
+            if (totalVideoPlayed >= videos.length) {
                 return;
             }
-            // console.log("videos.length: ", videos.length)
-            // console.log("totalElements: ", totalElements)
-            // console.log("totalElements: ", totalElements)
 
             videoApi.loadVideoNewsFeed(pageNo + 1, pageSize)
                 .then(res => {
                     setVideo([...videos, ...res.data.data]);
-                    setPageNo(res.data.pageNo + 1);
+                    setPageNo(res.data.pageNo);
                     setTotalElements(res.data.totalElements)
                 })
                 .catch((error) => {

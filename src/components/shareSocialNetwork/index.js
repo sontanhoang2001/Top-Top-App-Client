@@ -99,7 +99,7 @@ function ShareSocialNetwork() {
             </FacebookShareButton>
         </div>
 
-        <div className="share__container">
+        {/* <div className="share__container">
             <FacebookMessengerShareButton appId="" redirectUri={shareUrl}>
                 <FacebookMessengerIcon size={40} round={true} />
                 <Typography variant="caption" display="block" gutterBottom>
@@ -151,7 +151,7 @@ function ShareSocialNetwork() {
                     Telegram
                 </Typography>
             </TelegramShareButton>
-        </div>
+        </div> */}
 
         <div className="share__container">
             <EmailShareButton body={`${shareUrl} \nGửi từ TopTop App.`}>
@@ -162,7 +162,7 @@ function ShareSocialNetwork() {
             </EmailShareButton>
         </div>
 
-        <div className="share__container">
+        {/* <div className="share__container">
             <LineShareButton title={shareUrl}>
                 <LineIcon size={40} round={true} />
                 <Typography variant="caption" display="block" gutterBottom>
@@ -187,7 +187,7 @@ function ShareSocialNetwork() {
                     Pinterest
                 </Typography>
             </PinterestShareButton>
-        </div>
+        </div> */}
 
         <div className="share__container">
             <button className='react-share__ShareButton fixShareButton' onClick={handleCopy} >
