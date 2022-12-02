@@ -1,3 +1,12 @@
+@import '../../components/Global/media-queries.scss';
+
+@include ResponsiveCustom('max', 900px) {
+    .sm {
+        display: none !important;
+    }
+}
+
+
 .listFriend {
     margin: 0;
     height: 84vh;

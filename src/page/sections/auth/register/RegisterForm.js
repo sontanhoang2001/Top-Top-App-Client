@@ -107,7 +107,7 @@ export default function RegisterForm({ setUserTempId }) {
         const snackBarPayload = { type: 'success', message: 'Bạn đã đăng ký tài khoản thành công!', duration: 10000 };
         dispatch(openSnackbar(snackBarPayload))
 
-        dispatch(setDirection({ direction: '/' }));
+        dispatch(setDirection({ direction: '/login' }));
         navigate('/otp');
       })
       .catch(error => {

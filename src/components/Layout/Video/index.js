@@ -59,27 +59,62 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
     //     }
     // };
 
-    const attemptPlay = () => {
-        if (index == 0) {
-            videoRef &&
-                videoRef.current &&
-                buffViewVideo();
-        }
-    };
+    // const attemptPlay = () => {
+    //     if (index == 0) {
+    //         videoRef &&
+    //             videoRef.current &&
+    //             // buffViewVideo();
+    //     }
+    // };
+
+    const [currentTime, setCurrentTime] = useState();
+    const [videoTime, setVideoTime] = useState();
+    const [isBuffView, setIsBuffView] = useState(false);
+
+    window.setInterval(function () {
+        setVideoTime(Math.floor(videoRef.current?.duration));
+        setCurrentTime(Math.floor(videoRef.current?.currentTime));
+    }, 1000);
 
     useEffect(() => {
-        attemptPlay();
+        // console.log("videoTime: ", videoTime)
+        // console.log("currentTime: ", currentTime)
+
+        // console.log("buff: ", Math.floor((currentTime * 100) / videoTime))
+        const currentTimePer = Math.floor((currentTime * 100) / videoTime)
+        if (isBuffView == false && currentTimePer >= 15) {
+            buffViewVideo();
+        }
+    }, [currentTime])
+
+    // useEffect(() => {
+    //     console.log("print: ", Math.floor(currentTime % 60));
+    //     console.log("% : ", Math.floor(currentTime % 60));
+
+    //     // total time 60
+    //     // current time 30
+    //     // 
+
+
+    // }, [currentTime])
+
+    useEffect(() => {
+        // attemptPlay();
 
         if (isVisibile) {
             if (!playing) {
                 videoRef.current.play();
                 setPlaying(true);
 
-                buffViewVideo();
                 isYouFollowUser();
 
                 const payload = { videoId: id, totalVideoPlayed: index, userVideo: userVideo };
                 dispatch(setVideo(payload));
+
+
+                // const videoStorage = JSON.parse(window.localStorage.getItem("video"));
+                // const videoWatched = { id: id, statusVideo: true };
+                // window.localStorage.setItem("video", JSON.stringify([videoWatched]))
 
                 // console.log(`video playing total:  ${index}`);
                 // console.log(`current video:  ${videoRef.current}, videoID: ${id}`);
@@ -109,7 +144,8 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
     const buffViewVideo = () => {
         videoApi.buffViewVideo(id)
             .then(res => {
-                // console.log("buff view: ", res.data);
+                setIsBuffView(true);
+                console.log("buff view: ", res.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -151,7 +187,7 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
 
             {id !== 0 ? (
                 <>
-                    <VideoSidebar videoId={id} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} userVideo={userVideo} isFollow={follow} profileVideo={profileVideo} enableComment={enableComment} />
+                    <VideoSidebar videoId={id} url={url} playing={playing} avatarUser={avatarUser} channel={channel} comments={comments} shares={shares} likes={likes} userVideo={userVideo} isFollow={follow} profileVideo={profileVideo} enableComment={enableComment} />
                     <VideoFooter playing={playing} channel={channel} title={title} song={song} />
                 </>
             ) : (<></>)}

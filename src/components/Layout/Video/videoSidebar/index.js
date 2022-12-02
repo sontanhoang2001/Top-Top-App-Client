@@ -28,7 +28,7 @@ import { UserAuth } from '~/context/AuthContext';
 // import useId from '@mui/material/utils/useId';
 
 const cx = classNames.bind(styles);
-function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares, likes, userVideo, isFollow, profileVideo, enableComment }) {
+function VideoSidebar({ videoId, url, playing, avatarUser, channel, comments, shares, likes, userVideo, isFollow, profileVideo, enableComment }) {
     const dispatch = useDispatch()
     const navigate = useNavigate();
     // const videoId = useSelector(selectVideoId);
@@ -85,7 +85,7 @@ function VideoSidebar({ videoId, playing, avatarUser, channel, comments, shares,
     }
 
     const handleClickOpenDialogShare = () => {
-        const payload = { dialogStatus: true, videoId: videoId };
+        const payload = { dialogStatus: true, videoId: videoId, videoUrl: url };
         dispatch(dialogShare(payload));
     };
 

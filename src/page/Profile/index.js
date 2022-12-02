@@ -311,7 +311,7 @@ export default function Profile() {
 
     const handleFollow = () => {
         const userId = methods.getValues("id");
-        if (user)
+        if (user) {
             if (userId) {
                 const data = {
                     "requestId": user.id,
@@ -319,6 +319,7 @@ export default function Profile() {
                 };
                 profileApi.folllow(data)
                     .then(res => {
+                        console.log("res follow: ", res)
                         setFollow(true);
                         const snackBarPayload = { type: 'success', message: `Bạn đã follow @${methods.getValues("alias")}` };
                         dispatch(openSnackbar(snackBarPayload))
@@ -327,6 +328,9 @@ export default function Profile() {
                         console.log(error);
                     })
             }
+        } else {
+            navigate("/login")
+        }
     }
 
     const handleUnFollow = () => {

@@ -115,7 +115,7 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
 
     // Nhận tin nhắn
     useEffect(() => {
-        if (receiveMessage !== "") {
+        if (receiveMessage != "") {
             audioReceiveMessage.play();
             const { content, senderId } = receiveMessage;
             const newReceiveMessage = { content: content, senderUser: { id: senderId }, createdDate: "" };
@@ -126,10 +126,8 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
 
     // Lắng nghe đang soạn tin nhắn
     useEffect(() => {
-        console.log("pendingMessage: ", pendingMessage)
         setMessagePending(pendingMessage);
         if (pendingMessage) {
-            audioTyping.loop = true;
             audioTyping.play();
         } else {
             audioTyping.pause();
@@ -200,9 +198,7 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
 
     const handleSendMessage = () => {
         handleCloseEmoji(false);
-        if (messageInput.trim() == "") {
-
-        } else {
+        if (messageInput.trim() != "") {
             setMessageInput("");
             clearPending();
             sendMessageSoket(messageInput);
@@ -299,7 +295,6 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
     //     console.log("selectListImagesViewer: ", listImagesViewer)
     //     console.log("currentImage: ", currentImage)
     //     console.log("isViewerOpen: ", isViewerOpen)
-
     // })
 
     const enterPressed = (e) => {

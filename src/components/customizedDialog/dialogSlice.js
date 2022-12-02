@@ -6,12 +6,14 @@ export const dialogSlice = createSlice({
         dialogStatus: false,
         dialogName: "",
         videoId: "",
+        videoUrl: ""
     },
     reducers: {
         dialogShare: (state, action) => {
             state.dialogStatus = action.payload.dialogStatus;
             state.dialogName = "share";
             state.videoId = action.payload.videoId;
+            state.videoUrl = action.payload.videoUrl;
         },
         dialogComment: (state, action) => {
             state.dialogStatus = true;
@@ -48,5 +50,6 @@ export const { dialogComment, dialogShare, dialogCommentLock, dialogOptionVideo,
 export const selectDialogStatus = (state) => state.dialog.dialogStatus;
 export const selectDialogName = (state) => state.dialog.dialogName;
 export const selectVideoId = (state) => state.dialog.videoId;
+export const selectVideoUrl = (state) => state.dialog.videoUrl;
 
 export default dialogSlice.reducer;

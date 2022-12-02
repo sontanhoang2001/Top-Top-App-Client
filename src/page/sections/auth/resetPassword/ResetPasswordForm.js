@@ -28,11 +28,11 @@ export default function ResetPasswordForm({ userTempId }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const REGEX_PASSWORD = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,15}$/
+  const REGEX_PASSWORD = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/
 
   const RegisterSchema = Yup.object().shape({
     password: Yup.string()
-      .matches(REGEX_PASSWORD, 'Mật khẩu phải trên 8 ký tự tối đã 15 ký tự, phải có số và ít nhất một chữ cái in hoa'),
+      .matches(REGEX_PASSWORD, 'Mật khẩu phải trên 8 ký tự tối đã 16 ký tự, phải có số và ít nhất một chữ cái in hoa, không có khoản trắng, ít nhất một ký tự đặt biệt'),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], 'Nhập lại mật khẩu không khớp!')
       .required("Bạn chưa nhập lại mật khẩu!")

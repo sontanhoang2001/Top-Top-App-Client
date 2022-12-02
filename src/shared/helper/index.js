@@ -1,5 +1,6 @@
 // Translate Google Drive link to streamable link
 const urlFromDriveUrl = (url) => url.replace('file/d/', 'uc?export=view&id=').replace('/view?usp=drivesdk', '');
+const urlFromDriveUrlConvertDownload = (url) => url.replace('view', 'download');
 
 const formatDate = (date) => {
     const d = date.$D;
@@ -10,4 +11,4 @@ const formatDate = (date) => {
     return formated;// convert it into a date
 }
 
-export { urlFromDriveUrl, formatDate };
+export { urlFromDriveUrl, formatDate, urlFromDriveUrlConvertDownload };

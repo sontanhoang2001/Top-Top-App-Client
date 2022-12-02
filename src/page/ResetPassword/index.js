@@ -18,6 +18,7 @@ import { ResetPasswordForm } from '../sections/auth/resetPassword';
 import { UserAuth } from '~/context/AuthContext';
 import VideoLogin from '~/components/Layout/videoLogin';
 import Title from '~/components/title';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -72,13 +73,16 @@ export default function ChangePassword() {
   const smUp = useResponsive('up', 'sm');
   const mdUp = useResponsive('up', 'md');
 
-  if (!userTempId) {
-    navigate("/404")
-  } else {
+  useEffect(() => {
+    if (!userTempId)
+      navigate('/sessionError');
+  })
+
+  if (userTempId) {
     return (
       <>
         <Title titleString="Cá nhân" />
-        
+
         <RootStyle>
           <HeaderStyle>
             {smUp && (
@@ -105,7 +109,7 @@ export default function ChangePassword() {
 
               <ResetPasswordForm userTempId={userTempId} />
 
-              <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
+              {/* <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
                 Bằng cách đăng ký, tôi đồng ý với&nbsp;
                 <Link underline="always" color="text.primary" href="#">
                   Điều khoản dịch vụ
@@ -115,7 +119,7 @@ export default function ChangePassword() {
                   Chính sách quyền riêng tư
                 </Link>
                 .
-              </Typography>
+              </Typography> */}
 
               {!smUp && (
                 <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>

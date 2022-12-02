@@ -33,11 +33,13 @@ export const AuthContextProvider = ({ children }) => {
 
     // <======= START LOGIN  =======>
     const login = async (email, password) => {
-        let snackBarPayload = {};
         const resquest = { "username": email, "password": password };
 
         await authApi.login(resquest)
             .then(res => {
+                const snackBarPayloadSuccess = { type: 'success', message: 'Bạn đã đăng nhập thành công!' };
+                dispatch(openSnackbar(snackBarPayloadSuccess))
+
                 // save token in localStorage
                 const token = res.data.access_token;
                 window.localStorage.setItem("token", token);
@@ -46,18 +48,19 @@ export const AuthContextProvider = ({ children }) => {
             .catch(error => {
                 if (error.response) {
                     if (error.response.status === 403) {
-                        snackBarPayload = { type: 'error', message: 'Tài khoản hoặc mật khẩu chưa đúng!' };
+                        const snackBarPayload = { type: 'error', message: 'Tài khoản hoặc mật khẩu chưa đúng!' };
+                        dispatch(openSnackbar(snackBarPayload))
                     } else {
-                        snackBarPayload = { type: 'error', message: 'Đăng nhập không thành công!' };
+                        const snackBarPayload = { type: 'error', message: 'Đăng nhập không thành công!' };
+                        dispatch(openSnackbar(snackBarPayload))
                     }
                 } else {
-                    snackBarPayload = { type: 'error', message: 'Đã xảy ra sự cố!' };
+                    const snackBarPayload = { type: 'error', message: 'Đã xảy ra sự cố!' };
+                    dispatch(openSnackbar(snackBarPayload))
                     console.log('Error', error.message);
                 }
                 console.log("error login: ", error)
-
             });
-        dispatch(openSnackbar(snackBarPayload))
     };
 
     const googleSignIn = () => {

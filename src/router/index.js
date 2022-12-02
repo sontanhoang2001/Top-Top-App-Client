@@ -16,6 +16,7 @@ import Chat from '~/page/Chat/index';
 // import Test from '~/page/Test';
 import StartProfile from '~/page/startProfile';
 import VideoProfile from '~/page/VideoProfile';
+import SessionError from '~/page/SessionError';
 
 
 
@@ -33,6 +34,7 @@ const publicRoutes = [
     { path: '/counter', component: Counter },
     // { path: '/test', component: Test },
     { path: '/404', component: NotFoundPage },
+    { path: '/sessionError', component: SessionError }
 ];
 
 const privateRoutes = [

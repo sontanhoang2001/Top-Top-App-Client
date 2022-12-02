@@ -188,10 +188,7 @@ function Comment() {
 
     const handleCreateComment = async () => {
         handleCloseEmoji(false);
-        if (commentInput.trim() === "") {
-
-        } else {
-
+        if (commentInput.trim() != "") {
             const dataRequest = {
                 "content": commentInputSubmit,
                 "parentId": parentId,
@@ -201,7 +198,7 @@ function Comment() {
 
             commentApi.creatComment(dataRequest)
                 .then(res => {
-                    console.log("res createComment: ", res);
+                    // console.log("res createComment: ", res);
                     reloadComment();
                     if (isChildren) {
 
@@ -223,6 +220,8 @@ function Comment() {
     }
 
     const handleReply = (index, id, user) => {
+        inputCommentRef.current.childNodes[0].firstChild.focus();
+
         console.log("index reply: ", index);
 
         setReplyIndexCurrent(index);

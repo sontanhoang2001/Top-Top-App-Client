@@ -24,6 +24,7 @@ import { dialogComment } from '~/components/customizedDialog/dialogSlice'
 import { UserAuth } from '~/context/AuthContext';
 
 import videoAds from '~/assets/video/How Do Small Businesses Win On TikTok-.mp4'
+import { async } from '@firebase/util';
 
 const cx = classNames.bind(styles);
 
@@ -88,6 +89,8 @@ function Home() {
 
     const [isLoaded, setIsLoaded] = useState(false);
     const [loadFirst, setLoadFirst] = useState(false);
+    const [videoLocalStorage, setVideoLocalStorage] = useState(false);
+
 
     useEffect(() => {
         if (videoIdParam) {
@@ -108,14 +111,38 @@ function Home() {
     }, [loadFirst, videoIdParam])
 
     // lần đầu load page video
-    const fetchFirstPageVideo = () => {
-        videoApi.loadVideoNewsFeed(pageNo, pageSize)
+    
+    const fetchFirstPageVideo = async () => {
+        await videoApi.loadVideoNewsFeed(pageNo, pageSize)
             .then(res => {
                 if (videos) {
                     setVideo([...videos, ...res.data.data]);
                 } else {
                     setVideo(res.data.data);
+
+                    // let localVideo = [];
+                    // // check xem có dữ liệu trong local chưa ?
+                    // const videoStorage = window.localStorage.getItem("video");
+
+                    // if (videoStorage != null) {
+                    //     for (let i = 0; i < res.data.data.length; i++) {
+                    //         console.log("pass: ", JSON.parse(videoStorage))
+                    //         if (JSON.parse(videoStorage)[i].statusVideo == false) {
+                    //             localVideo.push(res.data.data[i]);
+                    //         }
+                    //     }
+
+                    //     setVideo(localVideo);
+                    // } else {
+                    //     // Lần đầu tiên chưa có data thì setLocalStorage cho video
+                    //     res.data.data.map((resVideo) => {
+                    //         localVideo.push({ id: resVideo.id, statusVideo: false });
+                    //     })
+                    //     window.localStorage.setItem("video", JSON.stringify(localVideo));
+                    //     setVideo(res.data.data);
+                    // }
                 }
+
                 setPageNo(res.data.pageNo);
                 setTotalElements(res.data.totalElements)
                 setIsLoaded(true);
@@ -126,8 +153,12 @@ function Home() {
             })
     }
 
+    // useEffect(() => {
+    //     console.log("vides: ", videos)
+    // })
+
     useEffect(() => {
-        console.log("totalVideoPlayed: ", totalVideoPlayed)
+        // console.log("totalVideoPlayed: ", totalVideoPlayed)
         if (videoIdParam) {
             if (totalVideoPlayed >= 1) {
 
@@ -153,6 +184,8 @@ function Home() {
                     setVideo([...videos, ...res.data.data]);
                     setPageNo(res.data.pageNo);
                     setTotalElements(res.data.totalElements)
+
+                    // setVideoLocalStorage([...videoLocalStorage, ...res.data.data]);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -166,7 +199,7 @@ function Home() {
             <div style={{ display: enable ? 'inherit' : 'none' }}>
                 <Header />
                 <div className={'video-scrollbar ' + cx('video__container')}>
-                    {videos.map((video, index) => (
+                    {videos && videos.map((video, index) => (
                         <div key={index}>
                             <Video
                                 index={index}

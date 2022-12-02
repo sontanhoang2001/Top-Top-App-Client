@@ -33,41 +33,48 @@ import { AppsRounded, LinkRounded } from '@mui/icons-material';
 // redux
 import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
-import { selectVideoId, closeDialog, dialogReportVideo } from '~/components/customizedDialog/dialogSlice'
+import { selectVideoId, closeDialog, dialogReportVideo, selectVideoUrl } from '~/components/customizedDialog/dialogSlice'
 
 // api
 import videoApi from '~/api/video';
+
+// helper
+import { urlFromDriveUrlConvertDownload } from '~/shared/helper'
+
+// image
+import downArrowIcon from '~/assets/image/down-arrow.png';
 
 const hashtag = "#toptopapp #toptopappcusc #cusc #ctu #mangxahoicantho";
 
 function ShareSocialNetwork() {
     const dispatch = useDispatch();
     const videoId = useSelector(selectVideoId);
+    const videoUrl = useSelector(selectVideoUrl);
     const hostName = "localhost:3000";
     const [shareUrl, setShareUrl] = useState();
 
-    const handleShare = () => {
-        if (navigator.share) {
-            navigator.share({
-                // Title that occurs over
-                // web share dialog
-                title: 'GeeksForGeeks',
-                // URL to share
-                url: `${hostName}/${videoId}`
-            }).then(() => {
-                // console.log('Thanks for sharing!');
-            }).catch(err => {
+    // const handleShare = () => {
+    //     if (navigator.share) {
+    //         navigator.share({
+    //             // Title that occurs over
+    //             // web share dialog
+    //             title: 'GeeksForGeeks',
+    //             // URL to share
+    //             url: `${hostName}/${videoId}`
+    //         }).then(() => {
+    //             // console.log('Thanks for sharing!');
+    //         }).catch(err => {
 
-                // Handle errors, if occured
-                console.log(
-                    "Error while using Web share API:");
-                console.log(err);
-            });
-        } else {
-            // Alerts user if API not available 
-            alert("Browser doesn't support this API !");
-        }
-    }
+    //             // Handle errors, if occured
+    //             console.log(
+    //                 "Error while using Web share API:");
+    //             console.log(err);
+    //         });
+    //     } else {
+    //         // Alerts user if API not available 
+    //         alert("Browser doesn't support this API !");
+    //     }
+    // }
 
     useEffect(() => {
         setShareUrl(`${hostName}/${videoId}`);
@@ -84,9 +91,12 @@ function ShareSocialNetwork() {
     }
 
     const handleOpenDialogReportVideo = () => {
-        console.log("ok ne")
         const payload = { videoId: videoId };
         dispatch(dialogReportVideo(payload));
+    }
+
+    const handleDownloadVideo = () => {
+        window.open(urlFromDriveUrlConvertDownload(videoUrl));
     }
 
     return (<>
@@ -98,7 +108,14 @@ function ShareSocialNetwork() {
                 </Typography>
             </FacebookShareButton>
         </div>
-
+        <div className="share__container">
+            <TwitterShareButton url={shareUrl} hashtag={hashtag}>
+                <TwitterIcon size={40} round={true} />
+                <Typography variant="caption" display="block" gutterBottom>
+                    Twitter
+                </Typography>
+            </TwitterShareButton>
+        </div>
         {/* <div className="share__container">
             <FacebookMessengerShareButton appId="" redirectUri={shareUrl}>
                 <FacebookMessengerIcon size={40} round={true} />
@@ -117,14 +134,7 @@ function ShareSocialNetwork() {
             </WhatsappShareButton>
         </div>
 
-        <div className="share__container">
-            <TwitterShareButton title={shareUrl} hashtag={hashtag}>
-                <TwitterIcon size={40} round={true} />
-                <Typography variant="caption" display="block" gutterBottom>
-                    Twitter
-                </Typography>
-            </TwitterShareButton>
-        </div>
+       
 
         <div className="share__container">
             <LinkedinShareButton title={shareUrl}>
@@ -198,29 +208,30 @@ function ShareSocialNetwork() {
             </button>
         </div>
 
-        <div className="share__container">
+        {/* <div className="share__container">
             <button className='react-share__ShareButton fixShareButton' onClick={handleShare}>
                 <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M23 46C35.7025 46 46 35.7025 46 23C46 10.2975 35.7025 0 23 0C10.2975 0 0 10.2975 0 23C0 35.7025 10.2975 46 23 46Z" fill="#161823" fill-opacity="0.06"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M24.952 13.8561L34.1644 30C34.9806 31.4297 33.9602 33.2176 32.3283 33.2176H13.9036C12.2717 33.2176 11.2513 31.4297 12.0675 30L21.2799 13.8561C22.0961 12.4259 24.1358 12.4259 24.952 13.8561Z" stroke="#161823" stroke-width="1.5"></path><path d="M23.1334 20.2175V25.4897" stroke="#161823" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M23.1161 29.5401C22.6415 29.5401 22.2567 29.1514 22.2567 28.6712C22.2567 28.191 22.6415 27.8022 23.1161 27.8022C23.5902 27.8022 23.975 28.191 23.975 28.6712C23.975 29.1514 23.5902 29.5401 23.1161 29.5401Z" fill="#161823"></path></svg>
                 <Typography variant="caption" display="block" gutterBottom>
                     Thêm
                 </Typography>
             </button>
-        </div>
+        </div> */}
 
-        <div className="share__container">
-            <button className='react-share__ShareButton fixShareButton'>
-                <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M23 46C35.7025 46 46 35.7025 46 23C46 10.2975 35.7025 0 23 0C10.2975 0 0 10.2975 0 23C0 35.7025 10.2975 46 23 46Z" fill="#161823" fill-opacity="0.06"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M24.952 13.8561L34.1644 30C34.9806 31.4297 33.9602 33.2176 32.3283 33.2176H13.9036C12.2717 33.2176 11.2513 31.4297 12.0675 30L21.2799 13.8561C22.0961 12.4259 24.1358 12.4259 24.952 13.8561Z" stroke="#161823" stroke-width="1.5"></path><path d="M23.1334 20.2175V25.4897" stroke="#161823" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M23.1161 29.5401C22.6415 29.5401 22.2567 29.1514 22.2567 28.6712C22.2567 28.191 22.6415 27.8022 23.1161 27.8022C23.5902 27.8022 23.975 28.191 23.975 28.6712C23.975 29.1514 23.5902 29.5401 23.1161 29.5401Z" fill="#161823"></path></svg>
-                <Typography variant="caption" display="block" gutterBottom>
-                    Tải video
-                </Typography>
-            </button>
-        </div>
 
         <div className="share__container">
             <button className='react-share__ShareButton fixShareButton' onClick={handleOpenDialogReportVideo}>
                 <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M23 46C35.7025 46 46 35.7025 46 23C46 10.2975 35.7025 0 23 0C10.2975 0 0 10.2975 0 23C0 35.7025 10.2975 46 23 46Z" fill="#161823" fill-opacity="0.06"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M24.952 13.8561L34.1644 30C34.9806 31.4297 33.9602 33.2176 32.3283 33.2176H13.9036C12.2717 33.2176 11.2513 31.4297 12.0675 30L21.2799 13.8561C22.0961 12.4259 24.1358 12.4259 24.952 13.8561Z" stroke="#161823" stroke-width="1.5"></path><path d="M23.1334 20.2175V25.4897" stroke="#161823" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M23.1161 29.5401C22.6415 29.5401 22.2567 29.1514 22.2567 28.6712C22.2567 28.191 22.6415 27.8022 23.1161 27.8022C23.5902 27.8022 23.975 28.191 23.975 28.6712C23.975 29.1514 23.5902 29.5401 23.1161 29.5401Z" fill="#161823"></path></svg>
                 <Typography variant="caption" display="block" gutterBottom>
                     Báo cáo
+                </Typography>
+            </button>
+        </div>
+
+        <div className="share__container">
+            <button className='react-share__ShareButton fixShareButton' onClick={handleDownloadVideo}>
+                <img src={downArrowIcon} width='43px' height='43px' />
+                <Typography variant="caption" display="block" gutterBottom sx={{marginTop: '2px'}}>
+                    Tải video
                 </Typography>
             </button>
         </div>

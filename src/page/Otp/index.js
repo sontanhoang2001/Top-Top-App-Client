@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactDOM from "react-dom";
 
@@ -25,6 +25,7 @@ import apiAccount from '~/api/account'
 // auth provider
 import { UserAuth } from '~/context/AuthContext';
 import Title from '~/components/title';
+import VideoLogin from '~/components/Layout/videoLogin';
 
 // ----------------------------------------------------------------------
 
@@ -49,15 +50,6 @@ const HeaderStyle = styled('header')(({ theme }) => ({
     alignItems: 'flex-start',
     padding: theme.spacing(7, 5, 0, 7),
   },
-}));
-
-const SectionStyle = styled(Card)(({ theme }) => ({
-  width: '100%',
-  maxWidth: 464,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  margin: theme.spacing(2, 0, 2, 2),
 }));
 
 const ContentStyle = styled('div')(({ theme }) => ({
@@ -110,10 +102,12 @@ export default function Otp() {
       });
 
   };
+  useEffect(() => {
+    if (!userTempId)
+      navigate("/sessionError");
+  }, [userTempId])
 
-  if (!userTempId) {
-    navigate("/404")
-  } else {
+  if (userTempId) {
     return (
       <>
         <Title titleString="Xác thực OTP" />
@@ -132,13 +126,9 @@ export default function Otp() {
             )}
           </HeaderStyle>
 
+
           {mdUp && (
-            <SectionStyle>
-              <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-                Chào mừng đến với mạng xã hội TopTop
-              </Typography>
-              <img src="/static/illustrations/illustration_login.png" alt="login" />
-            </SectionStyle>
+            <VideoLogin />
           )}
 
           <Container maxWidth="sm">
@@ -183,6 +173,5 @@ export default function Otp() {
         </RootStyle>
       </>
     );
-
   }
 }

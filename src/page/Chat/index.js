@@ -20,6 +20,7 @@ import Avatar from '@mui/material/Avatar';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+import PeopleIcon from '@mui/icons-material/People';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { Button, Chip, Grid, InputBase, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
@@ -213,10 +214,10 @@ function Chat() {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={2} md={3}>
                     <List sx={{ mb: 2 }} className='listFriend'>
-                        <ListSubheader sx={{ bgcolor: 'background.paper' }}>
-                            Danh sách bạn bè
+                        <ListSubheader sx={{ bgcolor: 'background.paper', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                           <PeopleIcon sx={{mr: 1}}/> <p className='sm'>Danh sách bạn bè</p>
                         </ListSubheader>
-                        <Search>
+                        <Search className='sm'>
                             <SearchIconWrapper>
                                 <SearchIcon />
                             </SearchIconWrapper>
@@ -244,7 +245,7 @@ function Chat() {
 
                 {user && (
                     <Grid item xs={10} md={9}>
-                        <ChatBox stompClient={stompClient} receiveMessage={privateMessage} pendingMessage={pendingMessage} friendInfo={friendInfo} userId={user.id} friendId={friendId} />
+                        <ChatBox sx={{width: '99%'}} stompClient={stompClient} receiveMessage={privateMessage} pendingMessage={pendingMessage} friendInfo={friendInfo} userId={user.id} friendId={friendId} />
                     </Grid>
                 )}
             </Grid>
