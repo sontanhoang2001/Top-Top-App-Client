@@ -25,6 +25,7 @@ import urlAudioReceiveMessage from '~/assets/audio/mixkit-alert-quick-chime-766.
 
 // avatar
 import avatarDefault from '~/assets/image/user-profile-default.png';
+import { Link } from 'react-router-dom';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -91,7 +92,7 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
     // Lần đầu load tin nhắn
     useEffect(() => {
         initialState();
-        console.log("check friendInfo: ", friendInfo)
+        // console.log("check friendInfo: ", friendInfo)
 
         // check xem có phải bạn bè ko
         if (friendInfo == undefined) {
@@ -111,7 +112,7 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
             .catch(error => {
                 console.log("error: ", error)
             })
-    }, [friendId])
+    }, [friendInfo])
 
     // Nhận tin nhắn
     useEffect(() => {
@@ -312,20 +313,22 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
     return (<>
         <Card sx={{ marginTop: '8px' }}>
             {friendInfor && (
-                <CardHeader
-                    sx={{ padding: '10px 10px 10px' }}
-                    avatar={
-                        <StyledBadge
-                            overlap="circular"
-                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        // variant="dot"
-                        >
-                            <Avatar aria-label="recipe" src={friendInfor.avatar}></Avatar>
-                        </StyledBadge>
-                    }
-                    title={friendInfor.fullName}
-                // subheader="Đang hoạt động"
-                />
+                <Link className='link' to={"/@" + friendInfor.alias} style={{color: '#000'}}>
+                    <CardHeader
+                        sx={{ padding: '10px 10px 10px' }}
+                        avatar={
+                            <StyledBadge
+                                overlap="circular"
+                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            // variant="dot"
+                            >
+                                <Avatar aria-label="recipe" src={friendInfor.avatar}></Avatar>
+                            </StyledBadge>
+                        }
+                        title={friendInfor.fullName}
+                    // subheader="Đang hoạt động"
+                    />
+                </Link>
             )}
             <div
                 id="scrollableDiv"
@@ -403,7 +406,7 @@ function ChatBox({ stompClient, receiveMessage, pendingMessage, friendInfo, user
                 </Box>
             ) : (
                 <Box className="footerChat">
-                    <Typography variant="h6" component="h6" sx={{color: 'red'}} >Hãy kết bạn để tiếp tục đoạn chat!</Typography>
+                    <Typography variant="h6" component="h6" sx={{ color: 'red' }} >Hãy kết bạn để tiếp tục đoạn chat!</Typography>
                 </Box>
             )}
         </Card>

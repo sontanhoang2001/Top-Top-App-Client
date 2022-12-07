@@ -9,12 +9,12 @@ const video = {
     return axiosClient.post(url, data);
   },
   loadVideoNewsFeed: (pageNo, pageSize) => {
-    const url = `${pathname}/watch?pageNo=${pageNo}&pageSize=${pageSize}&sortBy=id&sortDir=desc`;
+    const url = `${pathname}/watch?pageNo=${pageNo}&pageSize=${pageSize}&sortBy=heart&sortDir=desc`;
     return axiosClient.get(url);
   },
   findVideoById: (videoId) => {
     const url = `${pathname}/watch/${videoId}`;
-    return axiosClient.get(url);
+    return axiosClientLogin.get(url);
   },
   likeVideo: (data) => {
     const url = `${pathname}/heart`;
@@ -30,7 +30,7 @@ const video = {
   },
   buffViewVideo: (videoId) => {
     const url = `${pathname}/watch/${videoId}`;
-    return axiosClient.put(url);
+    return axiosClientLogin.put(url);
   },
   searchVideo: (pageNo, pageSize, keyword) => {
     const url = `${pathname}/watch?pageNo=${pageNo}&pageSize=${pageSize}&keyword=${keyword}`;

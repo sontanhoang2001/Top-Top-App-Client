@@ -4,20 +4,28 @@
     --primary-btn-color: #fe2c55;
 }
 
-/* hide scrollbar but allow scrolling */
-// ::-webkit-scrollbar {
-//     display: none;
-// }
-
-// ::-webkit-scrollbar {
-//     display: none;
-// }
-
 /* width */
-// :nth-last-child(1)::-webkit-scrollbar {
-//     display: none;
-// }
-
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    // box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #c4c4c46f; 
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #c4c4c4; 
+  }
+  
 * {
     margin: 0;
     padding: 0;

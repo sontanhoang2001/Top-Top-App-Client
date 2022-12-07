@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const commentSlice = createSlice({
     name: 'comment',
     initialState: {
+        isReply: null,
         parentId: null,
         replyUser: null,
         isChildren: false,
@@ -12,6 +13,7 @@ export const commentSlice = createSlice({
     },
     reducers: {
         setReply: (state, action) => {
+            state.isReply = Math.random();
             state.parentId = action.payload.parentId;
             state.replyUser = action.payload.replyUser;
             state.isChildren = action.payload.isChildren;
@@ -27,6 +29,7 @@ export const commentSlice = createSlice({
 
 export const { setReply, setReloadChildrenComment, setTotalComment } = commentSlice.actions;
 
+export const selectIsReply = (state) => state.comment.isReply;
 export const selectParentId = (state) => state.comment.parentId;
 export const selectReplyUser = (state) => state.comment.replyUser;
 export const selectIsChildren = (state) => state.comment.isChildren;

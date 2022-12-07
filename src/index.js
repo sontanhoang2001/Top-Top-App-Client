@@ -11,15 +11,15 @@ import store from './store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    // <React.StrictMode>
+    <React.StrictMode>
         <GlobalStyles>
             <Provider store={store}>
-                <BrowserRouter>
+                <BrowserRouter basename={process.env.REACT_APP_ROUTER_BASE || ''}>
                     <App />
                 </BrowserRouter>
             </Provider>
         </GlobalStyles>
-    // </React.StrictMode>,
+    </React.StrictMode>,
 );
 
 // ReactDOM.render(

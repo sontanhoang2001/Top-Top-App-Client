@@ -10,7 +10,7 @@ import { async } from '@firebase/util';
 // redux
 import { useDispatch, useSelector } from 'react-redux';
 import { openSnackbar } from "~/components/customizedSnackbars/snackbarSlice";
-import { setReply, selectParentId, selectReplyUser, selectIsChildren, setTotalComment } from './commentSlice';
+import { setReply, selectIsReply, selectParentId, selectReplyUser, selectIsChildren, setTotalComment } from './commentSlice';
 import { selectVideoId } from '~/components/Layout/Video/videoSlice';
 import { selectUserVideo } from '~/components/Layout/Video/videoSlice';
 import { closeDialog } from '~/components/customizedDialog/dialogSlice';
@@ -91,6 +91,7 @@ function Comment() {
     const [pageNo, setPageNo] = useState(1);
     const [totalElements, setTotalElements] = useState();
     const videoId = useSelector(selectVideoId);
+    const isReply = useSelector(selectIsReply);
     const parentId = useSelector(selectParentId);
     const replyUser = useSelector(selectReplyUser);
     const isChildren = useSelector(selectIsChildren);
@@ -143,8 +144,8 @@ function Comment() {
     const reloadComment = async () => {
         await commentApi.getCommentParent(videoId, pageNo, pageSize)
             .then(res => {
-                setTotalElements(res.data.totalElements)
                 setComments(res.data.data);
+                setTotalElements(res.data.totalElements)
                 // đếm tổng số comment
                 getTotalComment();
             })
@@ -156,11 +157,11 @@ function Comment() {
             return;
         }
 
-        await commentApi.getCommentParent(videoId, pageNo + 1, pageSize)
+        await commentApi.getCommentParent(videoId, pageNo, pageSize)
             .then(res => {
                 setTotalElements(res.data.totalElements)
                 setComments([...comments, ...res.data.data]);
-                setPageNo(pageNo + 1);
+                setPageNo(res.data.pageNo);
                 // đếm tổng số comment
                 getTotalComment();
             })
@@ -186,6 +187,13 @@ function Comment() {
         }
     }, [comments])
 
+    const enterPressed = (e) => {
+        var keynum = e.keyCode || e.which;
+        if (keynum == 13) {
+            handleCreateComment();
+        }
+    }
+
     const handleCreateComment = async () => {
         handleCloseEmoji(false);
         if (commentInput.trim() != "") {
@@ -201,7 +209,7 @@ function Comment() {
                     // console.log("res createComment: ", res);
                     reloadComment();
                     if (isChildren) {
-
+                        
                     } else {
                         commentBox.current.scrollTo({
                             top: 0,
@@ -219,11 +227,11 @@ function Comment() {
         }
     }
 
-    const handleReply = (index, id, user) => {
+    useEffect(() => {
         inputCommentRef.current.childNodes[0].firstChild.focus();
+    }, [isReply])
 
-        console.log("index reply: ", index);
-
+    const handleReply = (index, id, user) => {
         setReplyIndexCurrent(index);
         const payload = { parentId: id, replyUser: user, isChildren: true };
         dispatch(setReply(payload));
@@ -337,7 +345,10 @@ function Comment() {
                         <IconButton onClick={() => { handleCloseEmoji(!emoji) }} sx={{ marginRight: '1rem' }}>
                             <SentimentVerySatisfied />
                         </IconButton>
-                        <TextField ref={inputCommentRef} className={cx('inputComment')} hiddenLabel variant="outlined" placeholder="Thêm bình luận..." value={commentInput} onChange={(e) => { setCommentInput(e.target.value) }} onClick={() => { handleCloseEmoji(false) }} autoFocus />
+                        <TextField ref={inputCommentRef} className={cx('inputComment')} hiddenLabel variant="outlined" placeholder="Thêm bình luận..." value={commentInput} onChange={(e) => { setCommentInput(e.target.value) }}
+                            onClick={() => { handleCloseEmoji(false) }} autoFocus
+                            onKeyPress={(e) => enterPressed(e)}
+                        />
                         <Button className={cx('btnCommentMd')} variant="contained" endIcon={<MapsUgcIcon />} size="large" onClick={handleCreateComment}>Bình luận</Button>
                         <Button className={cx('btnCommentSm')} variant="contained" size="large" onClick={handleCreateComment}><MapsUgcIcon /></Button>
                     </Box>

@@ -251,10 +251,10 @@ export default function Profile() {
         const history = methods.getValues("history").trim() === "" ? null : methods.getValues("history");
 
         if (userProfile.avatar !== methods.getValues("avatar") || userProfile.fullName !== methods.getValues("fullName") || (userProfile.alias !== methods.getValues("alias")) || userProfile.history !== history) {
-
-            if (userProfile.alias !== methods.getValues("alias")) {
+            const alias = methods.getValues("alias");
+            if (userProfile.alias !== alias) {
                 // check TopTop ID
-                profileApi.findByAlias(methods.getValues("alias"))
+                profileApi.findByAlias(alias)
                     .then((res) => {
                         console.log("check toptop id: ", res.data)
                         // nếu check chưa trùng thì cho phép update
@@ -335,6 +335,7 @@ export default function Profile() {
 
     const handleUnFollow = () => {
         const userId = methods.getValues("id");
+        console.log("handleUnFollow");
         if (user)
             if (userId) {
                 const data = {

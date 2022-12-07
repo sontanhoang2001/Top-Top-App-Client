@@ -82,7 +82,7 @@ function Video({ index, id, url, avatarUser, song, title, channel, likes, commen
 
         // console.log("buff: ", Math.floor((currentTime * 100) / videoTime))
         const currentTimePer = Math.floor((currentTime * 100) / videoTime)
-        if (isBuffView == false && currentTimePer >= 15) {
+        if (isBuffView == false && currentTimePer >= 10) {
             buffViewVideo();
         }
     }, [currentTime])

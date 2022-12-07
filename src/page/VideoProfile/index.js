@@ -36,8 +36,9 @@ function VideoProfile() {
 
     // fetch first page video
     useEffect(() => {
-        if (videoId) {
-            videoApi.findVideoById(videoId)
+        if (videoId != null) {
+            console.log("videoId: ", videoId)
+            videoApi.findVideoById(10)
                 .then(res => {
                     setVideo([res.data]);
 

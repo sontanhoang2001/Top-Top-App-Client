@@ -43,7 +43,7 @@ export const AuthContextProvider = ({ children }) => {
                 // save token in localStorage
                 const token = res.data.access_token;
                 window.localStorage.setItem("token", token);
-                window.location = "/";
+                window.location = `${process.env.REACT_APP_ROUTER_BASE || ''}/`;
             })
             .catch(error => {
                 if (error.response) {
@@ -78,7 +78,7 @@ export const AuthContextProvider = ({ children }) => {
             signOut(auth);
             window.localStorage.setItem("token", null);
             window.localStorage.setItem("socialRegister", null);
-            window.location = "/login";
+            window.location =  `${process.env.REACT_APP_ROUTER_BASE || ''}/login`;
         } catch (error) {
             console.log(error)
         }
