@@ -1,128 +1,231 @@
 import { useEffect, useState } from 'react';
 import Video from '~/components/Layout/Video';
-import video1 from '~/source/video/video1.mp4';
-import video2 from '~/source/video/video2.mp4';
-import video3 from '~/source/video/video3.mp4';
-import video4 from '~/source/video/video4.mp4';
-import video5 from '~/source/video/video5.mp4';
-import video6 from '~/source/video/video6.mp4';
-import video7 from '~/source/video/video7.mp4';
-import video8 from '~/source/video/video8.mp4';
+
+// api
+import videoApi from '~/api/video';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import Header from './Header';
 
-const videosFake = [
-    {
-        url: video1,
-        likes: 581.7,
-        messages: 3146,
-        shares: 580,
-        description: 'Em này dễ thương quá @xuhuong @cover @hathay @amnhac',
-        channel: 'my30.01',
-        song: 'nhạc nền - I ❤ My IDOL',
-    },
-    {
-        url: video2,
-        likes: 750,
-        messages: 29,
-        shares: 2,
-        description:
-            'Xin chào tất cả mọi người!!🌻 Mình là LÊ THIÊN ÁI rất vui được làm quen cùng với mọi người!! 👋😌👋 Hãy theo dõi mình để xem những video tiếp theo chủ đề về vlog, Mv và hậu trường nha! 🎉 ',
-        channel: '@thienai176',
-        song: 'nhạc nền - Lê Thiên Ái',
-    },
-    {
-        url: video3,
-        likes: 950,
-        messages: 49,
-        shares: 100,
-        description:
-            'Các vị trí trong bộ phận IT của FPT software #fptsoftwareacademy #LearnOnTikTok #tuyendungit #fypシ #xuhuong',
-        channel: 'fptsoftwareacademy',
-        song: 'nhạc nền - FSoft Academy - Học viện CNTT',
-    },
-    {
-        url: video4,
-        likes: 850,
-        messages: 29,
-        shares: 78,
-        description: 'Vào đây mê không lối thoát lunnn #cantho #review #theanh28',
-        channel: 'fptsoftwareacademy',
-        song: 'nhạc nền - Di s Story in Can Tho',
-    },
-    {
-        url: video5,
-        likes: 479,
-        messages: 876,
-        shares: 26,
-        description: 'Bạn thích mẫu áo nào? #jteeman #thoitrangdinh #outfitideas #99tiktokshoppingsale',
-        channel: 'jteeman',
-        song: 'follow liz sanchez if you are hot - LIZ SANCHEZ',
-    },
-    {
-        url: video6,
-        likes: 329,
-        messages: 124,
-        shares: 34,
-        description: 'Nhìn như này mà đòi nhảy au với mình 😗',
-        channel: 'piitien1603',
-        song: 'Aloha remix nhảy Au thả thính - SPX Entertainment',
-    },
-    {
-        url: video7,
-        likes: 129,
-        messages: 24,
-        shares: 14,
-        description: 'Nhìn như này mà đòi nhảy au với mình 😗',
-        channel: 'piitien1603',
-        song: 'Aloha remix nhảy Au thả thính - SPX Entertainment',
-    },
-    {
-        url: video8,
-        likes: 829,
-        messages: 324,
-        shares: 4,
-        description: 'Nhìn như này mà đòi nhảy au với mình 😗',
-        channel: 'piitien1603',
-        song: 'Aloha remix nhảy Au thả thính - SPX Entertainment',
-    },
-];
+import { urlFromDriveUrl } from '~/shared/helper';
+import Loading from '~/components/Layout/Loading';
+
+import CustomizedDialog from '~/components/customizedDialog';
+
+// redux
+import { useDispatch, useSelector } from 'react-redux';
+import { selectTotalVideoPlayed } from '~/components/Layout/Video/videoSlice';
+import { selectVideoIdParam, selectCommentIdParam } from "~/router/routerPathSlice";
+import { dialogComment } from '~/components/customizedDialog/dialogSlice'
+
+// Auth provider
+import { UserAuth } from '~/context/AuthContext';
+
+import videoAds from '~/assets/video/How Do Small Businesses Win On TikTok-.mp4'
+import { async } from '@firebase/util';
 
 const cx = classNames.bind(styles);
 
+const emptyVideo = {
+    "id": 0,
+    "title": "",
+    "url": videoAds,
+    "enableComment": false,
+    "status": true,
+    "view": 0,
+    "heart": 0,
+    "share": null,
+    "professed": true,
+    "comment": 0,
+    "user": {
+        "id": "b3ab6a54-c520-44ac-9619-1789712f7a2a",
+        "email": "toptopappvideo@gmail.com",
+        "alias": "toptopappvideoa40e1",
+        "avatar": "https://lh3.googleusercontent.com/a/ALm5wu2qkQL1_bfIOFALC20xX90KwPMof-zGGmr9zNgR=s96-c",
+        "fullName": "TopTop App Video",
+        "history": null,
+        "createdDate": "18-11-2022",
+    }
+}
+
+const initialPageSize = 4;
+
 function Home() {
-    const [videos, setVideo] = useState(videosFake);
+    // const { user } = UserAuth();
+    const dispath = useDispatch();
+    const location = useLocation();
+    const pathName = location.pathname;
+    const navigate = useNavigate();
+
+    const [enable, setEnable] = useState(false);
+    const [videos, setVideo] = useState();
     const [muted, setMuted] = useState(true);
+
+    const [pageNo, setPageNo] = useState(1);
+    const [pageSize, setPageSize] = useState(initialPageSize);
+    const [totalElements, setTotalElements] = useState();
+    const totalVideoPlayed = useSelector(selectTotalVideoPlayed);
+    const videoIdParam = useSelector(selectVideoIdParam);
+    const commentIdParam = useSelector(selectCommentIdParam);
 
     const onEnableAudio = () => {
         setMuted(false);
     };
 
-    return (
-        <div className='home'>
-            <Header />
-            <div className={cx('video__container')}>
-                {videos.map((video, index) => (
-                    <div key={index}>
-                        <Video
-                            index={index}
-                            messages={video.messages}
-                            likes={video.likes}
-                            shares={video.shares}
-                            description={video.description}
-                            channel={video.channel}
-                            song={video.song}
-                            url={video.url}
-                            muted={muted}
-                            onEnableAudio={onEnableAudio}
-                        />
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
+    useEffect(() => {
+        if (pathName === '/' || pathName === '/home' || pathName === `/${videoIdParam}` || pathName === `/${videoIdParam}/comment/${commentIdParam}`) {
+            setEnable(true)
+        } else {
+            setEnable(false)
+        }
+
+        if (pathName === `/${videoIdParam}/comment/${commentIdParam}`) {
+            const payload = { commentIdParam: videoIdParam };
+            dispath(dialogComment(payload))
+        }
+    }, [pathName, videoIdParam])
+
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [loadFirst, setLoadFirst] = useState(false);
+    const [videoLocalStorage, setVideoLocalStorage] = useState(false);
+
+
+    useEffect(() => {
+        if (videoIdParam) {
+            videoApi.findVideoById(videoIdParam)
+                .then(res => {
+                    // empty Video video quảng cáo xin back-end
+                    setVideo([res.data, emptyVideo]);
+                    setIsLoaded(true);
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        } else {
+            // fetch first page video
+            fetchFirstPageVideo();
+        }
+        setLoadFirst(true);
+    }, [loadFirst, videoIdParam])
+
+    // lần đầu load page video
+    
+    const fetchFirstPageVideo = async () => {
+        await videoApi.loadVideoNewsFeed(pageNo, pageSize)
+            .then(res => {
+                if (videos) {
+                    setVideo([...videos, ...res.data.data]);
+                } else {
+                    setVideo(res.data.data);
+
+                    // let localVideo = [];
+                    // // check xem có dữ liệu trong local chưa ?
+                    // const videoStorage = window.localStorage.getItem("video");
+
+                    // if (videoStorage != null) {
+                    //     for (let i = 0; i < res.data.data.length; i++) {
+                    //         console.log("pass: ", JSON.parse(videoStorage))
+                    //         if (JSON.parse(videoStorage)[i].statusVideo == false) {
+                    //             localVideo.push(res.data.data[i]);
+                    //         }
+                    //     }
+
+                    //     setVideo(localVideo);
+                    // } else {
+                    //     // Lần đầu tiên chưa có data thì setLocalStorage cho video
+                    //     res.data.data.map((resVideo) => {
+                    //         localVideo.push({ id: resVideo.id, statusVideo: false });
+                    //     })
+                    //     window.localStorage.setItem("video", JSON.stringify(localVideo));
+                    //     setVideo(res.data.data);
+                    // }
+                }
+
+                setPageNo(res.data.pageNo);
+                setTotalElements(res.data.totalElements)
+                setIsLoaded(true);
+            })
+            .catch((error) => {
+                console.log(error);
+                setIsLoaded(false);
+            })
+    }
+
+    // useEffect(() => {
+    //     console.log("vides: ", videos)
+    // })
+
+    useEffect(() => {
+        // console.log("totalVideoPlayed: ", totalVideoPlayed)
+        if (videoIdParam) {
+            if (totalVideoPlayed >= 1) {
+
+                fetchFirstPageVideo();
+            }
+        }
+    }, [totalVideoPlayed])
+
+    // fetch more video
+    useEffect(() => {
+        // check limit 
+        if (videos) {
+            // debug more video
+            // console.log("totalVideoPlayed ne: ", totalVideoPlayed)
+            // console.log("videos.lengt ", videos.length)
+
+            if (totalVideoPlayed >= videos.length) {
+                return;
+            }
+
+            videoApi.loadVideoNewsFeed(pageNo + 1, pageSize)
+                .then(res => {
+                    setVideo([...videos, ...res.data.data]);
+                    setPageNo(res.data.pageNo);
+                    setTotalElements(res.data.totalElements)
+
+                    // setVideoLocalStorage([...videoLocalStorage, ...res.data.data]);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setIsLoaded(false);
+                })
+        }
+    }, [totalVideoPlayed])
+
+    if (isLoaded) {
+        return (
+            <div style={{ display: enable ? 'inherit' : 'none' }}>
+                <Header />
+                <div className={'video-scrollbar ' + cx('video__container')}>
+                    {videos && videos.map((video, index) => (
+                        <div key={index}>
+                            <Video
+                                index={index}
+                                id={video.id}
+                                avatarUser={video.user.avatar}
+                                comments={video.comment}
+                                likes={video.heart}
+                                shares={video.share}
+                                title={video.title}
+                                channel={video.user.alias}
+                                song={video.musicUrl}
+                                url={urlFromDriveUrl(video.url)}
+                                muted={muted}
+                                onEnableAudio={onEnableAudio}
+                                userVideo={video.user}
+                                enableComment={video.enableComment}
+                            />
+                        </div>
+                    ))}
+                </div>
+                <CustomizedDialog />
+            </div >
+        );
+    } else {
+        return <Loading />
+    }
 }
 
 export default Home;

@@ -5,28 +5,31 @@
 .videoSidebar {
     position: absolute;
     height: 100%;
-    right: 1%;
+    right: 2%;
     color: white;
     z-index: 10;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    padding-bottom: 3rem;
 }
+
 .videoSidebar__button:first-child {
     height: 80px;
     margin: 0 auto;
 }
+
 .videoSidebar__button {
-    padding-bottom: 20px;
+    padding-bottom: 35px;
     text-align: center;
     cursor: pointer;
-
 }
 
 .follow__button {
     position: relative;
     bottom: 16px;
 }
+
 .videoSidebar__musicCover {
     margin-top: 30px;
     text-align: center;
@@ -42,6 +45,7 @@
     cursor: pointer;
 
 }
+
 .divMusic__Album {
     background-size: cover;
     border-radius: 50%;
@@ -56,7 +60,15 @@
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
+}
+
+
+
+
+.toggle-heart {
+    background-color: red;
 }

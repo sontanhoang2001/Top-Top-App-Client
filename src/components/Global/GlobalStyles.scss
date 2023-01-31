@@ -4,11 +4,28 @@
     --primary-btn-color: #fe2c55;
 }
 
-/* hide scrollbar but allow scrolling */
+/* width */
 ::-webkit-scrollbar {
-    display: none;
-}
-
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    // box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #c4c4c46f; 
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #c4c4c4; 
+  }
+  
 * {
     margin: 0;
     padding: 0;
@@ -17,11 +34,43 @@
 // html {
 //     font-size: 62.5%;
 // }
+
 body {
     font-family: ibm-plex-sans, sans-serif;
     // font-size: 1.6rem;
     font-size: 16px;
+    min-width: 460px;
+    min-height: 658px;
 }
 .react-thumbnail-generator img {
     width: 100%;
+}
+
+.circularProgress {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.styles-module_wrapper__1I_qj {
+    z-index: 9999;
+}
+
+.container__center {
+    width: 100%;
+    height: 92vh;
+    overflow-y: scroll;
+    position: relative;
+}
+
+.link {
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+    }
 }

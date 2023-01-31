@@ -1,8 +1,22 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '~/page/Counter/counterSlice'
+import snackbarReducer from '~/components/customizedSnackbars/snackbarSlice'
+import currentPageReducer from '~/router/routerPathSlice'
+import authReducer from './context/authSlice';
+import dialogReducer from '~/components/customizedDialog/dialogSlice';
+import videoReducer from '~/components/Layout/Video/videoSlice';
+import chatReducer from '~/page/Chat/chatSlice';
+import commentReducer from '~/components/comment/commentSlice';
+import videoProfileReducer from '~/page/VideoProfile/videoProfileSlice';
 
 export default configureStore({
   reducer: {
-    counter: counterReducer,
+    snackbar: snackbarReducer,
+    currentPage: currentPageReducer,
+    auth: authReducer,
+    dialog: dialogReducer,
+    video: videoReducer,
+    chat: chatReducer,
+    comment: commentReducer,
+    videoProfile: videoProfileReducer
   },
 });

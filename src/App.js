@@ -1,66 +1,102 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { publicRoutes, privateRoutes } from './router';
+
+import ThemeProvider from './theme';
+import Snackbar from '~/components/customizedSnackbars';
+
+import { publicRoutes, privateRoutes, loginRoutes } from './router';
 import { DefaultLayout } from './components/Layout';
 import { AuthContextProvider } from './context/AuthContext';
-import Protected from './Proteced';
+import { ProtectedPrivate, ProtectedLogin } from './Proteced';
 
-import '@fontsource/roboto/300.css';
-import CssBaseline from '@mui/material/CssBaseline';
-import Container from '@mui/material/Container';
-
+// import '@fontsource/roboto/300.css';
 import Home from './page/Home';
+import { SocketContextProvider } from './context/SocketContext';
+import ListenerNotification from './components/listenerNotification';
+
 
 function App() {
     return (
-        <AuthContextProvider>
-            <Home />
-            <Routes>
-                {publicRoutes.map((route, index) => {
-                    const Page = route.component;
-                    let Layout = DefaultLayout;
+        <ThemeProvider>
+            <AuthContextProvider>
+                <SocketContextProvider>
+                    <Home />
+                    <ListenerNotification />
+                    <Routes>
+                        {publicRoutes.map((route, index) => {
+                            const Page = route.component;
+                            let Layout = DefaultLayout;
 
-                    if (route.layout) {
-                        Layout = route.layout;
-                    } else if (route.layout === null) {
-                        Layout = Fragment;
-                    }
-                    return (
-                        <Route
-                            key={index}
-                            path={route.path}
-                            element={
-                                <Layout>
-                                    <Page key={index} />
-                                </Layout>
+                            if (route.layout) {
+                                Layout = route.layout;
+                            } else if (route.layout === null) {
+                                Layout = Fragment;
                             }
-                        />
-                    );
-                })}
+                            return (
+                                <Route
+                                    key={index}
+                                    path={route.path}
+                                    element={
+                                        <Layout>
+                                            <Page key={index} />
+                                        </Layout>
+                                    }
+                                />
+                            );
+                        })}
 
-                {privateRoutes.map((route, index) => {
-                    const Page = route.component;
-                    let Layout = DefaultLayout;
+                        {loginRoutes.map((route, index) => {
+                            const Page = route.component;
+                            let Layout = DefaultLayout;
 
-                    if (route.layout) {
-                        Layout = route.layout;
-                    } else if (route.layout === null) {
-                        Layout = Fragment;
-                    }
-                    return (
-                        <Route
-                            key={index}
-                            path={route.path}
-                            element={
-                                <Layout>
-                                    <Page key={index} />
-                                </Layout>
+                            if (route.layout) {
+                                Layout = route.layout;
+                            } else if (route.layout === null) {
+                                Layout = Fragment;
                             }
-                        />
-                    );
-                })}
-            </Routes>
-        </AuthContextProvider>
+                            return (
+                                <Route
+                                    key={index}
+                                    path={route.path}
+                                    element={
+                                        <ProtectedLogin>
+                                            <Layout>
+                                                <Page key={index} />
+                                            </Layout>
+                                        </ProtectedLogin>
+                                    }
+                                />
+                            );
+                        })}
+
+                        {privateRoutes.map((route, index) => {
+                            const Page = route.component;
+                            let Layout = DefaultLayout;
+
+                            if (route.layout) {
+                                Layout = route.layout;
+                            } else if (route.layout === null) {
+                                Layout = Fragment;
+                            }
+                            return (
+                                <Route
+                                    key={index}
+                                    path={route.path}
+                                    element={
+                                        <ProtectedPrivate>
+                                            <Layout>
+                                                <Page key={index} />
+                                            </Layout>
+                                        </ProtectedPrivate>
+                                    }
+                                />
+                            );
+                        })}
+                    </Routes>
+                    <Snackbar />
+                </SocketContextProvider>
+            </AuthContextProvider>
+        </ThemeProvider>
     );
 }
 

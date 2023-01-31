@@ -1,4 +1,5 @@
 import React from 'react';
+// import ReactDOM from 'react-dom';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -13,13 +14,25 @@ root.render(
     <React.StrictMode>
         <GlobalStyles>
             <Provider store={store}>
-                <BrowserRouter>
+                <BrowserRouter basename={process.env.REACT_APP_ROUTER_BASE || ''}>
                     <App />
                 </BrowserRouter>
             </Provider>
         </GlobalStyles>
     </React.StrictMode>,
 );
+
+// ReactDOM.render(
+//     <React.StrictMode>
+//         <GlobalStyles>
+//             <Provider store={store}>
+//                 <BrowserRouter>
+//                     <App />
+//                 </BrowserRouter>
+//             </Provider>
+//         </GlobalStyles>    </React.StrictMode>,
+//     document.getElementById('root')
+// );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

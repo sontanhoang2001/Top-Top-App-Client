@@ -1,0 +1,14 @@
+.share__container  {
+    display: inline-block;
+    margin: 1rem;
+    width: 50px;
+}
+
+.fixShareButton {
+    background-color: transparent;
+    border: none;
+    padding: 0px;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}

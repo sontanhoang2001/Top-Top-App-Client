@@ -1,0 +1,32 @@
+.chatBox {
+    padding-left: 0;
+    margin: 0;
+    list-style-type: none;
+    min-height: 64vh;
+    border-top: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    background-color: rgba(122, 136, 136, 0.108);
+    overflow-y: auto;
+}
+
+.footerChat {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    margin: 1rem;
+}
+
+// .EmojiPicker {
+//     position: absolute;
+//     top: 157px;
+//     left: 0;
+//     z-index: 99;
+// }
+
+// .btn__scrollToBottom {
+//     position: absolute;
+//     top: 540px;
+//     left: 45%;
+//     z-index: 99;
+// }
