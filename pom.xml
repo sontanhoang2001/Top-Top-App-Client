@@ -79,7 +79,7 @@
 
                         <configuration>
                             <environmentVariables>
-                                <PUBLIC_URL>http://34.124.197.199:8080/${project.artifactId}</PUBLIC_URL>
+                                <PUBLIC_URL>https://494e-103-151-238-223.ap.ngrok.io/${project.artifactId}</PUBLIC_URL>
                                 <REACT_APP_ROUTER_BASE>/${project.artifactId}</REACT_APP_ROUTER_BASE>
                             </environmentVariables>
                         </configuration>
